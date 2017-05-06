@@ -1,0 +1,34 @@
+
+example.png
+size: 256,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bee
+  rotate: false
+  xy: 132, 150
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+cloud
+  rotate: false
+  xy: 2, 132
+  size: 128, 82
+  orig: 128, 82
+  offset: 0, 0
+  index: -1
+flower
+  rotate: false
+  xy: 2, 2
+  size: 64, 128
+  orig: 64, 128
+  offset: 0, 0
+  index: -1
+hero
+  rotate: false
+  xy: 68, 66
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
