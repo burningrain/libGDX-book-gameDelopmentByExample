@@ -9,20 +9,16 @@ import com.github.br.ecs.simple.node.AnimationNode;
  */
 public class AnimationSystem extends EcsSystem<AnimationNode> {
 
-    private SpriteBatch spriteBatch = new SpriteBatch();
-
     public AnimationSystem() {
         super(AnimationNode.class);
     }
 
     @Override
     public void update(float delta) {
-        spriteBatch.begin();
         for(AnimationNode node : nodes){
             node.animationComponent.controller.update();
             TextureRegion textureRegion = node.animationComponent.controller.getCurrentAnimator().getCurrentFrame();
-            spriteBatch.draw(textureRegion, node.transform.position.x, node.transform.position.y);
+            node.rendererComponent.textureRegion = textureRegion;
         }
-        spriteBatch.end();
     }
 }

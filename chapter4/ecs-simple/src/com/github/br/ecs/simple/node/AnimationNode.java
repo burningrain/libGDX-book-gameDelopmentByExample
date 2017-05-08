@@ -1,6 +1,7 @@
 package com.github.br.ecs.simple.node;
 
 import com.github.br.ecs.simple.component.AnimationComponent;
+import com.github.br.ecs.simple.component.RendererComponent;
 import com.github.br.ecs.simple.component.TransformComponent;
 
 /**
@@ -9,6 +10,7 @@ import com.github.br.ecs.simple.component.TransformComponent;
 public class AnimationNode implements EcsNode {
 
     public TransformComponent transform;
+    public RendererComponent rendererComponent;
     public AnimationComponent animationComponent;
 
 }

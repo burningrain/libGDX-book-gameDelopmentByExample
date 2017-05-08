@@ -4,6 +4,7 @@ import com.github.br.ecs.simple.component.EcsComponent;
 import com.github.br.ecs.simple.component.ScriptComponent;
 import com.github.br.ecs.simple.node.EcsNode;
 import com.github.br.ecs.simple.system.*;
+import com.github.br.ecs.simple.utils.EcsReflectionHelper;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,9 +33,9 @@ public class EcsContainer {
         //TODO поправить порядок, когда в системе рендеринга появятся слои для отрисовки
         addSystem(ScriptSystem.class);
         addSystem(PhysicsSystem.class);
+        addSystem(AnimationSystem.class);
         addSystem(RenderSystem.class);
         addSystem(TransformDebugSystem.class);
-        addSystem(AnimationSystem.class);
     }
 
     public void update(float delta) {

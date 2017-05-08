@@ -4,7 +4,7 @@ package com.github.br.ecs.simple.system;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
-import com.github.br.ecs.simple.EcsReflectionHelper;
+import com.github.br.ecs.simple.utils.EcsReflectionHelper;
 import com.github.br.ecs.simple.component.PhysicsComponent;
 import com.github.br.ecs.simple.component.TransformComponent;
 import com.github.br.ecs.simple.node.PhysicsNode;

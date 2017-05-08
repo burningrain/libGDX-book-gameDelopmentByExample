@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.github.br.ecs.simple.EcsContainer;
+import com.github.br.ecs.simple.EcsScript;
 import com.github.br.ecs.simple.animation.AnimationController;
 import com.github.br.ecs.simple.animation.Animator;
 import com.github.br.ecs.simple.component.*;
@@ -55,10 +56,10 @@ public final class GameObjectFactory {
         physicsComponent.boundary = new Boundary(new Circle(new Vector2(32, 32), radius));
 
         ScriptComponent scriptComponent = new ScriptComponent();
-        scriptComponent.scripts = Arrays.asList(new FlappeeScript());
+        scriptComponent.scripts = Arrays.<EcsScript>asList(new FlappeeScript());
 
         RendererComponent rendererComponent = new RendererComponent();
-        rendererComponent.sprite = packedimages.createSprite("bee");
+        rendererComponent.textureRegion = packedimages.findRegion("bee");
 
         container.createEntity("bee", transformComponent, physicsComponent, scriptComponent, rendererComponent);
     }
@@ -85,13 +86,13 @@ public final class GameObjectFactory {
 
         ScriptComponent scriptComponent = new ScriptComponent();
         if ((plantCount & 1) == 1) {
-            scriptComponent.scripts = Arrays.asList(new FlowerScript2());
+            scriptComponent.scripts = Arrays.<EcsScript>asList(new FlowerScript2());
         } else {
-            scriptComponent.scripts = Arrays.asList(new FlowerScript());
+            scriptComponent.scripts = Arrays.<EcsScript>asList(new FlowerScript());
         }
 
         RendererComponent rendererComponent = new RendererComponent();
-        rendererComponent.sprite = new Sprite(animAtlas.findRegion("anim", 0));
+        rendererComponent.textureRegion = animAtlas.findRegion("anim", 0);
 
         // АНИМАЦИЯ
         AnimationComponent animationComponent = new AnimationComponent();
@@ -135,7 +136,7 @@ public final class GameObjectFactory {
         scriptComponent.scripts = Arrays.asList(new CrabScript(), new CrabAnimScript());
 
         RendererComponent rendererComponent = new RendererComponent();
-        rendererComponent.sprite = crabAtlas.createSprite("crab", 1);
+        rendererComponent.textureRegion = crabAtlas.findRegion("crab", 1);
 
         // АНИМАЦИЯ
         AnimationComponent animationComponent = new AnimationComponent();
@@ -268,7 +269,7 @@ public final class GameObjectFactory {
         animationComponent.controller = animationController;
         // АНИМАЦИЯ
 
-        container.createEntity("crab", transformComponent, physicsComponent, scriptComponent,/* rendererComponent, */ animationComponent);
+        container.createEntity("crab", transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent);
     }
 
 

@@ -2,7 +2,7 @@ package com.github.br.ecs.simple.physics;
 
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
-import com.github.br.ecs.simple.EcsReflectionHelper;
+import com.github.br.ecs.simple.utils.EcsReflectionHelper;
 import com.github.br.ecs.simple.system.ShapeUtils;
 
 import java.io.Serializable;

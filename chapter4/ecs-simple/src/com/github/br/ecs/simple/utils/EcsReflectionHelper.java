@@ -1,6 +1,7 @@
-package com.github.br.ecs.simple;
+package com.github.br.ecs.simple.utils;
 
 
+import com.github.br.ecs.simple.EcsEntity;
 import com.github.br.ecs.simple.component.EcsComponent;
 import com.github.br.ecs.simple.node.EcsNode;
 

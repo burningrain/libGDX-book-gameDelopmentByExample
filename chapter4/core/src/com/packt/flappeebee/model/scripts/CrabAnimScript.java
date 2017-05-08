@@ -6,6 +6,7 @@ import com.github.br.ecs.simple.EcsScript;
 import com.github.br.ecs.simple.animation.AnimationController;
 import com.github.br.ecs.simple.component.AnimationComponent;
 import com.github.br.ecs.simple.component.PhysicsComponent;
+import com.github.br.ecs.simple.component.RendererComponent;
 import com.github.br.ecs.simple.fsm.FsmContext;
 
 /**
@@ -21,6 +22,7 @@ public class CrabAnimScript extends EcsScript {
 
 
     private PhysicsComponent physics;
+    private RendererComponent renderer;
     private AnimationController controller;
     private FsmContext context;
 
@@ -30,6 +32,7 @@ public class CrabAnimScript extends EcsScript {
     @Override
     public void init() {
         physics = getComponent(PhysicsComponent.class);
+        renderer = getComponent(RendererComponent.class);
         AnimationComponent animation = getComponent(AnimationComponent.class);
         controller = animation.controller;
         context = controller.getAnimationContext();
@@ -46,7 +49,13 @@ public class CrabAnimScript extends EcsScript {
             context.update(JUMP, true);
         }
 
+        if(physics.movement.x < 0){
+            renderer.flipX = true;
+        } else {
+            renderer.flipX = false;
+        }
         context.update(MOVEMENT, Math.abs(physics.movement.x));
+
         if(physics.movement.y < -0.3){
             context.update(FLY, true);
         } else if(physics.movement.y == 0){

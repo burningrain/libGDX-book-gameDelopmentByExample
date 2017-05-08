@@ -2,7 +2,7 @@ package com.github.br.ecs.simple.physics;
 
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
-import com.github.br.ecs.simple.EcsReflectionHelper;
+import com.github.br.ecs.simple.utils.EcsReflectionHelper;
 import com.github.br.ecs.simple.system.ShapeUtils;
 import com.github.br.ecs.simple.utils.HashCache;
 
@@ -19,7 +19,7 @@ public class Boundary {
 
     public Boundary(Shape2D shape){
         this.shape = shape;
-        offset = new Vector2(EcsReflectionHelper.getValue(shape, "x"), EcsReflectionHelper.getValue(shape, "y"));
+        offset = new Vector2((float)EcsReflectionHelper.getValue(shape, "x"), (float)EcsReflectionHelper.getValue(shape, "y"));
         cacheWidth = new HashCache(shape, ShapeUtils.calculateWidth(shape));
         cacheHeight = new HashCache(shape, ShapeUtils.calculateHeight(shape));
     }
