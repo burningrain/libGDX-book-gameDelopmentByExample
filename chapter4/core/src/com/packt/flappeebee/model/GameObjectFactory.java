@@ -3,27 +3,29 @@ package com.packt.flappeebee.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.github.br.ecs.simple.EcsContainer;
-import com.github.br.ecs.simple.EcsScript;
-import com.github.br.ecs.simple.animation.AnimationController;
-import com.github.br.ecs.simple.animation.Animator;
-import com.github.br.ecs.simple.component.*;
+import com.github.br.ecs.simple.engine.EcsContainer;
+import com.github.br.ecs.simple.engine.EcsScript;
+import com.github.br.ecs.simple.system.animation.AnimationComponent;
+import com.github.br.ecs.simple.system.animation.AnimationController;
+import com.github.br.ecs.simple.system.animation.Animator;
 import com.github.br.ecs.simple.fsm.FSM;
 import com.github.br.ecs.simple.fsm.FsmContext;
 import com.github.br.ecs.simple.fsm.FsmPredicate;
 import com.github.br.ecs.simple.fsm.FsmState;
-import com.github.br.ecs.simple.physics.Boundary;
-import com.github.br.ecs.simple.physics.GroupShape;
+import com.github.br.ecs.simple.system.physics.Boundary;
+import com.github.br.ecs.simple.system.physics.GroupShape;
+import com.github.br.ecs.simple.system.physics.PhysicsComponent;
+import com.github.br.ecs.simple.system.render.RendererComponent;
+import com.github.br.ecs.simple.system.script.ScriptComponent;
+import com.github.br.ecs.simple.system.transform.TransformComponent;
 import com.packt.flappeebee.model.scripts.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public final class GameObjectFactory {
@@ -45,7 +47,7 @@ public final class GameObjectFactory {
         //todo сделать нормальные билдеры для сущностей
 
         TransformComponent transformComponent = new TransformComponent();
-        transformComponent.position = new Vector2(300, 0);
+        transformComponent.position = new Vector2(300, 600);
         transformComponent.rotation = 0f;
         transformComponent.debugInfo = "bee";
 

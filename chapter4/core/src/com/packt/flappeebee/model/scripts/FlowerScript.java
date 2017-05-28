@@ -2,10 +2,10 @@ package com.packt.flappeebee.model.scripts;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
-import com.github.br.ecs.simple.EcsScript;
-import com.github.br.ecs.simple.component.PhysicsComponent;
-import com.github.br.ecs.simple.component.TransformComponent;
-import com.github.br.ecs.simple.physics.GroupShape;
+import com.github.br.ecs.simple.engine.EcsScript;
+import com.github.br.ecs.simple.system.physics.PhysicsComponent;
+import com.github.br.ecs.simple.system.transform.TransformComponent;
+import com.github.br.ecs.simple.system.physics.GroupShape;
 import com.github.br.ecs.simple.utils.ViewHelper;
 
 /**

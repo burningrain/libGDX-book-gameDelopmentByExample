@@ -2,11 +2,11 @@ package com.packt.flappeebee.model.scripts;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.github.br.ecs.simple.EcsScript;
-import com.github.br.ecs.simple.animation.AnimationController;
-import com.github.br.ecs.simple.component.AnimationComponent;
-import com.github.br.ecs.simple.component.PhysicsComponent;
-import com.github.br.ecs.simple.component.RendererComponent;
+import com.github.br.ecs.simple.engine.EcsScript;
+import com.github.br.ecs.simple.system.animation.AnimationController;
+import com.github.br.ecs.simple.system.animation.AnimationComponent;
+import com.github.br.ecs.simple.system.physics.PhysicsComponent;
+import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.fsm.FsmContext;
 
 /**
