@@ -9,19 +9,21 @@ import com.github.br.ecs.simple.system.transform.TransformDebugSystem;
 
 import java.util.LinkedHashMap;
 
+import static java.lang.String.format;
+
 /**
  * Контейнер, порождающий игровые сущности. Связывает вместе системы, компоненты и сущности
  */
 public class EcsContainer {
 
-    private LinkedHashMap<Class, EcsSystem> systems = new LinkedHashMap<>();
+    private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<>();
     private EntityManager entityManager = new EntityManager();
 
     private EntityManager.Callback createCallback = new EntityManager.Callback() {
         @Override
         public void call(EcsEntity entity) {
             // заполняем системы нодами с компонентами сущности
-            for (EcsSystem<EcsNode> system : systems.values()) {
+            for (IEcsSystem<EcsNode> system : systems.values()) {
                 Class nodeClass = system.getNodeClass();
                 EcsNode node = EcsReflectionHelper.createAndFillNode(nodeClass, entity);
                 if(node != null){
@@ -43,31 +45,30 @@ public class EcsContainer {
     private EntityManager.Callback deleteCallback = new EntityManager.Callback() {
         @Override
         public void call(EcsEntity entity) {
-            for(EcsSystem system : systems.values()){
+            for(IEcsSystem system : systems.values()){
                 system.removeNode(entity.getId());
             }
         }
     };
 
     public void setDebugMode(boolean active) {
-        for(EcsSystem system : systems.values()){
+        for(IEcsSystem system : systems.values()){
             system.setDebugMode(active);
         }
     }
 
-    public void setDebugMode(boolean active, Class<EcsSystem> system) {
-        EcsSystem ecsSystem = getSystem(system);
+    public void setDebugMode(boolean active, Class<? extends IEcsSystem> system) {
+        IEcsSystem ecsSystem = getSystem(system);
+        if(ecsSystem == null) throw new IllegalArgumentException(format("Система '%s' не найдена", system));
         ecsSystem.setDebugMode(active);
     }
 
-    public EcsContainer() {
+    public EcsContainer(EcsSettings settings) {
         // инициализация систем. Порядок очень важен!
-        //TODO нужна возожность задавать список систем извне, как и настройки каждой системы
-        //TODO поправить порядок, когда в системе рендеринга появятся слои для отрисовки
         addSystem(ScriptSystem.class);
         addSystem(PhysicsSystem.class);
         addSystem(AnimationSystem.class);
-        addSystem(RenderSystem.class);
+        addSystem(new RenderSystem(settings.layers));
         addSystem(TransformDebugSystem.class);
     }
 
@@ -75,7 +76,7 @@ public class EcsContainer {
         if(entityManager.hasChanges()){
             entityManager.update(createCallback, deleteCallback); // коллбеки для очистки нод в системах
         }
-        for (EcsSystem system : systems.values()) {
+        for (IEcsSystem system : systems.values()) {
             system.update(delta);
         }
     }
@@ -89,17 +90,21 @@ public class EcsContainer {
     }
 
 
-    private <T extends EcsSystem> T getSystem(Class<? extends EcsSystem> clazz) {
+    private <T extends EcsSystem> T getSystem(Class<? extends IEcsSystem> clazz) {
         return (T) systems.get(clazz);
     }
 
 
-    private void addSystem(Class<? extends EcsSystem> clazz) {
+    public void addSystem(Class<? extends IEcsSystem> clazz) {
         try {
             systems.put(clazz, clazz.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addSystem(IEcsSystem system) {
+        systems.put(system.getClass(), system);
     }
 
 

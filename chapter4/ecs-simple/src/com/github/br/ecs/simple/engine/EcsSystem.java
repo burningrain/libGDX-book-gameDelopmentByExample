@@ -3,7 +3,7 @@ package com.github.br.ecs.simple.engine;
 import java.util.Collection;
 import java.util.HashMap;
 
-public abstract class EcsSystem<T extends EcsNode> {
+public abstract class EcsSystem<T extends EcsNode> implements IEcsSystem<T> {
 
     private final Class<T> nodeClazz;
     private HashMap<EntityId, T> allNodes = new HashMap<>();
@@ -14,26 +14,32 @@ public abstract class EcsSystem<T extends EcsNode> {
         this.nodeClazz = clazz;
     }
 
+    @Override
     public void addNode(T node){
         allNodes.put(node.entityId, node);
     }
 
+    @Override
     public void removeNode(EntityId entityId){
         allNodes.remove(entityId);
     }
 
+    @Override
     public Class<T> getNodeClass() {
         return nodeClazz;
     }
 
+    @Override
     public boolean isDebugMode() {
         return debugMode;
     }
 
+    @Override
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
     }
 
+    @Override
     public void update(float delta){
         update(delta, allNodes.values());
     }

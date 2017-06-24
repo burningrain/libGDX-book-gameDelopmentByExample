@@ -2,9 +2,12 @@ package com.packt.flappeebee.model;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -37,17 +40,51 @@ public final class GameObjectFactory {
     private static TextureAtlas animAtlas;
     private static TextureAtlas crabAtlas;
 
+    private static Texture background;
+
     static {
         packedimages = new TextureAtlas(Gdx.files.internal("packedimages/example.atlas"));
         animAtlas = new TextureAtlas(Gdx.files.internal("packedimages/anim_example.atlas"));
         crabAtlas = new TextureAtlas(Gdx.files.internal("crab/crab.atlas"));
+
+        background = new Texture(Gdx.files.internal("background.png"));
+    }
+
+    public static void createCloud(EcsContainer container){
+        TransformComponent transformComponent = new TransformComponent();
+        transformComponent.position = new Vector2(660f, 460 - MathUtils.random(0, 200));
+        transformComponent.rotation = 0f;
+        transformComponent.debugInfo = "cloud";
+
+        RendererComponent rendererComponent = new RendererComponent();
+        rendererComponent.textureRegion = packedimages.findRegion("cloud");
+        rendererComponent.layer = LayerEnum.PRE_BACKGROUND.name();
+
+        ScriptComponent scriptComponent = new ScriptComponent();
+        scriptComponent.scripts = Arrays.<EcsScript>asList(new CloudScript());
+
+        container.createEntity("cloud", transformComponent, rendererComponent, scriptComponent);
+    }
+
+    public static void createBackground(EcsContainer container){
+        TransformComponent transformComponent = new TransformComponent();
+        transformComponent.position = new Vector2(0f, 0f);
+        transformComponent.rotation = 0f;
+        transformComponent.debugInfo = "background";
+
+        RendererComponent rendererComponent = new RendererComponent();
+        rendererComponent.textureRegion = new TextureRegion(background);
+        rendererComponent.layer = LayerEnum.BACKGROUND.name();
+
+        container.createEntity("background", transformComponent, rendererComponent);
     }
 
     public static void createFlappee(EcsContainer container) {
         //todo сделать нормальные билдеры для сущностей
 
+        int x = MathUtils.random(0, 480);
         TransformComponent transformComponent = new TransformComponent();
-        transformComponent.position = new Vector2(300, 600);
+        transformComponent.position = new Vector2(x, 600);
         transformComponent.rotation = 0f;
         transformComponent.debugInfo = "bee";
 
@@ -62,6 +99,7 @@ public final class GameObjectFactory {
 
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = packedimages.findRegion("bee");
+        rendererComponent.layer = LayerEnum.FRONT_EFFECTS.name();
 
         container.createEntity("bee", transformComponent, physicsComponent, scriptComponent, rendererComponent);
     }
@@ -70,7 +108,7 @@ public final class GameObjectFactory {
 
     public static void createPlant(EcsContainer container) {
         TransformComponent transformComponent = new TransformComponent();
-        transformComponent.position = new Vector2(100 * plantCount, 250);
+        transformComponent.position = new Vector2(85 * plantCount, 250);
         transformComponent.rotation = 0f;
         transformComponent.debugInfo = "flower";
 
@@ -95,13 +133,13 @@ public final class GameObjectFactory {
 
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = animAtlas.findRegion("anim", 0);
+        rendererComponent.layer = (plantCount & 1) == 1? LayerEnum.PRE_BACKGROUND.name() : LayerEnum.FRONT_EFFECTS.name();
 
         // АНИМАЦИЯ
         AnimationComponent animationComponent = new AnimationComponent();
         Animator animatorGrow = new Animator("grow", animAtlas.getRegions(), (float)1 / 30);
         animatorGrow.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         animatorGrow.setLooping(true);
-        animatorGrow.play();
 
         FsmContext fsmContext = new FsmContext();
         FSM.Builder builder = new FSM.Builder();
@@ -139,6 +177,7 @@ public final class GameObjectFactory {
 
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = crabAtlas.findRegion("crab", 1);
+        rendererComponent.layer = LayerEnum.MAIN_LAYER.name();
 
         // АНИМАЦИЯ
         AnimationComponent animationComponent = new AnimationComponent();

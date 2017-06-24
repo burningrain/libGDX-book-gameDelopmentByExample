@@ -24,7 +24,7 @@ public class FlappeeScript extends EcsScript {
     @Override
     public void update(float delta) {
         transform.rotation +=1;
-
+        physics.movement.add(0, MathUtils.random(0f, 0.4f)); //todo хак, пока не допилю физ. систему более-менее
         blockFlappeeLeavingTheWorld();
 
     }

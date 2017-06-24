@@ -7,6 +7,6 @@ package com.github.br.ecs.simple.engine;
  */
 public abstract class EcsNode {
 
-    EntityId entityId;
+    public EntityId entityId;
 
 }

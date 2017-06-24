@@ -10,4 +10,6 @@ public class RendererComponent implements EcsComponent {
     public boolean flipX = false;
     public boolean flipY = false;
 
+    public String layer;
+
 }
