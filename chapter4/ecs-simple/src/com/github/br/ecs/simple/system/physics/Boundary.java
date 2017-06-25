@@ -18,7 +18,7 @@ public class Boundary {
 
     public Boundary(Shape2D shape){
         this.shape = shape;
-        offset = new Vector2((float)EcsReflectionHelper.getValue(shape, "x"), (float)EcsReflectionHelper.getValue(shape, "y"));
+        offset = new Vector2(Float.class.cast(EcsReflectionHelper.getValue(shape, "x")), Float.class.cast(EcsReflectionHelper.getValue(shape, "y")));
         cacheWidth = new HashCache(shape, ShapeUtils.calculateWidth(shape));
         cacheHeight = new HashCache(shape, ShapeUtils.calculateHeight(shape));
     }
@@ -35,14 +35,14 @@ public class Boundary {
         if(!cacheWidth.isValid(shape)){
             cacheWidth.update(shape, ShapeUtils.calculateWidth(shape));
         }
-        return (float) cacheWidth.getValue();
+        return Float.class.cast(cacheWidth.getValue());
     }
 
     public float getHeight(){
         if(!cacheHeight.isValid(shape)){
             cacheHeight.update(shape, ShapeUtils.calculateHeight(shape));
         }
-        return (float) cacheHeight.getValue();
+        return Float.class.cast(cacheHeight.getValue());
     }
 
     public Vector2 getOffset() {

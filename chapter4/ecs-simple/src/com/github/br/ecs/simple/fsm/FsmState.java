@@ -38,14 +38,14 @@ public class FsmState {
 
     void addTransition(FsmTransition transition) {
         if (transitions == null) {
-            transitions = new ArrayList<>();
+            transitions = new ArrayList<FsmTransition>();
         }
         transitions.add(transition);
     }
 
     void addTransitions(Collection<FsmTransition> transition) {
         if (transitions == null) {
-            transitions = new ArrayList<>();
+            transitions = new ArrayList<FsmTransition>();
         }
         transitions.addAll(transition);
     }
@@ -130,7 +130,7 @@ public class FsmState {
 
         Builder addTranstion(FsmTransition transition) {
             if(this.transitions == null){
-                this.transitions = new ArrayList<>();
+                this.transitions = new ArrayList<FsmTransition>();
             }
             this.transitions.add(transition);
             return this;
@@ -138,7 +138,7 @@ public class FsmState {
 
         Builder addTransitions(Collection<FsmTransition> transitions) {
             if(this.transitions == null){
-                this.transitions = new ArrayList<>();
+                this.transitions = new ArrayList<FsmTransition>();
             }
             this.transitions.addAll(transitions);
             return this;

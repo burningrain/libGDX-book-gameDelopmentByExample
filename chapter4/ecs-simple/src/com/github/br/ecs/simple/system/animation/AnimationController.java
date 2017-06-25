@@ -9,7 +9,7 @@ import java.util.HashMap;
  */
 public class AnimationController {
 
-    private HashMap<String, Animator> animators = new HashMap<>();
+    private HashMap<String, Animator> animators = new HashMap<String, Animator>();
     private FSM fsm;
 
     private Animator currentAnimator;

@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class FsmContext {
 
-    private HashMap<String, Object> map = new HashMap<>();
+    private HashMap<String, Object> map = new HashMap<String, Object>();
 
     private String currentStateName;
 

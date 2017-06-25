@@ -18,12 +18,12 @@ public class FSM {
     FsmState startState;
     FsmState endState;
 
-    private HashMap<String, FsmState> states = new HashMap<>();
+    private HashMap<String, FsmState> states = new HashMap<String, FsmState>();
     private ArrayList<FsmChangeStateCallback> fsmStateCallbacks;
     private HashMap<FsmStateEvent, FsmStateEventBasket> rules;
 
     private final FsmState anyState;
-    private LinkedBlockingDeque<FsmStateEvent> fsmEvents = new LinkedBlockingDeque<>();
+    private LinkedBlockingDeque<FsmStateEvent> fsmEvents = new LinkedBlockingDeque<FsmStateEvent>();
 
     //TODO а если TreeSet юзаются? Все с концами?
     FSM(FsmContext context,
@@ -39,7 +39,7 @@ public class FSM {
         this.context = context;
         this.fsmStateCallbacks = fsmStateCallbacks;
         if(rules != null){
-            this.rules = new HashMap<>();
+            this.rules = new HashMap<FsmStateEvent, FsmStateEventBasket>();
             for(FsmStateEventBasket rule : rules){
                 this.rules.put(rule.getEvent(), rule);
             }
@@ -97,7 +97,7 @@ public class FSM {
 
     public void addChangeStateCallback(FsmChangeStateCallback fsmStateCallback){
         if(fsmStateCallbacks == null){
-            fsmStateCallbacks = new ArrayList<>();
+            fsmStateCallbacks = new ArrayList<FsmChangeStateCallback>();
         }
         this.fsmStateCallbacks.add(fsmStateCallback);
     }
@@ -128,19 +128,19 @@ public class FSM {
 
     public static class Builder {
         private FsmContext context;
-        private HashSet<FsmState> states = new HashSet<>();
-        private HashSet<String> statesString = new HashSet<>();
-        private HashSet<FsmStateEventBasket> rules = new HashSet<>();
+        private HashSet<FsmState> states = new HashSet<FsmState>();
+        private HashSet<String> statesString = new HashSet<String>();
+        private HashSet<FsmStateEventBasket> rules = new HashSet<FsmStateEventBasket>();
         private String startState;
         private String endState;
         private ArrayList<FsmChangeStateCallback> fsmStateCallbacks;
-        private HashSet<FsmTransition> transitions = new HashSet<>();
+        private HashSet<FsmTransition> transitions = new HashSet<FsmTransition>();
 
         private ArrayList<AnyStateTransitionBag> anyStateTransitionBag;
 
         public Builder addCallback(FsmChangeStateCallback fsmStateCallback){
             if(fsmStateCallbacks == null){
-                fsmStateCallbacks = new ArrayList<>();
+                fsmStateCallbacks = new ArrayList<FsmChangeStateCallback>();
             }
 
             this.fsmStateCallbacks.add(fsmStateCallback);
@@ -180,7 +180,7 @@ public class FSM {
 
         public Builder addTransitionFromAnyState(String to, FsmPredicate predicate){
             if(anyStateTransitionBag == null){
-                anyStateTransitionBag = new ArrayList<>();
+                anyStateTransitionBag = new ArrayList<AnyStateTransitionBag>();
             }
             anyStateTransitionBag.add(new AnyStateTransitionBag(to, predicate));
             return this;

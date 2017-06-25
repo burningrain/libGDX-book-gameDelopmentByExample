@@ -50,7 +50,7 @@ public class FsmStateSubFsm extends FsmState {
 
         public Builder addTranstion(FsmTransition transition) {
             if (this.transitions == null) {
-                this.transitions = new ArrayList<>();
+                this.transitions = new ArrayList<FsmTransition>();
             }
             this.transitions.add(transition);
             return this;
@@ -58,7 +58,7 @@ public class FsmStateSubFsm extends FsmState {
 
         public Builder addTransitions(Collection<FsmTransition> transitions) {
             if (this.transitions == null) {
-                this.transitions = new ArrayList<>();
+                this.transitions = new ArrayList<FsmTransition>();
             }
             this.transitions.addAll(transitions);
             return this;

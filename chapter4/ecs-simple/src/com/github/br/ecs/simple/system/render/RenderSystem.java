@@ -14,8 +14,8 @@ import static java.lang.String.format;
  */
 public class RenderSystem implements IEcsSystem<RendererNode> {
 
-    private LinkedHashMap<String, Layer> layers = new LinkedHashMap<>();
-    private LinkedHashMap<EntityId, String> entityLayerMap = new LinkedHashMap<>();
+    private LinkedHashMap<String, Layer> layers = new LinkedHashMap<String, Layer>();
+    private LinkedHashMap<EntityId, String> entityLayerMap = new LinkedHashMap<EntityId, String>();
 
     private SpriteBatch batch = new SpriteBatch();
 

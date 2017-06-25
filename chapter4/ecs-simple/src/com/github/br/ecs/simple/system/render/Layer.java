@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Layer {
 
     private String title;
-    private HashMap<EntityId, RendererNode> nodes = new HashMap<>();
+    private HashMap<EntityId, RendererNode> nodes = new HashMap<EntityId, RendererNode>();
 
     public Layer(String title){
         this.title = title;

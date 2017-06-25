@@ -14,7 +14,7 @@ public class GroupShape implements Serializable, Shape2D {
 
     public float x, y; // глобальные координаты объекта
     public float rotation; //TODO допилить ротацию
-    private HashMap<String, Shape2D> localPosShapes = new HashMap<>();
+    private HashMap<String, Shape2D> localPosShapes = new HashMap<String, Shape2D>();
 
     public GroupShape(GroupShape groupShape){
         this.x = groupShape.x;
@@ -58,7 +58,7 @@ public class GroupShape implements Serializable, Shape2D {
     }
 
     public Collection<Shape2D> getGlobalPosShapes() {
-        ArrayList<Shape2D> list = new ArrayList<>(localPosShapes.size());
+        ArrayList<Shape2D> list = new ArrayList<Shape2D>(localPosShapes.size());
         for(Shape2D shape2D : localPosShapes.values()){
             Shape2D copy = ShapeUtils.copyShape(shape2D);
             setGlobalPosition(copy);
@@ -123,8 +123,8 @@ public class GroupShape implements Serializable, Shape2D {
     }
 
     private void setGlobalPosition(Shape2D copy){
-        EcsReflectionHelper.setValue(copy, "x", (float)EcsReflectionHelper.getValue(copy, "x") + this.x);
-        EcsReflectionHelper.setValue(copy, "y", (float)EcsReflectionHelper.getValue(copy, "y") + this.y);
+        EcsReflectionHelper.setValue(copy, "x", Float.class.cast(EcsReflectionHelper.getValue(copy, "x")) + this.x);
+        EcsReflectionHelper.setValue(copy, "y", Float.class.cast(EcsReflectionHelper.getValue(copy, "y")) + this.y);
     }
 
     @Override

@@ -10,11 +10,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class EntityManager {
 
     private IdGenerator idGenerator = new IdGenerator();
-    private HashMap<EntityId, EcsEntity> entities = new HashMap<>();
+    private HashMap<EntityId, EcsEntity> entities = new HashMap<EntityId, EcsEntity>();
 
     private volatile boolean hasChanges = false;
-    private LinkedList<EcsEntity> added = new LinkedList<>();
-    private LinkedList<EntityId> deleted = new LinkedList<>();
+    private LinkedList<EcsEntity> added = new LinkedList<EcsEntity>();
+    private LinkedList<EntityId> deleted = new LinkedList<EntityId>();
 
     public void createEntity(String type, EcsComponent... components) {
         hasChanges = true;

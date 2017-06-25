@@ -6,7 +6,7 @@ import java.util.HashMap;
 public abstract class EcsSystem<T extends EcsNode> implements IEcsSystem<T> {
 
     private final Class<T> nodeClazz;
-    private HashMap<EntityId, T> allNodes = new HashMap<>();
+    private HashMap<EntityId, T> allNodes = new HashMap<EntityId, T>();
 
     private boolean debugMode;
 

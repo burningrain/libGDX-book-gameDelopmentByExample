@@ -30,14 +30,14 @@ public class GamePublisher {
         return currentState;
     }
 
-    private HashMap<State, ArrayList<Subscriber>> subscribers = new HashMap<>();
+    private HashMap<State, ArrayList<Subscriber>> subscribers = new HashMap<State, ArrayList<Subscriber>>();
 
     public void addListener(State state, Subscriber subscriber){
         if(state == null) throw new IllegalArgumentException();
         if(subscriber == null) throw new IllegalArgumentException();
 
         if(subscribers.get(state) == null) {
-            ArrayList<Subscriber> list = new ArrayList<>();
+            ArrayList<Subscriber> list = new ArrayList<Subscriber>();
             list.add(subscriber);
             subscribers.put(state, list);
         } else {

@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class EcsEntity {
 
     private final EntityId id;
-    HashMap<Class, EcsComponent> components = new HashMap<>();
+    HashMap<Class, EcsComponent> components = new HashMap<Class, EcsComponent>();
 
     EcsEntity(EntityId id){
         this.id = id;

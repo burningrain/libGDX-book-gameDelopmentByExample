@@ -16,7 +16,7 @@ class FsmStateEventBasket {
             throw new IllegalArgumentException("Событие должно быть задано!");
         }
         this.event = event;
-        this.handlers = new ArrayList<>(handlers);
+        this.handlers = new ArrayList<FsmStateEventHandler>(handlers);
     }
 
     void notifyHandlers(FsmStateEvent event){

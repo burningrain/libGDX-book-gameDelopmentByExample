@@ -184,10 +184,10 @@ public final class GameObjectFactory {
         Array<TextureAtlas.AtlasRegion> atlasRegions = crabAtlas.getRegions();
         List<TextureAtlas.AtlasRegion> atlasList = Arrays.asList(atlasRegions.items);
 
-        Array<TextureAtlas.AtlasRegion> movementArray = new Array<>(atlasList.subList(0, 44).toArray(new TextureAtlas.AtlasRegion[0]));
-        Array<TextureAtlas.AtlasRegion> attackArray = new Array<>(atlasList.subList(45, 75).toArray(new TextureAtlas.AtlasRegion[0]));
-        Array<TextureAtlas.AtlasRegion> jumpArray = new Array<>(atlasList.subList(76, 86).toArray(new TextureAtlas.AtlasRegion[0]));
-        Array<TextureAtlas.AtlasRegion> flyArray = new Array<>(atlasList.subList(87, 104).toArray(new TextureAtlas.AtlasRegion[0]));
+        Array<TextureAtlas.AtlasRegion> movementArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(0, 44).toArray(new TextureAtlas.AtlasRegion[0]));
+        Array<TextureAtlas.AtlasRegion> attackArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(45, 75).toArray(new TextureAtlas.AtlasRegion[0]));
+        Array<TextureAtlas.AtlasRegion> jumpArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(76, 86).toArray(new TextureAtlas.AtlasRegion[0]));
+        Array<TextureAtlas.AtlasRegion> flyArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(87, 104).toArray(new TextureAtlas.AtlasRegion[0]));
 
         Animator animatorIdle = new Animator(CrabAnimScript.IDLE, jumpArray, (float)1 / 10);
         animatorIdle.setPlayMode(Animation.PlayMode.LOOP);
@@ -227,81 +227,68 @@ public final class GameObjectFactory {
                 .addState(stateFlyBuilder.build())
 
                 .addTransition(CrabAnimScript.IDLE, CrabAnimScript.MOVEMENT, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (float)context.get(CrabAnimScript.MOVEMENT) > 0;
+                        return Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;
                     }
                 })
                 .addTransition(CrabAnimScript.MOVEMENT, CrabAnimScript.IDLE, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (float)context.get(CrabAnimScript.MOVEMENT) <= 0;
+                        return Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;
                     }
                 })
                 .addTransition(CrabAnimScript.IDLE, CrabAnimScript.JUMP, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.JUMP) == true;
+                        return Boolean.class.cast(context.get(CrabAnimScript.JUMP)) == true;
                     }
                 })
                 .addTransition(CrabAnimScript.MOVEMENT, CrabAnimScript.JUMP, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.JUMP) == true;
+                        return Boolean.class.cast(context.get(CrabAnimScript.JUMP)) == true;
                     }
                 })
                 .addTransition(CrabAnimScript.JUMP, CrabAnimScript.FLY, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.FLY) == true;
+                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
                     }
                 })
                 .addTransition(CrabAnimScript.IDLE, CrabAnimScript.FLY, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.FLY) == true;
+                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
                     }
                 })
                 .addTransition(CrabAnimScript.MOVEMENT, CrabAnimScript.FLY, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.FLY) == true;
+                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
                     }
                 })
                 .addTransition(CrabAnimScript.FLY, CrabAnimScript.IDLE, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.FLY) == false && (float)context.get(CrabAnimScript.MOVEMENT) <= 0;
+                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;
                     }
                 })
                 .addTransition(CrabAnimScript.FLY, CrabAnimScript.MOVEMENT, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.FLY) == false && (float)context.get(CrabAnimScript.MOVEMENT) > 0;
+                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;
                     }
                 })
                 .addTransitionFromAnyState(CrabAnimScript.ATTACK, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.ATTACK) == true;
+                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == true;
                     }
                 })
                 .addTransition(CrabAnimScript.ATTACK, CrabAnimScript.IDLE, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.ATTACK) == false && (float)context.get(CrabAnimScript.MOVEMENT) <= 0;
+                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;
                     }
                 })
                 .addTransition(CrabAnimScript.ATTACK, CrabAnimScript.MOVEMENT, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.ATTACK) == false && (float)context.get(CrabAnimScript.MOVEMENT) > 0;
+                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;
                     }
                 })
                 .addTransition(CrabAnimScript.ATTACK, CrabAnimScript.FLY, new FsmPredicate() {
-                    @Override
                     public boolean predicate(FsmContext context) {
-                        return (boolean)context.get(CrabAnimScript.ATTACK) == false && (boolean)context.get(CrabAnimScript.FLY) == true;
+                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
                     }
                 });
 

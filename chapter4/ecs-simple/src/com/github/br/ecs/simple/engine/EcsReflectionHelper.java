@@ -15,8 +15,10 @@ public final class EcsReflectionHelper {
         EcsNode node = null;
         try {
             node = nodeClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException e) {
             e.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
         }
         Field[] fields = nodeClass.getDeclaredFields();
         for(Field field : fields){
@@ -44,8 +46,11 @@ public final class EcsReflectionHelper {
             Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             return (T)field.get(object);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
+            return null;
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
             return null;
         }
     }
@@ -55,8 +60,10 @@ public final class EcsReflectionHelper {
             Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(object, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
+        } catch (IllegalAccessException ex){
+            ex.printStackTrace();
         }
     }
 

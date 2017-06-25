@@ -7,8 +7,8 @@ import java.util.Iterator;
 
 public class LayerFolder extends Layer {
 
-    private ArrayList<Layer> layers = new ArrayList<>();
-    private HashMap<String, Layer> layersMap = new HashMap<>();
+    private ArrayList<Layer> layers = new ArrayList<Layer>();
+    private HashMap<String, Layer> layersMap = new HashMap<String, Layer>();
 
     public LayerFolder(String title){
         super(title);

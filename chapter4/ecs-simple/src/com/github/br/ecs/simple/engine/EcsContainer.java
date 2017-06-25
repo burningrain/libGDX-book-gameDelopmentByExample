@@ -16,7 +16,7 @@ import static java.lang.String.format;
  */
 public class EcsContainer {
 
-    private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<>();
+    private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<Class, IEcsSystem>();
     private EntityManager entityManager = new EntityManager();
 
     private EntityManager.Callback createCallback = new EntityManager.Callback() {
@@ -98,8 +98,10 @@ public class EcsContainer {
     public void addSystem(Class<? extends IEcsSystem> clazz) {
         try {
             systems.put(clazz, clazz.newInstance());
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException  e) {
             e.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
         }
     }
 

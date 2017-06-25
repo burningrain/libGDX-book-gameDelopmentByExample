@@ -121,7 +121,7 @@ public class Animator {
 
     public void addFinishedCallback(FinishedCallback callback){
         if(finishedCallbacks == null){
-            finishedCallbacks = new ArrayList<>();
+            finishedCallbacks = new ArrayList<FinishedCallback>();
         }
         finishedCallbacks.add(callback);
     }
