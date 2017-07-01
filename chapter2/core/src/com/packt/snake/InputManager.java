@@ -15,7 +15,16 @@ public class InputManager implements ScreenManager {
 
     @Override
     public void render(float delta) {
-        if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)){
+        boolean pressed = false;
+        switch (Gdx.app.getType()) {
+            case Desktop:
+                pressed = Gdx.input.isKeyPressed(Input.Keys.ANY_KEY);
+                break;
+            case Android:
+                pressed = Gdx.input.justTouched();
+                break;
+        }
+        if(pressed){
             notifyHandlers();
         }
     }

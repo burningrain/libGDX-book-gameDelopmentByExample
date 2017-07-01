@@ -14,9 +14,19 @@ public class NewGameInputHandler implements InputManager.Handler, GamePublisher.
 
     @Override
     public void handleInput() {
-         if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && active) {
-             GamePublisher.self().changeState(GamePublisher.State.NEW_GAME);
-         }
+        boolean pressed = false;
+        switch (Gdx.app.getType()) {
+            case Desktop:
+                pressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+                break;
+            case Android:
+                pressed = Gdx.input.justTouched();
+                break;
+        }
+
+        if (pressed && active) {
+            GamePublisher.self().changeState(GamePublisher.State.NEW_GAME);
+        }
     }
 
 
