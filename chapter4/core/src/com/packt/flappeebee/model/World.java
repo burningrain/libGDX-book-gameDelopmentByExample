@@ -37,23 +37,27 @@ public class World implements ScreenManager, GamePublisher.Subscriber {
                 MAIN_LAYER.name(),
                 FRONT_EFFECTS.name()
         };
+        settings.debug = true;
         container = new EcsContainer(settings);
-        container.setDebugMode(true);
 
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.scheduleWithFixedDelay(new Runnable(){
+        scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                for(int i = 0; i < 5; i++){
-                    GameObjectFactory.createFlappee(container);
-                }
-                for(int i =0; i < 3; i++){
-                    GameObjectFactory.createCloud(container);
+                try {
+                    for (int i = 0; i < 5; i++) {
+                        GameObjectFactory.createFlappee(container);
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        GameObjectFactory.createCloud(container);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }, 0, 5L, TimeUnit.SECONDS);
 
-        for(int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             GameObjectFactory.createPlant(container);
         }
         GameObjectFactory.createCrab(container);

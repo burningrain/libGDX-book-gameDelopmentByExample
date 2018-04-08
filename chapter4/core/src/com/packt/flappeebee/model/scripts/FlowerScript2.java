@@ -2,12 +2,12 @@ package com.packt.flappeebee.model.scripts;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.animation.AnimationController;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
-import com.github.br.ecs.simple.system.physics.GroupShape;
 
 /**
  * Created by user on 28.03.2017.
@@ -19,7 +19,7 @@ public class FlowerScript2 extends EcsScript {
     private AnimationComponent animation;
     private AnimationController animator;
 
-    private Circle flower;
+    private Rectangle flower;
     private float count = 0f;
 
     @Override
@@ -30,8 +30,7 @@ public class FlowerScript2 extends EcsScript {
         animator = animation.controller;
         animator.getCurrentAnimator().gotoAndStop(5);
 
-        GroupShape groupShape = (GroupShape) physics.boundary.shape;
-        flower = groupShape.getLocalPosShape("flower");
+        flower = (Rectangle) physics.boundary.shape;
     }
 
     @Override

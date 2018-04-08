@@ -1,10 +1,6 @@
 package com.github.br.ecs.simple.engine;
 
 
-import com.github.br.ecs.simple.engine.EcsEntity;
-import com.github.br.ecs.simple.engine.EcsComponent;
-import com.github.br.ecs.simple.engine.EcsNode;
-
 import java.lang.reflect.Field;
 
 public final class EcsReflectionHelper {

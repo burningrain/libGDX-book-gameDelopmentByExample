@@ -21,7 +21,6 @@ import com.github.br.ecs.simple.fsm.FsmContext;
 import com.github.br.ecs.simple.fsm.FsmPredicate;
 import com.github.br.ecs.simple.fsm.FsmState;
 import com.github.br.ecs.simple.system.physics.Boundary;
-import com.github.br.ecs.simple.system.physics.GroupShape;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
@@ -50,11 +49,10 @@ public final class GameObjectFactory {
         background = new Texture(Gdx.files.internal("background.png"));
     }
 
-    public static void createCloud(EcsContainer container){
+    public static void createCloud(EcsContainer container) {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(660f, 460 - MathUtils.random(0, 200));
         transformComponent.rotation = 0f;
-        transformComponent.debugInfo = "cloud";
 
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = packedimages.findRegion("cloud");
@@ -70,7 +68,6 @@ public final class GameObjectFactory {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(0f, 0f);
         transformComponent.rotation = 0f;
-        transformComponent.debugInfo = "background";
 
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = new TextureRegion(background);
@@ -86,13 +83,11 @@ public final class GameObjectFactory {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(x, 600);
         transformComponent.rotation = 0f;
-        transformComponent.debugInfo = "bee";
 
         PhysicsComponent physicsComponent = new PhysicsComponent();
         physicsComponent.movement = new Vector2(0f, 0f);
         physicsComponent.acceleration = GameConstants.DIVE_ACCEL;
-        float radius = 30f;
-        physicsComponent.boundary = new Boundary(new Circle(new Vector2(32, 32), radius));
+        physicsComponent.boundary = new Boundary(new Circle(new Vector2(32f, 32f), 32f));
 
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = Arrays.<EcsScript>asList(new FlappeeScript());
@@ -110,19 +105,12 @@ public final class GameObjectFactory {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(85 * plantCount, 250);
         transformComponent.rotation = 0f;
-        transformComponent.debugInfo = "flower";
 
         PhysicsComponent physicsComponent = new PhysicsComponent();
         physicsComponent.movement = new Vector2(0f, 0f);
         physicsComponent.acceleration = GameConstants.DIVE_ACCEL;
-        // заполняем составную физику
-        GroupShape groupShape = new GroupShape(transformComponent.position, transformComponent.rotation);
-        float radius = 30f;
-        Rectangle stalk = new Rectangle(0, 0, 12, 70);
-        groupShape.addShape("stalk", stalk);
-        Circle flower = new Circle(new Vector2(12 / 2, 70 + radius), radius);
-        groupShape.addShape("flower", flower);
-        physicsComponent.boundary = new Boundary(groupShape);
+        // заполняем физику
+        physicsComponent.boundary = new Boundary(new Rectangle(0, 0, 64, 128));
 
         ScriptComponent scriptComponent = new ScriptComponent();
         if ((plantCount & 1) == 1) {
@@ -137,7 +125,7 @@ public final class GameObjectFactory {
 
         // АНИМАЦИЯ
         AnimationComponent animationComponent = new AnimationComponent();
-        Animator animatorGrow = new Animator("grow", animAtlas.getRegions(), (float)1 / 30);
+        Animator animatorGrow = new Animator("grow", animAtlas.getRegions(), 1f / 30);
         animatorGrow.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
         animatorGrow.setLooping(true);
 
@@ -165,7 +153,6 @@ public final class GameObjectFactory {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(250, 250);
         transformComponent.rotation = 0f;
-        transformComponent.debugInfo = "crab";
 
         PhysicsComponent physicsComponent = new PhysicsComponent();
         physicsComponent.movement = new Vector2(0f, 0f);
@@ -189,15 +176,15 @@ public final class GameObjectFactory {
         Array<TextureAtlas.AtlasRegion> jumpArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(76, 86).toArray(new TextureAtlas.AtlasRegion[0]));
         Array<TextureAtlas.AtlasRegion> flyArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(87, 104).toArray(new TextureAtlas.AtlasRegion[0]));
 
-        Animator animatorIdle = new Animator(CrabAnimScript.IDLE, jumpArray, (float)1 / 10);
+        Animator animatorIdle = new Animator(CrabAnimScript.IDLE, jumpArray, 1f / 10);
         animatorIdle.setPlayMode(Animation.PlayMode.LOOP);
         animatorIdle.setLooping(true);
-        Animator animatorMovement = new Animator(CrabAnimScript.MOVEMENT, movementArray, (float)1 / 60);
+        Animator animatorMovement = new Animator(CrabAnimScript.MOVEMENT, movementArray, 1f / 60);
         animatorMovement.setPlayMode(Animation.PlayMode.LOOP);
         animatorMovement.setLooping(true);
-        Animator animatorAttack = new Animator(CrabAnimScript.ATTACK, attackArray, (float)1 / 30);
-        Animator animatorJump = new Animator(CrabAnimScript.JUMP, jumpArray, (float)1 / 60);
-        Animator animatorFly = new Animator(CrabAnimScript.FLY, flyArray, (float)1 / 30);
+        Animator animatorAttack = new Animator(CrabAnimScript.ATTACK, attackArray, 1f / 30);
+        Animator animatorJump = new Animator(CrabAnimScript.JUMP, jumpArray, 1f / 60);
+        Animator animatorFly = new Animator(CrabAnimScript.FLY, flyArray, 1f / 30);
         animatorFly.setPlayMode(Animation.PlayMode.LOOP);
         animatorFly.setLooping(true);
 

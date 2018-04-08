@@ -1,20 +1,24 @@
 package com.github.br.ecs.simple.system.physics;
 
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.*;
-import com.github.br.ecs.simple.engine.EcsSystem;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Shape2D;
+import com.badlogic.gdx.math.Vector2;
 import com.github.br.ecs.simple.engine.EcsReflectionHelper;
+import com.github.br.ecs.simple.engine.EcsSystem;
+import com.github.br.ecs.simple.engine.debug.DebugDataContainer;
+import com.github.br.ecs.simple.engine.debug.data.CircleData;
+import com.github.br.ecs.simple.engine.debug.data.DebugData;
+import com.github.br.ecs.simple.engine.debug.data.PointData;
+import com.github.br.ecs.simple.engine.debug.data.RectangleData;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
-import com.github.br.ecs.simple.utils.ViewHelper;
 
 import java.util.Collection;
-import java.util.List;
 
 public class PhysicsSystem extends EcsSystem<PhysicsNode> {
 
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private DebugDataContainer debugDataContainer;
 
     public PhysicsSystem() {
         super(PhysicsNode.class);
@@ -23,23 +27,39 @@ public class PhysicsSystem extends EcsSystem<PhysicsNode> {
     // подумать, может эти батчи через прокси сделать, как транзакции
     @Override
     public void update(float delta, Collection<PhysicsNode> nodes) {
-        if (isDebugMode()) {
-            ViewHelper.applyCameraAndViewPort(shapeRenderer);
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        if(isDebugMode()) {
+            if(debugDataContainer == null) {
+                debugDataContainer = new DebugDataContainer();
+            }
+            debugDataContainer.clear(); // очищаем предыдущее состояние
         }
+
         for (PhysicsNode physicsNode : nodes) {
             TransformComponent transform = physicsNode.transform;
             PhysicsComponent physics = physicsNode.physics;
 
             moveNode(transform, physics);
             if (isDebugMode()) {
-                drawBoundary(physics.boundary);
-                drawDebugShape(physics.boundary.shape, transform.rotation);
+                fillDebugData(physics.boundary.shape, transform);
             }
         }
-        if (isDebugMode()) {
-            shapeRenderer.end();
+    }
+
+    private void fillDebugData(Shape2D shape, TransformComponent transform) {
+        DebugData debugData = null;
+        PointData pointData = null;
+        Vector2 position = transform.position;
+        if(Circle.class == shape.getClass()) {
+            Circle circle = (Circle) shape;
+            debugData = new CircleData(position.x, position.y, circle.radius, transform.rotation);
+            pointData = new PointData(position.x, position.y);
+        } else if(Rectangle.class == shape.getClass()) {
+            Rectangle rect = (Rectangle) shape;
+            debugData = new RectangleData(position.x, position.y, rect.width, rect.height);
+            pointData = new PointData(position.x, position.y);
         }
+        debugDataContainer.put(debugData);
+        debugDataContainer.put(pointData);
     }
 
     private void moveNode(TransformComponent transform, PhysicsComponent physics){
@@ -54,41 +74,9 @@ public class PhysicsSystem extends EcsSystem<PhysicsNode> {
         EcsReflectionHelper.setValue(boundary.shape, "y", vector2.y + boundary.getOffset().y);
     }
 
-    private void drawBoundary(Boundary boundary){
-        shapeRenderer.setColor(Color.LIGHT_GRAY);
-        shapeRenderer.line(boundary.getX() - 2, boundary.getY() - 2, boundary.getX() + 2, boundary.getY() + 2);
-        shapeRenderer.line(boundary.getX() - 2, boundary.getY() + 2, boundary.getX() + 2, boundary.getY() - 2);
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(boundary.getX(), boundary.getY(), boundary.getWidth(), boundary.getHeight());
+
+    @Override
+    public DebugDataContainer getDebugData() {
+        return debugDataContainer;
     }
-
-    private void drawDebugShape(Shape2D debugShape, float degree) {
-        shapeRenderer.setColor(Color.YELLOW);
-        float x = EcsReflectionHelper.getValue(debugShape,"x");
-        float y = EcsReflectionHelper.getValue(debugShape,"y");
-        shapeRenderer.line(x - 2, y - 2, x + 2, y + 2);
-        shapeRenderer.line(x - 2, y + 2, x + 2, y - 2);
-
-        shapeRenderer.setColor(Color.GOLD);
-        if (debugShape instanceof Circle) {
-            Circle circle = (Circle) debugShape;
-            shapeRenderer.circle(circle.x, circle.y, circle.radius);
-            shapeRenderer.line(circle.x, circle.y,
-                    circle.x + circle.radius * MathUtils.cosDeg(degree), circle.y + circle.radius * MathUtils.sinDeg(degree));
-        } else if (debugShape instanceof Rectangle) {
-            Rectangle rectangle = (Rectangle) debugShape;
-            shapeRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-        } else if(debugShape instanceof GroupShape){
-            GroupShape groupShape = (GroupShape) debugShape;
-            for(Shape2D shape2D : groupShape.getGlobalPosShapes()){
-                drawDebugShape(shape2D, degree);
-            }
-        } else {
-            throw new IllegalArgumentException(String.format("Тип физической формы %s пока не поддерживается",
-                    debugShape.getClass().getSimpleName()));
-        }
-    }
-
-
-
 }

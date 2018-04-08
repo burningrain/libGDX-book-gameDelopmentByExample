@@ -14,27 +14,28 @@ public class Layer {
     private String title;
     private HashMap<EntityId, RendererNode> nodes = new HashMap<EntityId, RendererNode>();
 
-    public Layer(String title){
+    public Layer(String title) {
         this.title = title;
     }
 
-    public void addNode(RendererNode node){
+    public void addNode(RendererNode node) {
         nodes.put(node.entityId, node);
     }
 
-    public void removeNode(EntityId entityId){
+    public void removeNode(EntityId entityId) {
         nodes.remove(entityId);
     }
 
-    public void render(SpriteBatch batch){
+    public void render(SpriteBatch batch) {
         for (RendererNode node : nodes.values()) {
             TransformComponent transform = node.transform;
             RendererComponent renderer = node.renderer;
+
             batch.draw(renderer.textureRegion.getTexture(),
                     transform.position.x,
                     transform.position.y,
-                    renderer.textureRegion.getRegionWidth() * transform.scale.x,
-                    renderer.textureRegion.getRegionHeight() * transform.scale.y,
+                    renderer.textureRegion.getRegionWidth() * transform.scale.x * 0.5f,
+                    renderer.textureRegion.getRegionHeight() * transform.scale.y * 0.5f,
                     renderer.textureRegion.getRegionWidth() * transform.scale.x,
                     renderer.textureRegion.getRegionHeight() * transform.scale.y,
                     transform.scale.x,

@@ -1,12 +1,13 @@
 package com.github.br.ecs.simple.engine;
 
+import com.github.br.ecs.simple.engine.debug.DebugService;
 import com.github.br.ecs.simple.system.animation.AnimationSystem;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
 import com.github.br.ecs.simple.system.physics.PhysicsSystem;
 import com.github.br.ecs.simple.system.render.RenderSystem;
 import com.github.br.ecs.simple.system.script.ScriptSystem;
-import com.github.br.ecs.simple.system.transform.TransformDebugSystem;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import static java.lang.String.format;
@@ -16,6 +17,7 @@ import static java.lang.String.format;
  */
 public class EcsContainer {
 
+    private DebugService debugService = new DebugService();
     private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<Class, IEcsSystem>();
     private EntityManager entityManager = new EntityManager();
 
@@ -26,7 +28,7 @@ public class EcsContainer {
             for (IEcsSystem<EcsNode> system : systems.values()) {
                 Class nodeClass = system.getNodeClass();
                 EcsNode node = EcsReflectionHelper.createAndFillNode(nodeClass, entity);
-                if(node != null){
+                if (node != null) {
                     system.addNode(node);
                 }
             }
@@ -45,21 +47,15 @@ public class EcsContainer {
     private EntityManager.Callback deleteCallback = new EntityManager.Callback() {
         @Override
         public void call(EcsEntity entity) {
-            for(IEcsSystem system : systems.values()){
+            for (IEcsSystem system : systems.values()) {
                 system.removeNode(entity.getId());
             }
         }
     };
 
-    public void setDebugMode(boolean active) {
-        for(IEcsSystem system : systems.values()){
-            system.setDebugMode(active);
-        }
-    }
-
     public void setDebugMode(boolean active, Class<? extends IEcsSystem> system) {
         IEcsSystem ecsSystem = getSystem(system);
-        if(ecsSystem == null) throw new IllegalArgumentException(format("Система '%s' не найдена", system));
+        if (ecsSystem == null) throw new IllegalArgumentException(format("Система '%s' не найдена", system));
         ecsSystem.setDebugMode(active);
     }
 
@@ -69,16 +65,34 @@ public class EcsContainer {
         addSystem(PhysicsSystem.class);
         addSystem(AnimationSystem.class);
         addSystem(new RenderSystem(settings.layers));
-        addSystem(TransformDebugSystem.class);
+
+        if (settings.debug) {
+            addDebugSystem(systems.values());
+            setDebugMode(true);
+        }
+
+    }
+
+    private void setDebugMode(boolean active) {
+        for (IEcsSystem system : systems.values()) {
+            system.setDebugMode(active);
+        }
+    }
+
+    private void addDebugSystem(Collection<IEcsSystem> systems) {
+        for (IEcsSystem system : systems) {
+            debugService.addSystem(system);
+        }
     }
 
     public void update(float delta) {
-        if(entityManager.hasChanges()){
+        if (entityManager.hasChanges()) {
             entityManager.update(createCallback, deleteCallback); // коллбеки для очистки нод в системах
         }
         for (IEcsSystem system : systems.values()) {
             system.update(delta);
         }
+        debugService.update(delta);
     }
 
     public void createEntity(String type, EcsComponent... components) {
@@ -98,7 +112,7 @@ public class EcsContainer {
     public void addSystem(Class<? extends IEcsSystem> clazz) {
         try {
             systems.put(clazz, clazz.newInstance());
-        } catch (InstantiationException  e) {
+        } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException ex) {
             ex.printStackTrace();

@@ -2,10 +2,10 @@ package com.packt.flappeebee.model.scripts;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
-import com.github.br.ecs.simple.system.physics.GroupShape;
 import com.github.br.ecs.simple.utils.ViewHelper;
 
 /**
@@ -16,7 +16,7 @@ public class FlowerScript extends EcsScript {
     private TransformComponent transform;
     private PhysicsComponent physics;
 
-    private Circle flower;
+    private Rectangle flower;
 
     private float maxY;
     private float minY;
@@ -26,8 +26,7 @@ public class FlowerScript extends EcsScript {
     public void init() {
         transform = getComponent(TransformComponent.class);
         physics = getComponent(PhysicsComponent.class);
-        GroupShape groupShape = (GroupShape) physics.boundary.shape;
-        flower = groupShape.getLocalPosShape("flower");
+        flower = (Rectangle) physics.boundary.shape;
         minY = flower.y;
         maxY = flower.y + 15;
     }

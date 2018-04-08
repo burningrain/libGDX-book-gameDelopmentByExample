@@ -31,9 +31,9 @@ public class CrabScript extends EcsScript {
             flyUp();
         }
         if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            physics.movement.x = 1;
+            physics.movement.x = 2;
         } else if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            physics.movement.x = -1;
+            physics.movement.x = -2;
         } else {
             physics.movement.x = 0;
         }
