@@ -10,6 +10,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 //		config.height = (int) ViewHelper.WORLD_HEIGHT;
 //		config.width = (int) ViewHelper.WORLD_WIDTH;
+		config.samples = 3;
 		new LwjglApplication(new FlappeeBeeGame(), config);
 	}
 }
