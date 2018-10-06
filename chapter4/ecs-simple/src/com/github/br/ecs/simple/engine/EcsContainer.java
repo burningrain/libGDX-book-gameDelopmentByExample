@@ -9,6 +9,7 @@ import com.github.br.ecs.simple.system.script.ScriptSystem;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import static java.lang.String.format;
 
@@ -17,7 +18,9 @@ import static java.lang.String.format;
  */
 public class EcsContainer {
 
-    private DebugService debugService = new DebugService();
+    private EcsSettings settings;
+
+    private DebugService debugService;
     private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<Class, IEcsSystem>();
     private EntityManager entityManager = new EntityManager();
 
@@ -56,10 +59,13 @@ public class EcsContainer {
     public void setDebugMode(boolean active, Class<? extends IEcsSystem> system) {
         IEcsSystem ecsSystem = getSystem(system);
         if (ecsSystem == null) throw new IllegalArgumentException(format("Система '%s' не найдена", system));
-        ecsSystem.setDebugMode(active);
+        if (ecsSystem instanceof DebugSystem) {
+            ((IDebugSystem)ecsSystem).setDebugMode(active);
+        }
     }
 
     public EcsContainer(EcsSettings settings) {
+        this.settings = settings;
         // инициализация систем. Порядок очень важен!
         addSystem(ScriptSystem.class);
         addSystem(PhysicsSystem.class);
@@ -67,32 +73,44 @@ public class EcsContainer {
         addSystem(new RenderSystem(settings.layers));
 
         if (settings.debug) {
-            addDebugSystem(systems.values());
+            debugService = new DebugService();
+            addDebugSystem(filterDebugSystems(systems.values()));
             setDebugMode(true);
         }
 
     }
 
+    private static Collection<IDebugSystem> filterDebugSystems(Collection<IEcsSystem> systems) {
+        LinkedList<IDebugSystem> result = new LinkedList<IDebugSystem>();
+        for (IEcsSystem system : systems) {
+            if (system instanceof IDebugSystem) result.add((IDebugSystem) system);
+        }
+        return result;
+    }
+
     private void setDebugMode(boolean active) {
-        for (IEcsSystem system : systems.values()) {
-            system.setDebugMode(active);
+        for (IEcsSystem system : filterDebugSystems(systems.values())) {
+            ((IDebugSystem)system).setDebugMode(active);
         }
     }
 
-    private void addDebugSystem(Collection<IEcsSystem> systems) {
-        for (IEcsSystem system : systems) {
+    private void addDebugSystem(Collection<IDebugSystem> systems) {
+        for (IDebugSystem system : systems) {
             debugService.addSystem(system);
         }
     }
 
     public void update(float delta) {
+        EcsSimple.ECS.update(delta);
         if (entityManager.hasChanges()) {
             entityManager.update(createCallback, deleteCallback); // коллбеки для очистки нод в системах
         }
         for (IEcsSystem system : systems.values()) {
             system.update(delta);
         }
-        debugService.update(delta);
+        if (settings.debug) {
+            debugService.update(delta);
+        }
     }
 
     public void createEntity(String type, EcsComponent... components) {

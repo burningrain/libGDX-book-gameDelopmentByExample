@@ -3,7 +3,7 @@ package com.github.br.ecs.simple.utils;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -30,7 +30,7 @@ public final class ViewHelper {
         new ViewHelper(640, 480);
     }
 
-    public static void applyCameraAndViewPort(SpriteBatch batch){
+    public static void applyCameraAndViewPort(Batch batch){
         batch.setProjectionMatrix(camera.projection);
         batch.setTransformMatrix(camera.view);
     }

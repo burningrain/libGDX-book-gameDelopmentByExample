@@ -3,6 +3,7 @@ package com.packt.flappeebee.model;
 
 import com.github.br.ecs.simple.engine.EcsContainer;
 import com.github.br.ecs.simple.engine.EcsSettings;
+import com.github.br.ecs.simple.engine.EcsSimple;
 import com.packt.flappeebee.GamePublisher;
 import com.packt.flappeebee.ScreenManager;
 

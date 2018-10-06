@@ -1,24 +1,41 @@
 package com.github.br.ecs.simple.engine.debug.data;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Created by user on 07.04.2018.
  */
 public class TableData implements DebugData {
 
-    private final String key;
-    private final String value;
+    private LinkedHashMap<String,String> map = new LinkedHashMap<String, String>();
 
-    public TableData(String key, String value) {
-        this.key = key;
-        this.value = value;
+    private TableData(Builder builder) {
+        this.map = builder.map;
     }
 
-    public String getKey() {
-        return key;
+    public void forEach(Callback callback) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            callback.call(entry.getKey(), entry.getValue());
+        }
     }
 
-    public String getValue() {
-        return value;
+    public static class Builder {
+        private LinkedHashMap<String,String> map = new LinkedHashMap<String, String>();
+
+        public Builder put(String key,String value) {
+            map.put(key, value);
+            return this;
+        }
+
+        public TableData build() {
+            return new TableData(this);
+        }
+
+    }
+
+    public interface Callback {
+        void call(String key, String value);
     }
 
 }

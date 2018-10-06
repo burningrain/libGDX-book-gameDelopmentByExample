@@ -2,6 +2,7 @@ package com.github.br.ecs.simple.system.render;
 
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.github.br.ecs.simple.engine.IDebugSystem;
 import com.github.br.ecs.simple.engine.debug.DebugDataContainer;
 import com.github.br.ecs.simple.engine.EntityId;
 import com.github.br.ecs.simple.engine.IEcsSystem;
@@ -15,7 +16,7 @@ import static java.lang.String.format;
 /**
  * Created by user on 02.04.2017.
  */
-public class RenderSystem implements IEcsSystem<RendererNode> {
+public class RenderSystem implements IDebugSystem<RendererNode> {
 
     private LinkedHashMap<String, Layer> layers = new LinkedHashMap<String, Layer>();
     private LinkedHashMap<EntityId, String> entityLayerMap = new LinkedHashMap<EntityId, String>();
@@ -26,7 +27,7 @@ public class RenderSystem implements IEcsSystem<RendererNode> {
     private DebugDataContainer debugDataContainer;
 
     public RenderSystem(String[] layers) {
-        for(String layerTitle : layers){
+        for(String layerTitle : layers) {
             addLayer(layerTitle);
         }
     }
@@ -70,8 +71,6 @@ public class RenderSystem implements IEcsSystem<RendererNode> {
 
     @Override
     public void update(float delta) {
-        ViewHelper.applyCameraAndViewPort(batch);
-
         if(isDebugMode()) {
             if(debugDataContainer == null) {
                 debugDataContainer = new DebugDataContainer();
@@ -79,14 +78,24 @@ public class RenderSystem implements IEcsSystem<RendererNode> {
             debugDataContainer.clear(); // очищаем предыдущее состояние
         }
 
+        TableData.Builder builder = null;
+        if(isDebugMode()) {
+            builder = new TableData.Builder();
+        }
+
+        ViewHelper.applyCameraAndViewPort(batch);
         batch.begin();
         for(Layer layer : layers.values()) {
             layer.render(batch);
             if (isDebugMode()) {
-                debugDataContainer.put(new TableData(layer.getTitle(), "123"));
+                builder.put(layer.getTitle(), "");
             }
         }
         batch.end();
+
+        if(isDebugMode()) {
+            debugDataContainer.put(builder.build());
+        }
     }
 
     @Override

@@ -8,8 +8,6 @@ public abstract class EcsSystem<T extends EcsNode> implements IEcsSystem<T> {
     private final Class<T> nodeClazz;
     private HashMap<EntityId, T> allNodes = new HashMap<EntityId, T>();
 
-    private boolean debugMode;
-
     public EcsSystem(Class<T> clazz){
         this.nodeClazz = clazz;
     }
@@ -27,16 +25,6 @@ public abstract class EcsSystem<T extends EcsNode> implements IEcsSystem<T> {
     @Override
     public Class<T> getNodeClass() {
         return nodeClazz;
-    }
-
-    @Override
-    public boolean isDebugMode() {
-        return debugMode;
-    }
-
-    @Override
-    public void setDebugMode(boolean debugMode) {
-        this.debugMode = debugMode;
     }
 
     @Override

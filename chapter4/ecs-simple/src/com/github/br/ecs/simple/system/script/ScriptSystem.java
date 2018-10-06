@@ -1,7 +1,6 @@
 package com.github.br.ecs.simple.system.script;
 
 
-import com.github.br.ecs.simple.engine.debug.DebugDataContainer;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.engine.EcsSystem;
 
@@ -20,10 +19,5 @@ public class ScriptSystem extends EcsSystem<ScriptNode> {
                 script.update(delta);
             }
         }
-    }
-
-    @Override
-    public DebugDataContainer getDebugData() {
-        return new DebugDataContainer();
     }
 }

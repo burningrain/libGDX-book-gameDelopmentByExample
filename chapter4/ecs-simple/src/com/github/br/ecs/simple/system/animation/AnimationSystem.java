@@ -1,7 +1,6 @@
 package com.github.br.ecs.simple.system.animation;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.github.br.ecs.simple.engine.debug.DebugDataContainer;
 import com.github.br.ecs.simple.engine.EcsSystem;
 
 import java.util.Collection;
@@ -24,8 +23,4 @@ public class AnimationSystem extends EcsSystem<AnimationNode> {
         }
     }
 
-    @Override
-    public DebugDataContainer getDebugData() {
-        return new DebugDataContainer();
-    }
 }
