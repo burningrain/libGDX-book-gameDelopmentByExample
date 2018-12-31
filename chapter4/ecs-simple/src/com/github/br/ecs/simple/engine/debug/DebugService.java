@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.github.br.ecs.simple.engine.EcsSimple;
 import com.github.br.ecs.simple.engine.IDebugSystem;
 import com.github.br.ecs.simple.engine.IEcsSystem;
+import com.github.br.ecs.simple.engine.debug.console.ConsoleService;
+import com.github.br.ecs.simple.engine.debug.console.exception.ConsoleException;
 import com.github.br.ecs.simple.engine.debug.data.DebugData;
 import com.github.br.ecs.simple.engine.debug.drawobject.DebugDrawObject;
 import com.github.br.ecs.simple.utils.ViewHelper;
@@ -24,6 +26,7 @@ import java.util.Map;
  */
 public class DebugService {
 
+    private ConsoleService consoleService;
     private LinkedHashMap<Class<? extends IDebugSystem>, IDebugSystem> systems =
             new LinkedHashMap<Class<? extends IDebugSystem>, IDebugSystem>();
 
@@ -48,7 +51,27 @@ public class DebugService {
     private Label timeLabel = new Label("TIME", DebugDrawObject.DEFAULT_SKIN);
     private Label fpsLabel = new Label("FPS", DebugDrawObject.DEFAULT_SKIN);
 
-    public DebugService() {
+    public DebugService(final ConsoleService consoleService) {
+        this.consoleService = consoleService;
+        this.consoleService.setConsoleOutput(new ConsoleService.ConsoleOutput() {
+            @Override
+            public void message(String message) {
+                textArea.setText(message);
+            }
+        });
+        consoleTextField.setTextFieldListener(new TextField.TextFieldListener() {
+            @Override
+            public void keyTyped(TextField textField, char key) {
+                if ((key == '\r' || key == '\n')){
+                    try {
+                        consoleService.interpretInput(consoleTextField.getText());
+                    } catch (ConsoleException e) {
+                        textArea.setText(e.getMessage());
+                    }
+                }
+            }
+        });
+
         windowTable.setFillParent(true);
         stage.setDebugAll(true);
         stage.addActor(windowTable);

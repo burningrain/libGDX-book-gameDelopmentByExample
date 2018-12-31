@@ -1,6 +1,9 @@
 package com.github.br.ecs.simple.engine;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.github.br.ecs.simple.engine.debug.DebugService;
+import com.github.br.ecs.simple.engine.debug.console.ConsoleService;
 import com.github.br.ecs.simple.system.animation.AnimationSystem;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
 import com.github.br.ecs.simple.system.physics.PhysicsSystem;
@@ -20,6 +23,7 @@ public class EcsContainer {
 
     private EcsSettings settings;
 
+    private ConsoleService consoleService;
     private DebugService debugService;
     private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<Class, IEcsSystem>();
     private EntityManager entityManager = new EntityManager();
@@ -73,7 +77,8 @@ public class EcsContainer {
         addSystem(new RenderSystem(settings.layers));
 
         if (settings.debug) {
-            debugService = new DebugService();
+            consoleService = new ConsoleService(this.settings.commands);
+            debugService = new DebugService(consoleService);
             addDebugSystem(filterDebugSystems(systems.values()));
             setDebugMode(true);
         }
@@ -102,6 +107,12 @@ public class EcsContainer {
 
     public void update(float delta) {
         EcsSimple.ECS.update(delta);
+
+        //fixme дребезг контактов
+        if (Gdx.input.isKeyPressed(Input.Keys.F9)) {
+            setDebugMode(settings.debug = !settings.debug);
+        }
+
         if (entityManager.hasChanges()) {
             entityManager.update(createCallback, deleteCallback); // коллбеки для очистки нод в системах
         }
