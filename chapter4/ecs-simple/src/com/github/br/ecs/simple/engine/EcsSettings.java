@@ -10,7 +10,7 @@ public class EcsSettings {
 
     public String[] layers;
     public Viewport viewport;
-    public boolean debug;
+    public boolean isConsoleEnabled;
+    public boolean isDebugEnabled;
 
-    public Command[] commands;
 }

@@ -2,6 +2,8 @@ package com.github.br.ecs.simple.engine.debug;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -75,7 +77,6 @@ public class DebugService {
         windowTable.setFillParent(true);
         stage.setDebugAll(true);
         stage.addActor(windowTable);
-        Gdx.input.setInputProcessor(stage);
 
         consoleGroup.addActor(textArea);
         consoleGroup.addActor(consoleTextField);
@@ -143,4 +144,7 @@ public class DebugService {
         return systems.get(key).isDebugMode();
     }
 
+    public InputProcessor getInputProcessor() {
+        return stage;
+    }
 }

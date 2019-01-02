@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.github.br.ecs.simple.engine.EcsComponent;
 import com.github.br.ecs.simple.engine.EcsContainer;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
@@ -49,7 +50,7 @@ public final class GameObjectFactory {
         background = new Texture(Gdx.files.internal("background.png"));
     }
 
-    public static void createCloud(EcsContainer container) {
+    public static EcsComponent[] createCloud() {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(660f, 460 - MathUtils.random(0, 200));
         transformComponent.rotation = 0f;
@@ -61,10 +62,10 @@ public final class GameObjectFactory {
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = Arrays.<EcsScript>asList(new CloudScript());
 
-        container.createEntity("cloud", transformComponent, rendererComponent, scriptComponent);
+        return new EcsComponent[]{transformComponent, rendererComponent, scriptComponent};
     }
 
-    public static void createBackground(EcsContainer container){
+    public static EcsComponent[] createBackground() {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(0f, 0f);
         transformComponent.rotation = 0f;
@@ -73,10 +74,10 @@ public final class GameObjectFactory {
         rendererComponent.textureRegion = new TextureRegion(background);
         rendererComponent.layer = LayerEnum.BACKGROUND.name();
 
-        container.createEntity("background", transformComponent, rendererComponent);
+        return new EcsComponent[]{transformComponent, rendererComponent};
     }
 
-    public static void createFlappee(EcsContainer container) {
+    public static EcsComponent[] createFlappee() {
         //todo сделать нормальные билдеры для сущностей
 
         int x = MathUtils.random(0, 480);
@@ -96,12 +97,10 @@ public final class GameObjectFactory {
         rendererComponent.textureRegion = packedimages.findRegion("bee");
         rendererComponent.layer = LayerEnum.FRONT_EFFECTS.name();
 
-        container.createEntity("bee", transformComponent, physicsComponent, scriptComponent, rendererComponent);
+        return new EcsComponent[]{transformComponent, physicsComponent, scriptComponent, rendererComponent};
     }
 
-    private static int plantCount = 1;
-
-    public static void createPlant(EcsContainer container) {
+    public static EcsComponent[] createPlant(int plantCount) {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(85 * plantCount, 250);
         transformComponent.rotation = 0f;
@@ -121,7 +120,7 @@ public final class GameObjectFactory {
 
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = animAtlas.findRegion("anim", 0);
-        rendererComponent.layer = (plantCount & 1) == 1? LayerEnum.PRE_BACKGROUND.name() : LayerEnum.FRONT_EFFECTS.name();
+        rendererComponent.layer = (plantCount & 1) == 1 ? LayerEnum.PRE_BACKGROUND.name() : LayerEnum.FRONT_EFFECTS.name();
 
         // АНИМАЦИЯ
         AnimationComponent animationComponent = new AnimationComponent();
@@ -140,16 +139,15 @@ public final class GameObjectFactory {
         AnimationController animationController = new AnimationController(new Animator[]{animatorGrow}, fsm);
         animationComponent.controller = animationController;
 
-        container.createEntity("plant" + plantCount,
-                                transformComponent,
-                                physicsComponent,
-                                scriptComponent,
-                                rendererComponent,
-                                animationComponent);
-        plantCount++;
+        return new EcsComponent[]{
+                transformComponent,
+                physicsComponent,
+                scriptComponent,
+                rendererComponent,
+                animationComponent};
     }
 
-    public static void createCrab(EcsContainer container) {
+    public static EcsComponent[] createCrab() {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(250, 250);
         transformComponent.rotation = 0f;
@@ -284,7 +282,7 @@ public final class GameObjectFactory {
         animationComponent.controller = animationController;
         // АНИМАЦИЯ
 
-        container.createEntity("crab", transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent);
+        return new EcsComponent[]{transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent};
     }
 
 

@@ -1,15 +1,13 @@
 package com.packt.flappeebee.model;
 
 
+import com.badlogic.gdx.Gdx;
 import com.github.br.ecs.simple.engine.EcsContainer;
 import com.github.br.ecs.simple.engine.EcsSettings;
-import com.github.br.ecs.simple.engine.EcsSimple;
+import com.github.br.ecs.simple.engine.debug.console.Command;
+import com.github.br.ecs.simple.engine.debug.console.exception.CommandExecutionException;
 import com.packt.flappeebee.GamePublisher;
 import com.packt.flappeebee.ScreenManager;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.packt.flappeebee.model.LayerEnum.*;
 
@@ -38,31 +36,87 @@ public class World implements ScreenManager, GamePublisher.Subscriber {
                 MAIN_LAYER.name(),
                 FRONT_EFFECTS.name()
         };
-        settings.debug = true;
-        container = new EcsContainer(settings);
+        settings.isConsoleEnabled = true;
+        settings.isDebugEnabled = true;
 
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
+        container = new EcsContainer(settings);
+        container.addConsoleCommands(getCommands(container));
+        Gdx.input.setInputProcessor(container.getInputProcessor()); //fixme криво, но контроль у клиента
+
+        container.createEntity("background", GameObjectFactory.createBackground());
+    }
+
+    private Command[] getCommands(EcsContainer container) {
+        return new Command[]{
+                createBee(container),
+                createPlant(container),
+                createCloud(container),
+                createCrab(container)
+        };
+    }
+
+    private Command createCrab(final EcsContainer container) {
+        return new Command() {
             @Override
-            public void run() {
-                try {
-                    for (int i = 0; i < 5; i++) {
-                        GameObjectFactory.createFlappee(container);
-                    }
-                    for (int i = 0; i < 5; i++) {
-                        GameObjectFactory.createCloud(container);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+            public void execute(String[] args) throws CommandExecutionException {
+                container.createEntity("crab", GameObjectFactory.createCrab());
+            }
+
+            @Override
+            public String getTitle() {
+                return "crab";
+            }
+        };
+    }
+
+    private Command createCloud(final EcsContainer container) {
+        return new Command() {
+            @Override
+            public void execute(String[] args) throws CommandExecutionException {
+                for (int i = 0; i < 5; i++) {
+                    container.createEntity("cloud", GameObjectFactory.createCloud());
                 }
             }
-        }, 0, 5L, TimeUnit.SECONDS);
 
-        for (int i = 0; i < 6; i++) {
-            GameObjectFactory.createPlant(container);
-        }
-        GameObjectFactory.createCrab(container);
-        GameObjectFactory.createBackground(container);
+            @Override
+            public String getTitle() {
+                return "cloud";
+            }
+        };
+    }
+
+    private Command createPlant(final EcsContainer container) {
+        return new Command() {
+            @Override
+            public void execute(String[] args) throws CommandExecutionException {
+                int count = Integer.parseInt(args[0]);
+                for (int i = 0; i < count; i++) {
+                    container.createEntity("plant", GameObjectFactory.createPlant(i + 1));
+                }
+            }
+
+            @Override
+            public String getTitle() {
+                return "plant";
+            }
+        };
+    }
+
+    private Command createBee(final EcsContainer container) {
+        return new Command() {
+            @Override
+            public void execute(String[] args) throws CommandExecutionException {
+                int count = Integer.parseInt(args[0]);
+                for (int i = 0; i < count; i++) {
+                    container.createEntity("bee", GameObjectFactory.createFlappee());
+                }
+            }
+
+            @Override
+            public String getTitle() {
+                return "bee";
+            }
+        };
     }
 
 

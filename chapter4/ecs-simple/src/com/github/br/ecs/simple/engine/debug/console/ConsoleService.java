@@ -14,16 +14,14 @@ public class ConsoleService {
     private HashMap<String, Command> commands = new HashMap<String, Command>();
     private ConsoleOutput consoleOutput;
 
-    public ConsoleService(Command[] commands) {
-        if(commands != null) {
-            for (Command command : commands) {
-                this.commands.put(command.getTitle(), command);
-            }
+    public void addCommands(Command[] commands) {
+        for (Command command : commands) {
+            this.commands.put(command.getTitle(), command);
         }
     }
 
     public void interpretInput(String consoleText) throws ConsoleException {
-        String[] strings = consoleText.split(" ");
+        String[] strings = consoleText.trim().split(" ");
         String commandTitle = strings[0];
         Command command = commands.get(commandTitle);
         if(command == null) {
