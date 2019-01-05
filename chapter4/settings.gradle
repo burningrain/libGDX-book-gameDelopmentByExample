@@ -1,3 +1,4 @@
 include 'core', 'desktop'
 include 'ecs-simple'
+include 'libgdx-simple-console'
 

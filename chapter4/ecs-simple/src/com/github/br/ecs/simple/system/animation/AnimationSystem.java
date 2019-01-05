@@ -16,7 +16,7 @@ public class AnimationSystem extends EcsSystem<AnimationNode> {
 
     @Override
     public void update(float delta, Collection<AnimationNode> nodes) {
-        for(AnimationNode node : nodes){
+        for (AnimationNode node : nodes) {
             node.animationComponent.controller.update();
             TextureRegion textureRegion = node.animationComponent.controller.getCurrentAnimator().getCurrentFrame();
             node.rendererComponent.textureRegion = textureRegion;

@@ -5,9 +5,11 @@ import java.lang.reflect.Field;
 
 public final class EcsReflectionHelper {
 
-    private EcsReflectionHelper(){}
+    private EcsReflectionHelper() {
+    }
 
-    public static EcsNode createAndFillNode(Class<EcsNode> nodeClass, EcsEntity entity){
+    //todo избавиться от рефлексии при создании сущности
+    public static EcsNode createAndFillNode(Class<EcsNode> nodeClass, EcsEntity entity) {
         EcsNode node = null;
         try {
             node = nodeClass.newInstance();
@@ -17,10 +19,10 @@ public final class EcsReflectionHelper {
             ex.printStackTrace();
         }
         Field[] fields = nodeClass.getDeclaredFields();
-        for(Field field : fields){
+        for (Field field : fields) {
             Class componentClass = field.getType();
             EcsComponent componentObject = entity.getComponent(componentClass);
-            if(componentObject != null){
+            if (componentObject != null) {
                 field.setAccessible(true);
                 try {
                     field.set(node, componentObject);
@@ -37,11 +39,11 @@ public final class EcsReflectionHelper {
         return node;
     }
 
-    public static <T> T getValue(Object object, String fieldName){
+    public static <T> T getValue(Object object, String fieldName) {
         try {
             Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
-            return (T)field.get(object);
+            return (T) field.get(object);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
             return null;
@@ -51,14 +53,14 @@ public final class EcsReflectionHelper {
         }
     }
 
-    public static void setValue(Object object, String fieldName, Object value){
+    public static void setValue(Object object, String fieldName, Object value) {
         try {
             Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(object, value);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
-        } catch (IllegalAccessException ex){
+        } catch (IllegalAccessException ex) {
             ex.printStackTrace();
         }
     }

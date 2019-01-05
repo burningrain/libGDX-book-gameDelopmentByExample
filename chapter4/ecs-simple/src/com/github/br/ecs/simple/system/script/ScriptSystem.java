@@ -20,4 +20,5 @@ public class ScriptSystem extends EcsSystem<ScriptNode> {
             }
         }
     }
+
 }

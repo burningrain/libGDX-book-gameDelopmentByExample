@@ -1,23 +1,14 @@
 package com.github.br.ecs.simple.engine;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.github.br.ecs.simple.engine.debug.DebugService;
 import com.github.br.ecs.simple.engine.debug.InputProcessorWrapper;
-import com.github.br.ecs.simple.engine.debug.console.Command;
-import com.github.br.ecs.simple.engine.debug.console.ConsoleService;
-import com.github.br.ecs.simple.system.animation.AnimationSystem;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
-import com.github.br.ecs.simple.system.physics.PhysicsSystem;
-import com.github.br.ecs.simple.system.render.RenderSystem;
-import com.github.br.ecs.simple.system.script.ScriptSystem;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
 import static java.lang.String.format;
 
@@ -28,13 +19,10 @@ public class EcsContainer {
 
     private EcsSettings settings;
 
-    private boolean isDebugMode;
-    private ConsoleService consoleService;
+    private boolean isDebugActive;
     private DebugService debugService;
     private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<Class, IEcsSystem>();
     private EntityManager entityManager = new EntityManager();
-
-    private ActivateConsoleInputProcessor activateConsoleInputProcessor;
     private InputMultiplexer inputMultiplexer;
 
     private EntityManager.Callback createCallback = new EntityManager.Callback() {
@@ -81,27 +69,17 @@ public class EcsContainer {
 
     public EcsContainer(EcsSettings settings) {
         this.settings = settings;
-        // инициализация систем. Порядок очень важен!
-        addSystem(ScriptSystem.class);
-        addSystem(PhysicsSystem.class);
-        addSystem(AnimationSystem.class);
-        addSystem(new RenderSystem(settings.layers));
 
         ArrayList<InputProcessor> processors = new ArrayList<InputProcessor>();
-        if (settings.isConsoleEnabled) {
-            consoleService = new ConsoleService();
-        }
         if (settings.isDebugEnabled) {
-            debugService = new DebugService(consoleService); //todo сделать дебаг независимым от консоли
+            debugService = new DebugService();
             addDebugSystem(filterDebugSystems(systems.values()));
             setDebugMode(true);
 
-            activateConsoleInputProcessor = new ActivateConsoleInputProcessor();
-            processors.add(activateConsoleInputProcessor);
             processors.add(wrapProcessor(debugService.getInputProcessor(), new InputProcessorWrapper.Predicate() {
                 @Override
                 public boolean apply() {
-                    return !isDebugMode;
+                    return !isDebugActive;
                 }
             }));
         }
@@ -112,17 +90,13 @@ public class EcsContainer {
         return inputMultiplexer;
     }
 
-    public void addConsoleCommands(Command[] commands) {
-        consoleService.addCommands(commands);
-    }
-
     private void initInputMultiplexer(InputProcessor... processors) {
         this.inputMultiplexer = new InputMultiplexer(processors);
         //Gdx.input.setInputProcessor(inputMultiplexer); todo пока решил оставить это на откуп клиенту
     }
 
     private static Collection<IDebugSystem> filterDebugSystems(Collection<IEcsSystem> systems) {
-        LinkedList<IDebugSystem> result = new LinkedList<IDebugSystem>();
+        ArrayList<IDebugSystem> result = new ArrayList<IDebugSystem>();
         for (IEcsSystem system : systems) {
             if (system instanceof IDebugSystem) result.add((IDebugSystem) system);
         }
@@ -143,14 +117,14 @@ public class EcsContainer {
 
     public void update(float delta) {
         EcsSimple.ECS.update(delta);
-
         if (entityManager.hasChanges()) {
             entityManager.update(createCallback, deleteCallback); // коллбеки для очистки нод в системах
         }
         for (IEcsSystem system : systems.values()) {
             system.update(delta);
         }
-        if (isDebugMode) {
+
+        if (isDebugActive) {
             debugService.update(delta);
         }
     }
@@ -185,20 +159,6 @@ public class EcsContainer {
 
     private static InputProcessor wrapProcessor(final InputProcessor inputProcessor, InputProcessorWrapper.Predicate predicate) {
         return new InputProcessorWrapper(inputProcessor, predicate);
-    }
-
-    private class ActivateConsoleInputProcessor extends InputAdapter {
-
-        @Override
-        public boolean keyDown(int keycode) {
-            if (Input.Keys.F9 == keycode) {
-                isDebugMode = !isDebugMode;
-                setDebugMode(isDebugMode);
-                return true;
-            }
-            return false;
-        }
-
     }
 
 

@@ -1,4 +1,4 @@
-package com.github.br.ecs.simple.engine.debug.console.exception;
+package com.github.br.gdx.simple.console.exception;
 
 /**
  * Created by user on 31.12.2018.

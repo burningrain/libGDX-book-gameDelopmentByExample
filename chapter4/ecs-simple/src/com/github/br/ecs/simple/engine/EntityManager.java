@@ -1,5 +1,6 @@
 package com.github.br.ecs.simple.engine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -13,10 +14,10 @@ public class EntityManager {
     private HashMap<EntityId, EcsEntity> entities = new HashMap<EntityId, EcsEntity>();
 
     private volatile boolean hasChanges = false;
-    private LinkedList<EcsEntity> added = new LinkedList<EcsEntity>();
-    private LinkedList<EntityId> deleted = new LinkedList<EntityId>();
+    private ArrayList<EcsEntity> added = new ArrayList<EcsEntity>();
+    private ArrayList<EntityId> deleted = new ArrayList<EntityId>();
 
-    public void createEntity(String type, EcsComponent... components) {
+    public EntityId createEntity(String type, EcsComponent... components) {
         hasChanges = true;
 
         int id = idGenerator.nextId();
@@ -28,6 +29,7 @@ public class EntityManager {
             entity.addComponent(component);
         }
         added.add(entity);
+        return entityId;
     }
 
 
@@ -36,22 +38,28 @@ public class EntityManager {
         deleted.add(id);
     }
 
-    public boolean hasChanges(){
+    public boolean hasChanges() {
         return hasChanges;
     }
 
-    public void update(Callback createCallback, Callback deleteCallback){
-        EcsEntity ecsEntity;
-        while((ecsEntity = added.poll()) != null){
-            entities.put(ecsEntity.getId(), ecsEntity);
-            createCallback.call(ecsEntity);
+    public void update(Callback createCallback, Callback deleteCallback) {
+        int addedSize = added.size();
+        for (int i = 0; i < addedSize; i++) {
+            EcsEntity entity = added.get(i);
+            entities.put(entity.getId(), entity);
+            createCallback.call(entity);
         }
-        EntityId entityId;
-        while((entityId = deleted.poll()) != null){
-            EcsEntity entity = entities.get(entityId);
-            entities.remove(entityId);
+
+        int deleteSize = deleted.size();
+        for (int i = 0; i < deleteSize; i++) {
+            EntityId id = deleted.get(i);
+            EcsEntity entity = entities.get(id);
+            entities.remove(id);
             deleteCallback.call(entity);
         }
+
+        added.clear();
+        deleted.clear();
         hasChanges = false;
     }
 

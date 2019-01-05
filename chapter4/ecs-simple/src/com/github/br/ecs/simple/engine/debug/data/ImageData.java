@@ -7,5 +7,4 @@ public class ImageData implements DebugData {
 
     private float x, y;
 
-
 }

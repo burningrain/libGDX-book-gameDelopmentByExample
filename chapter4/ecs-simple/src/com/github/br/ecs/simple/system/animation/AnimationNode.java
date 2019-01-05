@@ -10,7 +10,6 @@ import com.github.br.ecs.simple.system.transform.TransformComponent;
  */
 public class AnimationNode extends EcsNode {
 
-    public TransformComponent transform;
     public RendererComponent rendererComponent;
     public AnimationComponent animationComponent;
 
