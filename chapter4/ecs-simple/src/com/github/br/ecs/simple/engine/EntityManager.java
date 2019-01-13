@@ -1,9 +1,8 @@
 package com.github.br.ecs.simple.engine;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.concurrent.LinkedBlockingQueue;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntMap;
 
 /**
  * Created by user on 28.05.2017.
@@ -11,29 +10,27 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class EntityManager {
 
     private IdGenerator idGenerator = new IdGenerator();
-    private HashMap<EntityId, EcsEntity> entities = new HashMap<EntityId, EcsEntity>();
+    private IntMap<EcsEntity> entities = new IntMap<EcsEntity>();
 
     private volatile boolean hasChanges = false;
-    private ArrayList<EcsEntity> added = new ArrayList<EcsEntity>();
-    private ArrayList<EntityId> deleted = new ArrayList<EntityId>();
+    private Array<EcsEntity> added = new Array<EcsEntity>(false, 32);
+    private IntArray deleted = new IntArray(false, 32);
 
-    public EntityId createEntity(String type, EcsComponent... components) {
+    public int createEntity(String type, EcsComponent... components) {
         hasChanges = true;
 
-        int id = idGenerator.nextId();
-        EntityId entityId = EntityId.of(id, type);
-        EcsEntity entity = new EcsEntity(entityId);
+        EcsEntity entity = new EcsEntity(idGenerator.nextId());
 
         // заполняем сущность компонентами
         for (EcsComponent component : components) {
             entity.addComponent(component);
         }
         added.add(entity);
-        return entityId;
+        return entity.getId();
     }
 
 
-    public void deleteEntity(EntityId id) {
+    public void deleteEntity(int id) {
         hasChanges = true;
         deleted.add(id);
     }
@@ -43,16 +40,16 @@ public class EntityManager {
     }
 
     public void update(Callback createCallback, Callback deleteCallback) {
-        int addedSize = added.size();
+        int addedSize = added.size;
         for (int i = 0; i < addedSize; i++) {
             EcsEntity entity = added.get(i);
             entities.put(entity.getId(), entity);
             createCallback.call(entity);
         }
 
-        int deleteSize = deleted.size();
+        int deleteSize = deleted.size;
         for (int i = 0; i < deleteSize; i++) {
-            EntityId id = deleted.get(i);
+            int id = deleted.get(i);
             EcsEntity entity = entities.get(id);
             entities.remove(id);
             deleteCallback.call(entity);

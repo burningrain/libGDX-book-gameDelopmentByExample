@@ -1,15 +1,14 @@
 package com.github.br.ecs.simple.engine.debug;
 
+import com.badlogic.gdx.utils.Array;
 import com.github.br.ecs.simple.engine.debug.data.DebugData;
-
-import java.util.ArrayList;
 
 /**
  * Created by user on 31.07.2017.
  */
 public class DebugDataContainer {
 
-    private ArrayList<DebugData> data = new ArrayList<DebugData>();
+    private Array<DebugData> data = new Array<DebugData>();
 
     public DebugDataContainer put(DebugData debugData) {
         data.add(debugData);

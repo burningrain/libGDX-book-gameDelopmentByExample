@@ -2,14 +2,12 @@ package com.github.br.ecs.simple.system.render;
 
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.OrderedMap;
 import com.github.br.ecs.simple.engine.IDebugSystem;
 import com.github.br.ecs.simple.engine.debug.DebugDataContainer;
-import com.github.br.ecs.simple.engine.EntityId;
-import com.github.br.ecs.simple.engine.IEcsSystem;
 import com.github.br.ecs.simple.engine.debug.data.TableData;
 import com.github.br.ecs.simple.utils.ViewHelper;
-
-import java.util.LinkedHashMap;
 
 import static java.lang.String.format;
 
@@ -18,22 +16,21 @@ import static java.lang.String.format;
  */
 public class RenderSystem implements IDebugSystem<RendererNode> {
 
-    private LinkedHashMap<String, Layer> layers = new LinkedHashMap<String, Layer>();
-    private LinkedHashMap<EntityId, String> entityLayerMap = new LinkedHashMap<EntityId, String>();
+    private OrderedMap<String, Layer> layers = new OrderedMap<String, Layer>();
+    private IntMap<String> entityLayerMap = new IntMap<String>();
 
     private SpriteBatch batch = new SpriteBatch();
 
     private boolean debugMode;
     private DebugDataContainer debugDataContainer;
+    private long executionTime;
+    private int nodesAmount;
 
     public RenderSystem(String[] layers) {
         for(String layerTitle : layers) {
             addLayer(layerTitle);
         }
-    }
-
-    private void addLayer(String title) {
-        layers.put(title, new Layer(title));
+        debugDataContainer = new DebugDataContainer(); //todo см. DebugSystem
     }
 
     @Override
@@ -49,7 +46,7 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
     }
 
     @Override
-    public void removeNode(EntityId entityId) {
+    public void removeNode(int entityId) {
         String layerTitle = entityLayerMap.get(entityId);
         layers.get(layerTitle).removeNode(entityId);
     }
@@ -71,15 +68,12 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
 
     @Override
     public void update(float delta) {
-        if(isDebugMode()) {
-            if(debugDataContainer == null) {
-                debugDataContainer = new DebugDataContainer();
-            }
-            debugDataContainer.clear(); // очищаем предыдущее состояние
-        }
-
+        long before = 0;
         TableData.Builder builder = null;
         if(isDebugMode()) {
+            debugDataContainer.clear(); // очищаем предыдущее состояние
+            before = System.nanoTime();
+            nodesAmount = 0;
             builder = new TableData.Builder();
         }
 
@@ -88,12 +82,14 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
         for(Layer layer : layers.values()) {
             layer.render(batch);
             if (isDebugMode()) {
+                nodesAmount += layer.getNodesAmount();
                 builder.put(layer.getTitle(), "");
             }
         }
         batch.end();
 
         if(isDebugMode()) {
+            executionTime = System.nanoTime() - before;
             debugDataContainer.put(builder.build());
         }
     }
@@ -101,6 +97,20 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
     @Override
     public DebugDataContainer getDebugData() {
         return debugDataContainer;
+    }
+
+    @Override
+    public long getExecutionTime() {
+        return executionTime;
+    }
+
+    @Override
+    public int getNodesAmount() {
+        return nodesAmount;
+    }
+
+    private void addLayer(String title) {
+        layers.put(title, new Layer(title));
     }
 
 }

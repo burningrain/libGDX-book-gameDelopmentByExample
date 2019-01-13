@@ -5,10 +5,10 @@ import java.util.HashMap;
 
 public class EcsEntity {
 
-    private final EntityId id;
+    private final int id;
     HashMap<Class, EcsComponent> components = new HashMap<Class, EcsComponent>();
 
-    EcsEntity(EntityId id){
+    EcsEntity(int id) {
         this.id = id;
     }
 
@@ -19,11 +19,11 @@ public class EcsEntity {
         components.put(component.getClass(), component);
     }
 
-    public <T extends EcsComponent> T getComponent(Class<T> clazz){
-        return (T)components.get(clazz);
+    public <T extends EcsComponent> T getComponent(Class<T> clazz) {
+        return (T) components.get(clazz);
     }
 
-    public EntityId getId() {
+    public int getId() {
         return id;
     }
 }

@@ -1,10 +1,8 @@
 package com.github.br.ecs.simple.system.render;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.github.br.ecs.simple.engine.EntityId;
+import com.badlogic.gdx.utils.IntMap;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
-
-import java.util.HashMap;
 
 /**
  * Created by user on 22.06.2017.
@@ -12,7 +10,7 @@ import java.util.HashMap;
 public class Layer {
 
     private String title;
-    private HashMap<EntityId, RendererNode> nodes = new HashMap<EntityId, RendererNode>();
+    private IntMap<RendererNode> nodes = new IntMap<RendererNode>();
 
     public Layer(String title) {
         this.title = title;
@@ -22,7 +20,7 @@ public class Layer {
         nodes.put(node.entityId, node);
     }
 
-    public void removeNode(EntityId entityId) {
+    public void removeNode(int entityId) {
         nodes.remove(entityId);
     }
 
@@ -54,4 +52,9 @@ public class Layer {
     public String getTitle() {
         return title;
     }
+
+    public int getNodesAmount() {
+        return nodes.size;
+    }
+
 }

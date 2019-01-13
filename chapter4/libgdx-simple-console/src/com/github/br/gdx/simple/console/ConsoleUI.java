@@ -46,7 +46,7 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
         stage.getBatch().setProjectionMatrix(viewport.getCamera().projection);
         stage.getBatch().setTransformMatrix(viewport.getCamera().view);
 
-        fpsLabel.setText(FPS + Gdx.graphics.getFramesPerSecond());
+        fpsLabel.setText(FPS + Gdx.graphics.getFramesPerSecond()); //todo поправить частое обновление
         stage.draw();
     }
 

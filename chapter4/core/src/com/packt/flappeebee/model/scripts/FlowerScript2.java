@@ -30,7 +30,7 @@ public class FlowerScript2 extends EcsScript {
         animator = animation.controller;
         animator.getCurrentAnimator().gotoAndStop(5);
 
-        flower = (Rectangle) physics.boundary.shape;
+        flower = (Rectangle) physics.shape;
     }
 
     @Override

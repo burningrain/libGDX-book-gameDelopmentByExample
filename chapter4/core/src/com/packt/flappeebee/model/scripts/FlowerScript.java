@@ -26,7 +26,7 @@ public class FlowerScript extends EcsScript {
     public void init() {
         transform = getComponent(TransformComponent.class);
         physics = getComponent(PhysicsComponent.class);
-        flower = (Rectangle) physics.boundary.shape;
+        flower = (Rectangle) physics.shape;
         minY = flower.y;
         maxY = flower.y + 15;
     }

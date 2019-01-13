@@ -13,4 +13,8 @@ public interface IDebugSystem<T extends EcsNode> extends IEcsSystem<T> {
 
     DebugDataContainer getDebugData();
 
+    long getExecutionTime();
+
+    int getNodesAmount();
+
 }

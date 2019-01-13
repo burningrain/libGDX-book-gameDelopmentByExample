@@ -1,4 +1,4 @@
-package com.github.br.ecs.simple.engine.debug;
+package com.github.br.ecs.simple.utils;
 
 import com.badlogic.gdx.InputProcessor;
 

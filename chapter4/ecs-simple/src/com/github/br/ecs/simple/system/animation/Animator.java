@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayList;
-
 /**
  * Created by user on 08.04.2017.
  */
@@ -23,7 +21,7 @@ public class Animator {
     private Animation.PlayMode playMode;
     private boolean looping = false;
 
-    private ArrayList<FinishedCallback> finishedCallbacks;
+    private Array<FinishedCallback> finishedCallbacks;
 
     //TODO добавить коллбеки на окончание анимации
 
@@ -121,13 +119,13 @@ public class Animator {
 
     public void addFinishedCallback(FinishedCallback callback){
         if(finishedCallbacks == null){
-            finishedCallbacks = new ArrayList<FinishedCallback>();
+            finishedCallbacks = new Array<FinishedCallback>();
         }
         finishedCallbacks.add(callback);
     }
 
     public void removeCallback(FinishedCallback callback){
-        finishedCallbacks.remove(callback);
+        finishedCallbacks.removeValue(callback, true);
     }
 
     private void notifyFilishedListeners(){

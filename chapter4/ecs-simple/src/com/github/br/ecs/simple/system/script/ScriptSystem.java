@@ -1,6 +1,7 @@
 package com.github.br.ecs.simple.system.script;
 
 
+import com.badlogic.gdx.utils.IntMap;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.engine.EcsSystem;
 
@@ -13,7 +14,7 @@ public class ScriptSystem extends EcsSystem<ScriptNode> {
     }
 
     @Override
-    public void update(float delta, Collection<ScriptNode> nodes) {
+    public void update(float delta, IntMap.Values<ScriptNode> nodes) {
         for(ScriptNode node : nodes){
             for(EcsScript script : node.scriptComponent.scripts){
                 script.update(delta);

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.packt.flappeebee.model.World;
+import com.packt.flappeebee.model.EcsWorld;
 import com.packt.flappeebee.render.RenderDispatcher;
 import com.github.br.ecs.simple.utils.ViewHelper;
 
@@ -12,26 +12,26 @@ import com.github.br.ecs.simple.utils.ViewHelper;
 public class GameScreen extends ScreenAdapter {
 
     private RenderDispatcher renderDispatcher;
-    private World world;
+    private EcsWorld ecsWorld;
 
     @Override
     public void show() {
-        world = new World();
-        renderDispatcher = new RenderDispatcher(world);
+        ecsWorld = new EcsWorld();
+        renderDispatcher = new RenderDispatcher(ecsWorld);
 
         GamePublisher.self().changeState(GamePublisher.State.NEW_GAME);
     }
 
     @Override
     public void resize(int width, int height) {
-        ViewHelper.viewport.update(width, height);
+        ViewHelper.viewport.update(width, height, true);
     }
 
     @Override
     public void render(float delta) {
         clearScreen();                   // очищаем экран
         // обработка клавиш теперь размазана по коду
-        world.update(delta);             // обновление игрового мира (состояние и рендеринг)
+        ecsWorld.update(delta);             // обновление игрового мира (состояние и рендеринг)
         renderDispatcher.update(delta);  // дополнительный рендеринг (HUD или подобное)
 
         //TODO пробросить вывод runtime-ошибок на экран

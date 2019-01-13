@@ -25,11 +25,11 @@ public abstract class EcsScript {
         container.createEntity(type, components);
     }
 
-    public void deleteEntity(EntityId entityId){
+    public void deleteEntity(int entityId){
         container.deleteEntity(entityId);
     }
 
-    public EntityId getEntityId(){
+    public int getEntityId(){
         return entity.getId();
     }
 

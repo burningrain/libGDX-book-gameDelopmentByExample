@@ -1,24 +1,23 @@
 package com.github.br.ecs.simple.engine;
 
-import java.util.Collection;
-import java.util.HashMap;
+import com.badlogic.gdx.utils.IntMap;
 
 public abstract class EcsSystem<T extends EcsNode> implements IEcsSystem<T> {
 
     private final Class<T> nodeClazz;
-    private HashMap<EntityId, T> allNodes = new HashMap<EntityId, T>();
+    protected IntMap<T> allNodes = new IntMap<T>();
 
-    public EcsSystem(Class<T> clazz){
+    public EcsSystem(Class<T> clazz) {
         this.nodeClazz = clazz;
     }
 
     @Override
-    public void addNode(T node){
+    public void addNode(T node) {
         allNodes.put(node.entityId, node);
     }
 
     @Override
-    public void removeNode(EntityId entityId){
+    public void removeNode(int entityId) {
         allNodes.remove(entityId);
     }
 
@@ -28,10 +27,10 @@ public abstract class EcsSystem<T extends EcsNode> implements IEcsSystem<T> {
     }
 
     @Override
-    public void update(float delta){
+    public void update(float delta) {
         update(delta, allNodes.values());
     }
 
-    protected abstract void update(float delta, Collection<T> nodes);
+    protected abstract void update(float delta, IntMap.Values<T> nodes);
 
 }

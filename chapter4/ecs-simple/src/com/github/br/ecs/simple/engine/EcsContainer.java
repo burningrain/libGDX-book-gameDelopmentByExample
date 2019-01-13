@@ -2,15 +2,9 @@ package com.github.br.ecs.simple.engine;
 
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.github.br.ecs.simple.engine.debug.DebugService;
-import com.github.br.ecs.simple.engine.debug.InputProcessorWrapper;
+import com.badlogic.gdx.utils.Array;
+import com.github.br.ecs.simple.engine.debug.EcsDebug;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-
-import static java.lang.String.format;
 
 /**
  * Контейнер, порождающий игровые сущности. Связывает вместе системы, компоненты и сущности
@@ -19,9 +13,8 @@ public class EcsContainer {
 
     private EcsSettings settings;
 
-    private boolean isDebugActive;
-    private DebugService debugService;
-    private LinkedHashMap<Class, IEcsSystem> systems = new LinkedHashMap<Class, IEcsSystem>();
+    private EcsDebug ecsDebug;
+    private Array<IEcsSystem> systems = new Array<IEcsSystem>();
     private EntityManager entityManager = new EntityManager();
     private InputMultiplexer inputMultiplexer;
 
@@ -29,7 +22,7 @@ public class EcsContainer {
         @Override
         public void call(EcsEntity entity) {
             // заполняем системы нодами с компонентами сущности
-            for (IEcsSystem<EcsNode> system : systems.values()) {
+            for (IEcsSystem<EcsNode> system : systems) {
                 Class nodeClass = system.getNodeClass();
                 EcsNode node = EcsReflectionHelper.createAndFillNode(nodeClass, entity);
                 if (node != null) {
@@ -51,39 +44,35 @@ public class EcsContainer {
     private EntityManager.Callback deleteCallback = new EntityManager.Callback() {
         @Override
         public void call(EcsEntity entity) {
-            for (IEcsSystem system : systems.values()) {
+            for (IEcsSystem system : systems) {
                 system.removeNode(entity.getId());
             }
         }
     };
 
-    public void setDebugMode(boolean active, Class<? extends IEcsSystem> system) {
-        IEcsSystem ecsSystem = getSystem(system);
-        if (ecsSystem == null) throw new IllegalArgumentException(format("Система '%s' не найдена", system));
-        if (ecsSystem instanceof DebugSystem) {
-            ((IDebugSystem) ecsSystem).setDebugMode(active);
-        } else {
-            System.out.println(format("Система '%s' не поддерживает режим отладки", system)); //todo логгер впилить
-        }
+    public void setDebugMode(boolean active) {
+        ecsDebug.setDebugMode(active);
+    }
+
+    public void setDebugMode(Class<? extends IEcsSystem> system, boolean active) {
+        ecsDebug.setDebugMode(system, active);
     }
 
     public EcsContainer(EcsSettings settings) {
         this.settings = settings;
+    }
 
-        ArrayList<InputProcessor> processors = new ArrayList<InputProcessor>();
+    //fixme мрак, сделано из-за передачи списка в дебаг. Убрать когда сделаю билдер
+    public void init() {
+        Array<InputProcessor> processors = new Array<InputProcessor>();
         if (settings.isDebugEnabled) {
-            debugService = new DebugService();
-            addDebugSystem(filterDebugSystems(systems.values()));
+            ecsDebug = new EcsDebug(systems);
             setDebugMode(true);
 
-            processors.add(wrapProcessor(debugService.getInputProcessor(), new InputProcessorWrapper.Predicate() {
-                @Override
-                public boolean apply() {
-                    return !isDebugActive;
-                }
-            }));
+            processors.add(ecsDebug.getInputProcessor());
         }
-        initInputMultiplexer(processors.toArray(new InputProcessor[0]));
+
+        initInputMultiplexer((InputProcessor[]) processors.toArray(InputProcessor.class));
     }
 
     public InputProcessor getInputProcessor() {
@@ -95,57 +84,31 @@ public class EcsContainer {
         //Gdx.input.setInputProcessor(inputMultiplexer); todo пока решил оставить это на откуп клиенту
     }
 
-    private static Collection<IDebugSystem> filterDebugSystems(Collection<IEcsSystem> systems) {
-        ArrayList<IDebugSystem> result = new ArrayList<IDebugSystem>();
-        for (IEcsSystem system : systems) {
-            if (system instanceof IDebugSystem) result.add((IDebugSystem) system);
-        }
-        return result;
-    }
-
-    private void setDebugMode(boolean active) {
-        for (IEcsSystem system : filterDebugSystems(systems.values())) {
-            ((IDebugSystem) system).setDebugMode(active);
-        }
-    }
-
-    private void addDebugSystem(Collection<IDebugSystem> systems) {
-        for (IDebugSystem system : systems) {
-            debugService.addSystem(system);
-        }
-    }
-
     public void update(float delta) {
         EcsSimple.ECS.update(delta);
         if (entityManager.hasChanges()) {
             entityManager.update(createCallback, deleteCallback); // коллбеки для очистки нод в системах
         }
-        for (IEcsSystem system : systems.values()) {
+        for (IEcsSystem system : systems) {
             system.update(delta);
         }
 
-        if (isDebugActive) {
-            debugService.update(delta);
+        if (ecsDebug.isDebugActive()) {
+            ecsDebug.update(delta);
         }
     }
 
-    public void createEntity(String type, EcsComponent... components) {
-        entityManager.createEntity(type, components);
+    public int createEntity(String type, EcsComponent... components) {
+        return entityManager.createEntity(type, components);
     }
 
-    public void deleteEntity(EntityId id) {
+    public void deleteEntity(int id) {
         entityManager.deleteEntity(id);
     }
 
-
-    private <T extends EcsSystem> T getSystem(Class<? extends IEcsSystem> clazz) {
-        return (T) systems.get(clazz);
-    }
-
-
     public void addSystem(Class<? extends IEcsSystem> clazz) {
         try {
-            systems.put(clazz, clazz.newInstance());
+            systems.add(clazz.newInstance());
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException ex) {
@@ -154,11 +117,7 @@ public class EcsContainer {
     }
 
     public void addSystem(IEcsSystem system) {
-        systems.put(system.getClass(), system);
-    }
-
-    private static InputProcessor wrapProcessor(final InputProcessor inputProcessor, InputProcessorWrapper.Predicate predicate) {
-        return new InputProcessorWrapper(inputProcessor, predicate);
+        systems.add(system);
     }
 
 

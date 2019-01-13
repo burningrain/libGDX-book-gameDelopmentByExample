@@ -7,7 +7,7 @@ public interface IEcsSystem<T extends EcsNode> {
 
     void addNode(T node);
 
-    void removeNode(EntityId entityId);
+    void removeNode(int entityId);
 
     Class<T> getNodeClass();
 

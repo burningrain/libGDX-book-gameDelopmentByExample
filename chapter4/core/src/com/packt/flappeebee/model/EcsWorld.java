@@ -12,32 +12,39 @@ import com.github.br.ecs.simple.system.physics.PhysicsSystem;
 import com.github.br.ecs.simple.system.render.RenderSystem;
 import com.github.br.ecs.simple.system.script.ScriptSystem;
 import com.github.br.ecs.simple.utils.ViewHelper;
-import com.github.br.gdx.simple.console.Command;
 import com.github.br.gdx.simple.console.Console;
-import com.packt.flappeebee.GamePublisher;
-import com.packt.flappeebee.ScreenManager;
+import com.github.br.gdx.simple.console.ConsoleOffOnCallback;
 
 import static com.packt.flappeebee.model.LayerEnum.*;
 
 
-public class World implements ScreenManager, GamePublisher.Subscriber {
+public class EcsWorld {
 
     private EcsContainer container;
-    //todo пока так, потом подумать с местом инициализации. Плохо, что завязка на скин в ecs-контейнере
-    private Console console = new Console(Input.Keys.F9, DebugDrawObject.DEFAULT_SKIN, ViewHelper.viewport);
+    private Console console;
 
-    public World() {
-        GamePublisher.self().addListener(GamePublisher.State.NEW_GAME, this);
-    }
-
-    @Override
-    public void handleGameState(GamePublisher.State state) {
-        startNewGame();
-        GamePublisher.self().changeState(GamePublisher.State.PLAYING);
-    }
-
-    public void startNewGame() {
+    public EcsWorld() {
         //TODO
+        initEcsContainer();
+        initConsole();
+        setInputProcessor();
+
+        container.createEntity("background", GameObjectFactory.createBackground());
+    }
+
+    private void initConsole() {
+        //todo пока так, потом подумать с местом инициализации. Плохо, что завязка на скин в ecs-контейнере
+        console = new Console(Input.Keys.F9, DebugDrawObject.DEFAULT_SKIN, ViewHelper.viewport, new ConsoleOffOnCallback() {
+            @Override
+            public void call(boolean isActive) {
+                container.setDebugMode(isActive);
+            }
+        });
+        console.addCommands(CommandsFactory.getCommands(container));
+    }
+
+    private void initEcsContainer() {
+        // инициализация настроек
         EcsSettings settings = new EcsSettings();
         settings.layers = new String[]{
                 BACKGROUND.name(),
@@ -48,25 +55,14 @@ public class World implements ScreenManager, GamePublisher.Subscriber {
         };
         settings.isDebugEnabled = true;
 
-        initEcsContainer(settings);
-        initConsole(CommandsFactory.getCommands(container));
-        setInputProcessor();
-
-        container.createEntity("background", GameObjectFactory.createBackground());
-    }
-
-    private void initConsole(Command[] commands) {
-        console.addCommands(commands);
-    }
-
-    private void initEcsContainer(EcsSettings settings) {
         container = new EcsContainer(settings);
+
         // инициализация систем. Порядок очень важен!
         container.addSystem(ScriptSystem.class);
         container.addSystem(PhysicsSystem.class);
         container.addSystem(AnimationSystem.class);
         container.addSystem(new RenderSystem(settings.layers));
-
+        container.init();
     }
 
     private void setInputProcessor() {
@@ -76,12 +72,8 @@ public class World implements ScreenManager, GamePublisher.Subscriber {
         Gdx.input.setInputProcessor(inputMultiplexer); //fixme криво, но зато контроль у клиента
     }
 
-
-    @Override
     public void update(float delta) {
-        if (GamePublisher.self().getCurrentState() == GamePublisher.State.PLAYING) {
-            container.update(delta);
-        }
+        container.update(delta);
         console.update(delta);
     }
 

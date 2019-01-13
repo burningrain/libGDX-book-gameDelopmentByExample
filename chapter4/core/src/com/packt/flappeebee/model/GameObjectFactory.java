@@ -20,7 +20,6 @@ import com.github.br.ecs.simple.fsm.FsmState;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
 import com.github.br.ecs.simple.system.animation.AnimationController;
 import com.github.br.ecs.simple.system.animation.Animator;
-import com.github.br.ecs.simple.system.physics.Boundary;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
@@ -87,7 +86,7 @@ public final class GameObjectFactory {
         PhysicsComponent physicsComponent = new PhysicsComponent();
         physicsComponent.movement = new Vector2(0f, 0f);
         physicsComponent.acceleration = GameConstants.DIVE_ACCEL;
-        physicsComponent.boundary = new Boundary(new Circle(new Vector2(32f, 32f), 32f));
+        physicsComponent.shape = new Circle(new Vector2(32f, 32f), 32f);
 
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = Arrays.<EcsScript>asList(new FlappeeScript());
@@ -108,7 +107,7 @@ public final class GameObjectFactory {
         physicsComponent.movement = new Vector2(0f, 0f);
         physicsComponent.acceleration = GameConstants.DIVE_ACCEL;
         // заполняем физику
-        physicsComponent.boundary = new Boundary(new Rectangle(0, 0, 64, 128));
+        physicsComponent.shape = new Rectangle(0, 0, 64, 128);
 
         ScriptComponent scriptComponent = new ScriptComponent();
         if ((plantCount & 1) == 1) {
@@ -120,7 +119,6 @@ public final class GameObjectFactory {
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = animAtlas.findRegion("anim", 0);
         rendererComponent.layer = (plantCount & 1) == 1 ? LayerEnum.PRE_BACKGROUND.name() : LayerEnum.FRONT_EFFECTS.name();
-
         // АНИМАЦИЯ
         AnimationComponent animationComponent = new AnimationComponent();
         Animator animatorGrow = new Animator("grow", animAtlas.getRegions(), 1f / 30);
@@ -154,7 +152,7 @@ public final class GameObjectFactory {
         PhysicsComponent physicsComponent = new PhysicsComponent();
         physicsComponent.movement = new Vector2(0f, 0f);
         physicsComponent.acceleration = GameConstants.CRAB_DIVE_ACCEL;
-        physicsComponent.boundary = new Boundary(new Rectangle(0, 0, 75, 64));
+        physicsComponent.shape = new Rectangle(0, 0, 75, 64);
 
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = Arrays.asList(new CrabScript(), new CrabAnimScript());
