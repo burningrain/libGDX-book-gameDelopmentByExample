@@ -30,10 +30,10 @@ public class CrabScript extends EcsScript {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             flyUp();
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            physics.movement.x = 2;
-        } else if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            physics.movement.x = -2;
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            physics.movement.x = 50 * delta;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            physics.movement.x = -50 * delta;
         } else {
             physics.movement.x = 0;
         }
@@ -41,7 +41,7 @@ public class CrabScript extends EcsScript {
     }
 
     private void blockFlappeeLeavingTheWorld() {
-        if(transform.position.y <= 0 || transform.position.y >= ViewHelper.WORLD_HEIGHT){
+        if (transform.position.y <= 0 || transform.position.y >= ViewHelper.WORLD_HEIGHT) {
             physics.movement.y = 0;
         }
         transform.position.y = MathUtils.clamp(transform.position.y, 0, ViewHelper.WORLD_HEIGHT);

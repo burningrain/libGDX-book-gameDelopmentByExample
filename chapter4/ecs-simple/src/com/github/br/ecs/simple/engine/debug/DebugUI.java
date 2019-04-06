@@ -28,7 +28,7 @@ public class DebugUI {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     private SpriteBatch spriteBatch = new SpriteBatch();
 
-    private Stage stage = new Stage();
+    private Stage stage;
     private Table windowTable = new Table(DebugDrawObject.DEFAULT_SKIN);
     private VerticalGroup stack = new VerticalGroup();
     private ScrollPane scrollPane = new ScrollPane(stack, DebugDrawObject.DEFAULT_SKIN);
@@ -59,6 +59,8 @@ public class DebugUI {
         windowTable.top().left();
 
         windowTable.setFillParent(true);
+
+        stage = new Stage(ViewHelper.viewport);
         stage.addActor(windowTable);
         stage.setDebugAll(true);
     }
