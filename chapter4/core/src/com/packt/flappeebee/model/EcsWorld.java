@@ -53,8 +53,8 @@ public class EcsWorld {
 
         ShaderData waveShader = new ShaderData();
         waveShader.title = "wave";
-        waveShader.vertexShader = Gdx.files.internal("shaders/wave_shader.vertx");
-        waveShader.fragmentShader = Gdx.files.internal("shaders/wave_shader.frag");
+        waveShader.vertexShader = Gdx.files.internal("shaders/wave_shader.vsh");
+        waveShader.fragmentShader = Gdx.files.internal("shaders/wave_shader.fsh");
         waveShader.shaderUpdater = new ShaderUpdater() {
 
             private float time;

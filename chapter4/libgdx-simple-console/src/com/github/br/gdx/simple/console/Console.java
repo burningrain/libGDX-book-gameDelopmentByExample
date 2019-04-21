@@ -51,10 +51,10 @@ public class Console {
         for (int i = 0; i < plugins.length; i++) {
             processors[2 + i] = createInputProcessorWrapper(plugins[i].getInputProcessor());
         }
-        inputProcessor = new InputMultiplexer(new InputProcessor[]{
+        inputProcessor = new InputMultiplexer(
                 activateConsoleInputProcessor,
                 inputProcessorWrapper
-        });
+        );
     }
 
     private InputProcessorWrapper createInputProcessorWrapper(InputProcessor inputProcessor) {

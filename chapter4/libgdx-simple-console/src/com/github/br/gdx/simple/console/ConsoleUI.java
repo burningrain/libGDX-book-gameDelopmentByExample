@@ -30,6 +30,10 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
 
     private ConsoleService consoleService;
 
+    // устраняем множественное срабатывание при длительном нажатии
+    private static final float PAUSE_TIME = 0.4f;
+    private float time = 0f;
+
     public ConsoleUI(ConsoleService consoleService, Skin skin, Viewport viewport) {
         this.viewport = viewport;
         initUI(skin, viewport);
@@ -43,6 +47,8 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
     }
 
     public void update(float delta) {
+        time -= delta;
+
         stage.getBatch().setProjectionMatrix(viewport.getCamera().projection);
         stage.getBatch().setTransformMatrix(viewport.getCamera().view);
 
@@ -78,12 +84,19 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
         //show the keyboard
         consoleTextField.getOnscreenKeyboard().show(true);
 
-        //setTransparentBackground(textArea, new Color(0, 0, 0, 0.1f));
         setTransparentBackground(consoleTextField, new Color(0, 0, 0, 0.2f));
         consoleTextField.setTextFieldListener(new TextField.TextFieldListener() {
+
             @Override
             public void keyTyped(TextField textField, char key) {
-                if ((key == '\r' || key == '\n')){
+                // обработка нажатия ENTER
+                if ((key == '\r' || key == '\n')) {
+                    if(time > 0) {
+                        return;
+                    } else {
+                        time = PAUSE_TIME;
+                    }
+
                     try {
                         consoleService.interpretInput(consoleTextField.getText());
                     } catch (ConsoleException e) {
@@ -96,7 +109,7 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
     }
 
     private static void setTransparentBackground(TextField textField, Color color) {
-        Image image = getBackgroundImage((int)textField.getWidth(), (int)textField.getHeight(), color);
+        Image image = getBackgroundImage((int) textField.getWidth(), (int) textField.getHeight(), color);
 
         TextField.TextFieldStyle oldStyle = textField.getStyle();
         TextField.TextFieldStyle newStyle = new TextField.TextFieldStyle(oldStyle);
@@ -105,7 +118,7 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
     }
 
     private static void setTransparentBackground(Label label, Color color) {
-        Image image = getBackgroundImage((int)label.getWidth(), (int)label.getHeight(), color);
+        Image image = getBackgroundImage((int) label.getWidth(), (int) label.getHeight(), color);
 
         Label.LabelStyle oldStyle = label.getStyle();
         Label.LabelStyle newStyle = new Label.LabelStyle(oldStyle);
