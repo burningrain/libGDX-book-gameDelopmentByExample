@@ -1,17 +1,18 @@
 package com.github.br.ecs.simple.engine.debug;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Array;
-import com.github.br.ecs.simple.engine.IDebugSystem;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.github.br.ecs.simple.engine.DebugSystem;
 import com.github.br.ecs.simple.engine.debug.drawobject.DebugDrawObject;
 import com.github.br.ecs.simple.utils.ViewHelper;
 import com.github.br.ecs.simple.utils.cache.PeriodCacheValueInt;
@@ -20,7 +21,7 @@ import com.github.br.ecs.simple.utils.cache.PeriodCacheValueLong;
 /**
  * Created by user on 08.01.2019.
  */
-public class DebugUI {
+public class DebugUI extends ScreenAdapter {
 
     private DebugService debugService;
     private Array<SystemUiData> uiCache;
@@ -32,19 +33,13 @@ public class DebugUI {
     private Table windowTable = new Table(DebugDrawObject.DEFAULT_SKIN);
     private VerticalGroup stack = new VerticalGroup();
     private ScrollPane scrollPane = new ScrollPane(stack, DebugDrawObject.DEFAULT_SKIN);
-    private LibGdxPanel libGdxPanel = new LibGdxPanel() {
-        @Override
-        public void add(Actor actor) {
-            stack.addActor(actor);
-        }
-    };
 
     public DebugUI(DebugService debugService) {
         this.debugService = debugService;
 
         uiCache = new Array<SystemUiData>();
-        for (IDebugSystem iDebugSystem : debugService.getSystems()) {
-            SystemUiData systemUiData = new SystemUiData(iDebugSystem);
+        for (DebugSystem debugSystem : debugService.getSystems()) {
+            SystemUiData systemUiData = new SystemUiData(debugSystem);
             uiCache.add(systemUiData);
             stack.addActor(systemUiData.getTable());
         }
@@ -60,15 +55,17 @@ public class DebugUI {
 
         windowTable.setFillParent(true);
 
-        stage = new Stage(ViewHelper.viewport);
+        stage = new Stage(new ScreenViewport());
         stage.addActor(windowTable);
         stage.setDebugAll(true);
     }
 
-    public void update(float delta) {
-        ViewHelper.applyCameraAndViewPort(shapeRenderer);
-        ViewHelper.applyCameraAndViewPort(spriteBatch);
-        ViewHelper.applyCameraAndViewPort(stage.getBatch());
+    @Override
+    public void render(float delta) {
+        stage.getViewport().apply(true);
+        ViewHelper.applyCameraAndViewPort(shapeRenderer, stage.getViewport());
+        ViewHelper.applyCameraAndViewPort(spriteBatch, stage.getViewport());
+        ViewHelper.applyCameraAndViewPort(stage.getBatch(), stage.getViewport());
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         spriteBatch.begin();
@@ -78,8 +75,14 @@ public class DebugUI {
         stage.draw();
     }
 
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().apply(true);
+        stage.getViewport().update(width, height);
+    }
+
     private void updateData(float delta) {
-        Array<IDebugSystem> systems = debugService.getSystems();
+        Array<DebugSystem> systems = debugService.getSystems();
         for (int i = 0; i < systems.size; i++) {
             SystemUiData systemUiData = uiCache.get(i);
             systemUiData.updateData(systems.get(i), delta);
@@ -102,7 +105,7 @@ public class DebugUI {
         private Label nodesAmountLabel;
         private Table table;
 
-        public SystemUiData(IDebugSystem system) {
+        public SystemUiData(DebugSystem system) {
             this.systemClazz = system.getClass();
             this.executionTime.setValue((int) system.getExecutionTime());
             this.nodesAmount.setValue(system.getNodesAmount());
@@ -120,7 +123,7 @@ public class DebugUI {
             table.left();
         }
 
-        public void updateData(IDebugSystem system, float delta) {
+        public void updateData(DebugSystem system, float delta) {
             nodesAmount.update(system.getNodesAmount(), delta);
             executionTime.update(system.getExecutionTime(), delta);
 

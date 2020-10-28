@@ -1,5 +1,6 @@
 package com.packt.flappeebee.model.scripts;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -32,8 +33,15 @@ public class FlowerScript extends EcsScript {
     }
 
     @Override
+    public void dispose() {
+        transform = null;
+        physics = null;
+        flower = null;
+    }
+
+    @Override
     public void update(float delta) {
-        if(flower.y > maxY || flower.y < minY){
+        if (flower.y > maxY || flower.y < minY) {
             deltaY *= -1;
         }
         flower.y += deltaY;
@@ -41,10 +49,11 @@ public class FlowerScript extends EcsScript {
     }
 
     private void blockFlappeeLeavingTheWorld() {
-        if(transform.position.y <= 0 || transform.position.y >= ViewHelper.WORLD_HEIGHT){
+        int height = Gdx.graphics.getHeight();
+        if (transform.position.y <= 0 || transform.position.y >= height) {
             physics.movement.y = 0;
         }
-        transform.position.y = MathUtils.clamp(transform.position.y, 0, ViewHelper.WORLD_HEIGHT);
+        transform.position.y = MathUtils.clamp(transform.position.y, 0, height);
     }
 
 

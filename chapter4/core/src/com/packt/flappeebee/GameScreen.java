@@ -4,32 +4,36 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.github.br.ecs.simple.utils.ViewHelper;
-import com.packt.flappeebee.model.EcsWorld;
+import com.packt.flappeebee.model.GameWorld;
+import com.packt.flappeebee.model.GameWorldSettings;
 
 
 public class GameScreen extends ScreenAdapter {
 
-    private EcsWorld ecsWorld;
+    private GameWorld gameWorld;
 
     @Override
     public void show() {
         boolean npotSupported = Gdx.graphics.supportsExtension("GL_OES_texture_npot")
                 || Gdx.graphics.supportsExtension("GL_ARB_texture_non_power_of_two");
-        System.out.println(npotSupported);
-        ecsWorld = new EcsWorld();
+        System.out.println("isNpotSupported: " + npotSupported);
+
+        GameWorldSettings gameWorldSettings = new GameWorldSettings();
+        gameWorldSettings.virtualWidth = 1024;
+        gameWorldSettings.virtualHeight = 768;
+        gameWorld = new GameWorld(gameWorldSettings);
     }
 
     @Override
     public void resize(int width, int height) {
-        ViewHelper.viewport.update(width, height, true);
+        gameWorld.resize(width, height);
     }
 
     @Override
     public void render(float delta) {
-        clearScreen();                   // очищаем экран
+        clearScreen();                      // очищаем экран
         // обработка клавиш теперь размазана по коду
-        ecsWorld.update(delta);             // обновление игрового мира (состояние и рендеринг)
+        gameWorld.render(delta);             // обновление игрового мира (состояние и рендеринг)
 
         //TODO пробросить вывод runtime-ошибок на экран
     }

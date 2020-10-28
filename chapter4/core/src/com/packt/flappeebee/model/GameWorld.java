@@ -4,7 +4,12 @@ package com.packt.flappeebee.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.ecs.simple.engine.EcsContainer;
 import com.github.br.ecs.simple.engine.EcsSettings;
 import com.github.br.ecs.simple.engine.debug.drawobject.DebugDrawObject;
@@ -15,19 +20,21 @@ import com.github.br.ecs.simple.system.render.RenderSystem;
 import com.github.br.ecs.simple.system.render.ShaderData;
 import com.github.br.ecs.simple.system.render.ShaderUpdater;
 import com.github.br.ecs.simple.system.script.ScriptSystem;
-import com.github.br.ecs.simple.utils.ViewHelper;
 import com.github.br.gdx.simple.console.Console;
 import com.github.br.gdx.simple.console.ConsoleOffOnCallback;
 
 import static com.packt.flappeebee.model.LayerEnum.*;
 
 
-public class EcsWorld {
+public class GameWorld extends ScreenAdapter {
+
+    private GameWorldSettings gameWorldSettings;
 
     private EcsContainer container;
     private Console console;
 
-    public EcsWorld() {
+    public GameWorld(GameWorldSettings gameWorldSettings) {
+        this.gameWorldSettings = gameWorldSettings;
         //TODO
         initEcsContainer();
         initConsole();
@@ -38,12 +45,15 @@ public class EcsWorld {
 
     private void initConsole() {
         //todo пока так, потом подумать с местом инициализации. Плохо, что завязка на скин в ecs-контейнере
-        console = new Console(Input.Keys.F9, DebugDrawObject.DEFAULT_SKIN, ViewHelper.viewport, new ConsoleOffOnCallback() {
-            @Override
-            public void call(boolean isActive) {
-                container.setDebugMode(isActive);
-            }
-        });
+        console = new Console(
+                Input.Keys.F9,
+                DebugDrawObject.DEFAULT_SKIN,
+                new ConsoleOffOnCallback() {
+                    @Override
+                    public void call(boolean isActive) {
+                        container.setDebugMode(isActive);
+                    }
+                });
         console.addCommands(CommandsFactory.getCommands(container));
     }
 
@@ -62,17 +72,18 @@ public class EcsWorld {
             @Override
             public void update(ShaderProgram shaderProgram) {
                 time += Gdx.graphics.getDeltaTime();
-                int a = shaderProgram.getUniformLocation("u_time");
-                shaderProgram.setUniformf(a, time);
+                int uTime = shaderProgram.getUniformLocation("u_time");
+                shaderProgram.setUniformf(uTime, time);
             }
+
         };
 
         settings.layers = new LayerData[]{
-                new LayerData(BACKGROUND.name(), null),
-                new LayerData(PRE_BACKGROUND.name(), null),
-                new LayerData(BACK_EFFECTS.name(), null),
+                new LayerData(BACKGROUND.name()),
+                new LayerData(PRE_BACKGROUND.name()),
+                new LayerData(BACK_EFFECTS.name()),
                 new LayerData(MAIN_LAYER.name(), waveShader),
-                new LayerData(FRONT_EFFECTS.name(), null)
+                new LayerData(FRONT_EFFECTS.name())
         };
         settings.isDebugEnabled = true;
 
@@ -82,7 +93,12 @@ public class EcsWorld {
         container.addSystem(ScriptSystem.class);
         container.addSystem(PhysicsSystem.class);
         container.addSystem(AnimationSystem.class);
-        container.addSystem(new RenderSystem(settings.layers));
+        container.addSystem(
+                new RenderSystem(
+                        createViewport(gameWorldSettings.virtualWidth, gameWorldSettings.virtualHeight),
+                        settings.layers
+                )
+        );
         container.init();
     }
 
@@ -93,9 +109,23 @@ public class EcsWorld {
         Gdx.input.setInputProcessor(inputMultiplexer); //fixme криво, но зато контроль у клиента
     }
 
-    public void update(float delta) {
-        container.update(delta);
-        console.update(delta);
+    @Override
+    public void render(float delta) {
+        container.render(delta);
+        console.render(delta);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        container.resize(width, height);
+        console.resize(width, height);
+    }
+
+    protected Viewport createViewport(float worldWidth, float worldHeight) {
+        Camera camera = new OrthographicCamera();
+        camera.position.set(worldWidth / 2, worldHeight / 2, 0);
+        camera.update();
+        return new StretchViewport(worldWidth, worldHeight, camera);
     }
 
 }

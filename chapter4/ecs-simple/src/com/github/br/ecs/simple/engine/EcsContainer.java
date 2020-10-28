@@ -2,6 +2,7 @@ package com.github.br.ecs.simple.engine;
 
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.Array;
 import com.github.br.ecs.simple.engine.debug.EcsDebug;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
@@ -9,24 +10,22 @@ import com.github.br.ecs.simple.system.script.ScriptComponent;
 /**
  * Контейнер, порождающий игровые сущности. Связывает вместе системы, компоненты и сущности
  */
-public class EcsContainer {
+public class EcsContainer implements Screen {
 
     private EcsSettings settings;
 
     private EcsDebug ecsDebug;
-    private Array<IEcsSystem> systems = new Array<IEcsSystem>();
+    private Array<EcsSystem> systems = new Array<EcsSystem>();
     private EntityManager entityManager = new EntityManager();
     private InputMultiplexer inputMultiplexer;
 
-    private EntityManager.Callback createCallback = new EntityManager.Callback() {
+    private EntityManager.EntityEventCallback createEntityEventCallback = new EntityManager.EntityEventCallback() {
         @Override
         public void call(EcsEntity entity) {
             // заполняем системы нодами с компонентами сущности
-            for (IEcsSystem<EcsNode> system : systems) {
-                Class nodeClass = system.getNodeClass();
-                EcsNode node = EcsReflectionHelper.createAndFillNode(nodeClass, entity);
-                if (node != null) {
-                    system.addNode(node);
+            for (EcsSystem system : systems) {
+                if (system.isApplySystem(entity)) {
+                    system.addEntity(entity);
                 }
             }
             // передаем ссылку на сущность и компоненты скриптам
@@ -41,11 +40,34 @@ public class EcsContainer {
         }
     };
 
-    private EntityManager.Callback deleteCallback = new EntityManager.Callback() {
+    private EntityManager.EntityEventCallback deleteEntityEventCallback = new EntityManager.EntityEventCallback() {
         @Override
         public void call(EcsEntity entity) {
-            for (IEcsSystem system : systems) {
-                system.removeNode(entity.getId());
+            // fixme перебор всех систем, неоптимально.
+            for (EcsSystem system : systems) {
+                system.removeEntity(entity.getId());
+            }
+        }
+    };
+
+    private EntityManager.ComponentEventCallback addedComponentEventCallback = new EntityManager.ComponentEventCallback() {
+        @Override
+        public void call(EntityManager.ComponentChangeEvent componentChangeEvent) {
+            for (EcsSystem system : systems) {
+                if(system.isApplySystem(componentChangeEvent)) {
+                    system.addEntity(componentChangeEvent.ecsEntity);
+                }
+            }
+        }
+    };
+
+    private EntityManager.ComponentEventCallback deletedComponentEventCallback = new EntityManager.ComponentEventCallback() {
+        @Override
+        public void call(EntityManager.ComponentChangeEvent componentChangeEvent) {
+            for (EcsSystem system : systems) {
+                if(system.isApplySystem(componentChangeEvent)) {
+                    system.removeEntity(componentChangeEvent.ecsEntity.getId());
+                }
             }
         }
     };
@@ -54,7 +76,7 @@ public class EcsContainer {
         ecsDebug.setDebugMode(active);
     }
 
-    public void setDebugMode(Class<? extends IEcsSystem> system, boolean active) {
+    public void setDebugMode(Class<? extends EcsSystem> system, boolean active) {
         ecsDebug.setDebugMode(system, active);
     }
 
@@ -67,9 +89,8 @@ public class EcsContainer {
         Array<InputProcessor> processors = new Array<InputProcessor>();
         if (settings.isDebugEnabled) {
             ecsDebug = new EcsDebug(systems);
-            setDebugMode(true);
-
             processors.add(ecsDebug.getInputProcessor());
+            setDebugMode(false); // для красоты, чтобы с консолькой вместе появлялся режим
         }
 
         initInputMultiplexer((InputProcessor[]) processors.toArray(InputProcessor.class));
@@ -84,20 +105,6 @@ public class EcsContainer {
         //Gdx.input.setInputProcessor(inputMultiplexer); todo пока решил оставить это на откуп клиенту
     }
 
-    public void update(float delta) {
-        EcsSimple.ECS.update(delta);
-        if (entityManager.hasChanges()) {
-            entityManager.update(createCallback, deleteCallback); // коллбеки для очистки нод в системах
-        }
-        for (IEcsSystem system : systems) {
-            system.update(delta);
-        }
-
-        if (ecsDebug.isDebugActive()) {
-            ecsDebug.update(delta);
-        }
-    }
-
     public int createEntity(String type, EcsComponent... components) {
         return entityManager.createEntity(type, components);
     }
@@ -106,20 +113,83 @@ public class EcsContainer {
         entityManager.deleteEntity(id);
     }
 
-    public void addSystem(Class<? extends IEcsSystem> clazz) {
+    public void addComponents(int entityId, EcsComponent... components) {
+        entityManager.addComponents(entityId, components);
+    }
+
+    public void deleteComponents(int entityId, EcsComponent... components) {
+        entityManager.deleteComponents(entityId, components);
+    }
+
+    public void addSystem(Class<? extends EcsSystem> clazz) {
         try {
             systems.add(clazz.newInstance());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            throw  new RuntimeException(e);
         }
     }
 
-    public void addSystem(IEcsSystem system) {
+    public void addSystem(EcsSystem system) {
         systems.add(system);
     }
 
+    @Override
+    public void render(float delta) {
+        EcsSimple.ECS.update(delta);
+        entityManager.update(createEntityEventCallback, deleteEntityEventCallback, addedComponentEventCallback, deletedComponentEventCallback); // коллбеки для очистки нод в системах
+        for (EcsSystem system : systems) {
+            system.render(delta);
+        }
+
+        if (ecsDebug.isDebugActive()) {
+            ecsDebug.update(delta);
+        }
+    }
+
+    @Override
+    public void show() {
+        for (EcsSystem system : systems) {
+            system.show();
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        for (EcsSystem system : systems) {
+            system.resize(width, height);
+        }
+        if (ecsDebug != null) {
+            ecsDebug.resize(width, height);
+        }
+    }
+
+    @Override
+    public void pause() {
+        for (EcsSystem system : systems) {
+            system.pause();
+        }
+    }
+
+    @Override
+    public void resume() {
+        for (EcsSystem system : systems) {
+            system.resume();
+        }
+    }
+
+    @Override
+    public void hide() {
+        for (EcsSystem system : systems) {
+            system.hide();
+        }
+    }
+
+    @Override
+    public void dispose() {
+        for (EcsSystem system : systems) {
+            system.dispose();
+        }
+    }
 
     //todo сделать билдер для корректной инициализации контейнера
 

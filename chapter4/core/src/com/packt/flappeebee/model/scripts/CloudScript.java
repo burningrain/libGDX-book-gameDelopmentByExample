@@ -19,6 +19,11 @@ public class CloudScript extends EcsScript {
     }
 
     @Override
+    public void dispose() {
+        transform = null;
+    }
+
+    @Override
     public void update(float delta) {
         transform.position.x -= velocity*delta;
         if(transform.position.x <= 0){

@@ -2,10 +2,9 @@ package com.github.br.ecs.simple.engine.debug;
 
 
 import com.badlogic.gdx.utils.Array;
-import com.github.br.ecs.simple.engine.IDebugSystem;
-import com.github.br.ecs.simple.engine.IEcsSystem;
-
-import java.util.LinkedHashMap;
+import com.badlogic.gdx.utils.OrderedMap;
+import com.github.br.ecs.simple.engine.EcsSystem;
+import com.github.br.ecs.simple.engine.DebugSystem;
 
 import static java.lang.String.format;
 
@@ -15,44 +14,47 @@ import static java.lang.String.format;
  */
 public class DebugService {
 
+    private OrderedMap<Class<? extends EcsSystem>, EcsSystem> systems = new OrderedMap<Class<? extends EcsSystem>, EcsSystem>();
+    private Array<DebugSystem> systemsList = new Array<DebugSystem>();
 
-    private LinkedHashMap<Class<? extends IDebugSystem>, IDebugSystem> systems = new LinkedHashMap<Class<? extends IDebugSystem>, IDebugSystem>();
-    private Array<IDebugSystem> systemsList = new Array<IDebugSystem>();
-
-    public DebugService(Array<IEcsSystem> systems) {
-        for (IDebugSystem iDebugSystem : filterDebugSystems(systems)) {
-            addSystem(iDebugSystem);
+    public DebugService(Array<EcsSystem> systems) {
+        for (DebugSystem debugSystem : filterDebugSystems(systems)) {
+            addSystem(debugSystem);
         }
     }
 
-    public void addSystem(IDebugSystem system) {
+    public void addSystem(DebugSystem system) {
         systems.put(system.getClass(), system);
         systemsList.add(system);
         setDebugMode(system.getClass(), true);
     }
 
-    public void setDebugMode(Class<? extends IEcsSystem> system, boolean active) {
-        IEcsSystem ecsSystem = systems.get(system);
+    public void setDebugMode(Class<? extends EcsSystem> system, boolean active) {
+        EcsSystem ecsSystem = systems.get(system);
         if (ecsSystem == null) throw new IllegalArgumentException(format("Система '%s' не найдена", system));
-        if (ecsSystem instanceof IDebugSystem) {
-            ((IDebugSystem) ecsSystem).setDebugMode(active);
+        if (ecsSystem instanceof DebugSystem) {
+            ((DebugSystem) ecsSystem).setDebugMode(active);
         } else {
             System.out.println(format("Система '%s' не поддерживает режим отладки", system)); //todo логгер впилить
         }
     }
 
-    public Array<IDebugSystem> getSystems() {
+    public Array<DebugSystem> getSystems() {
         return systemsList;
     }
 
-    public boolean isSystemActive(Class<? extends IEcsSystem> key) {
-        return systems.get(key).isDebugMode();
+    public boolean isSystemActive(Class<? extends EcsSystem> ecsSystem) {
+        if (!DebugSystem.class.isAssignableFrom(ecsSystem)) {
+            System.out.println(format("Система '%s' не поддерживает режим отладки, не может быть активна", ecsSystem)); //todo логгер впилить
+            return false;
+        }
+        return ((DebugSystem)systems.get(ecsSystem)).isDebugMode();
     }
 
-    private static Array<IDebugSystem> filterDebugSystems(Array<IEcsSystem> systems) {
-        Array<IDebugSystem> result = new Array<IDebugSystem>();
-        for (IEcsSystem system : systems) {
-            if (system instanceof IDebugSystem) result.add((IDebugSystem) system);
+    private Array<DebugSystem> filterDebugSystems(Array<EcsSystem> systems) {
+        Array<DebugSystem> result = new Array<DebugSystem>();
+        for (EcsSystem system : systems) {
+            if (system instanceof DebugSystem) result.add((DebugSystem) system);
         }
         return result;
     }

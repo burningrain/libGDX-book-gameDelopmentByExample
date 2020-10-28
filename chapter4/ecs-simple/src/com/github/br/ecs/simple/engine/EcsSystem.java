@@ -1,36 +1,64 @@
 package com.github.br.ecs.simple.engine;
 
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.utils.IntMap;
 
-public abstract class EcsSystem<T extends EcsNode> implements IEcsSystem<T> {
+public abstract class EcsSystem extends ScreenAdapter {
 
-    private final Class<T> nodeClazz;
-    protected IntMap<T> allNodes = new IntMap<T>();
+    private final Class[] componentsClasses;
+    protected IntMap<EcsEntity> entities = new IntMap<EcsEntity>();
 
-    public EcsSystem(Class<T> clazz) {
-        this.nodeClazz = clazz;
+    public EcsSystem(Class... componentsClasses) {
+        this.componentsClasses = componentsClasses;
     }
 
-    @Override
-    public void addNode(T node) {
-        allNodes.put(node.entityId, node);
+    public void addEntity(EcsEntity entity) {
+        entities.put(entity.getId(), entity);
     }
 
-    @Override
-    public void removeNode(int entityId) {
-        allNodes.remove(entityId);
+    public void removeEntity(int entityId) {
+        entities.remove(entityId);
     }
 
-    @Override
-    public Class<T> getNodeClass() {
-        return nodeClazz;
+    public boolean isApplySystem(EcsEntity entity) {
+        if (entities.containsKey(entity.getId())) {
+            return false;
+        }
+
+        boolean isApply = true;
+        for (Class componentsClass : componentsClasses) {
+            if (entity.getComponent(componentsClass) == null) {
+                isApply = false;
+                break;
+            }
+        }
+
+        return isApply;
     }
 
-    @Override
-    public void update(float delta) {
-        update(delta, allNodes.values());
+    public boolean isApplySystem(EntityManager.ComponentChangeEvent componentChangeEvent) {
+        switch (componentChangeEvent.type) {
+            case ADD:
+                return isApplySystem(componentChangeEvent.ecsEntity);
+            case DELETE:
+                boolean isApply = false;
+                for (Class componentsClass : componentsClasses) {
+                    if (componentChangeEvent.targetComponents.containsKey(componentsClass)) {
+                        isApply = true;
+                        break;
+                    }
+                }
+
+                return isApply;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
-    protected abstract void update(float delta, IntMap.Values<T> nodes);
+    public void render(float delta) {
+        update(delta, entities.values());
+    }
+
+    protected abstract void update(float delta, IntMap.Values<EcsEntity> nodes);
 
 }

@@ -7,22 +7,21 @@ import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.IdentityMap;
 import com.badlogic.gdx.utils.IntMap;
-import com.github.br.ecs.simple.engine.debug.DebugSystem;
+import com.github.br.ecs.simple.engine.EcsEntity;
 import com.github.br.ecs.simple.engine.debug.DebugDataContainer;
+import com.github.br.ecs.simple.engine.debug.DebugSystem;
 import com.github.br.ecs.simple.engine.debug.data.CircleData;
 import com.github.br.ecs.simple.engine.debug.data.DebugData;
 import com.github.br.ecs.simple.engine.debug.data.PointData;
 import com.github.br.ecs.simple.engine.debug.data.RectangleData;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
 
-import java.util.Collection;
-
-public class PhysicsSystem extends DebugSystem<PhysicsNode> {
+public class PhysicsSystem extends DebugSystem {
 
     private IdentityMap<Class, ShapePosUpdater> shapeUpdaters;
 
     public PhysicsSystem() {
-        super(PhysicsNode.class);
+        super(TransformComponent.class, PhysicsComponent.class);
 
         shapeUpdaters = new IdentityMap<Class, ShapePosUpdater>();
         shapeUpdaters.put(Circle.class, new CirclePosUpdater());
@@ -31,10 +30,10 @@ public class PhysicsSystem extends DebugSystem<PhysicsNode> {
 
     // подумать, может эти батчи через прокси сделать, как транзакции
     @Override
-    public void update(float delta, IntMap.Values<PhysicsNode> nodes, DebugDataContainer debugDataContainer) {
-        for (PhysicsNode physicsNode : nodes) {
-            TransformComponent transform = physicsNode.transform;
-            PhysicsComponent physics = physicsNode.physics;
+    public void update(float delta, IntMap.Values<EcsEntity> entities, DebugDataContainer debugDataContainer) {
+        for (EcsEntity entity : entities) {
+            TransformComponent transform = entity.getComponent(TransformComponent.class);
+            PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
 
             moveNode(transform, physics);
             if (isDebugMode()) {
@@ -47,11 +46,11 @@ public class PhysicsSystem extends DebugSystem<PhysicsNode> {
         DebugData debugData = null;
         PointData pointData = null;
         Vector2 position = transform.position;
-        if(Circle.class == shape.getClass()) {
+        if (Circle.class == shape.getClass()) {
             Circle circle = (Circle) shape;
             debugData = new CircleData(position.x, position.y, circle.radius, transform.rotation);
             pointData = new PointData(position.x, position.y);
-        } else if(Rectangle.class == shape.getClass()) {
+        } else if (Rectangle.class == shape.getClass()) {
             Rectangle rect = (Rectangle) shape;
             debugData = new RectangleData(position.x, position.y, rect.width, rect.height);
             pointData = new PointData(position.x, position.y);
@@ -60,7 +59,7 @@ public class PhysicsSystem extends DebugSystem<PhysicsNode> {
         debugDataContainer.put(pointData);
     }
 
-    private void moveNode(TransformComponent transform, PhysicsComponent physics){
+    private void moveNode(TransformComponent transform, PhysicsComponent physics) {
         //TODO где ротация???
         physics.movement.add(physics.acceleration);
         transform.position.add(physics.movement);

@@ -34,6 +34,15 @@ public class FlowerScript2 extends EcsScript {
     }
 
     @Override
+    public void dispose() {
+        transform = null;
+        physics = null;
+        animation = null;
+        animator = null;
+        flower = null;
+    }
+
+    @Override
     public void update(float delta) {
         flower.x += 10*MathUtils.cos(count);
         flower.y += 10*MathUtils.sin(count);

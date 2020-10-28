@@ -2,6 +2,7 @@ package com.github.br.gdx.simple.console;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,7 +14,7 @@ import com.github.br.gdx.simple.console.exception.ConsoleException;
 /**
  * Created by user on 03.01.2019.
  */
-public class ConsoleUI implements ConsoleService.ConsoleOutput {
+public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOutput {
 
     public static final String FPS = "FPS: ";
 
@@ -31,7 +32,7 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
     private ConsoleService consoleService;
 
     // устраняем множественное срабатывание при длительном нажатии
-    private static final float PAUSE_TIME = 0.4f;
+    private static final float PAUSE_TIME = 0.6f;
     private float time = 0f;
 
     public ConsoleUI(ConsoleService consoleService, Skin skin, Viewport viewport) {
@@ -46,14 +47,22 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
         textArea.setText(message);
     }
 
-    public void update(float delta) {
+    @Override
+    public void render(float delta) {
         time -= delta;
 
+        viewport.apply(true);
         stage.getBatch().setProjectionMatrix(viewport.getCamera().projection);
         stage.getBatch().setTransformMatrix(viewport.getCamera().view);
 
         fpsLabel.setText(FPS + Gdx.graphics.getFramesPerSecond()); //todo поправить частое обновление
         stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.apply(true);
+        viewport.update(width, height);
     }
 
     public InputProcessor getInputProcessor() {
@@ -91,7 +100,7 @@ public class ConsoleUI implements ConsoleService.ConsoleOutput {
             public void keyTyped(TextField textField, char key) {
                 // обработка нажатия ENTER
                 if ((key == '\r' || key == '\n')) {
-                    if(time > 0) {
+                    if (time > 0) {
                         return;
                     } else {
                         time = PAUSE_TIME;

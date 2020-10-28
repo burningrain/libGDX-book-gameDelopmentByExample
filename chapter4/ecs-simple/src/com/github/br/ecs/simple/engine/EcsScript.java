@@ -19,22 +19,38 @@ public abstract class EcsScript {
     }
 
     public abstract void init(); // либо прокидывать entity через super, либо сетить после создания скрипта.
+
+    public abstract void dispose();
+
     public abstract void update(float delta);
 
-    public void createEntity(String type, EcsComponent... components){
+    public void createEntity(String type, EcsComponent... components) {
         container.createEntity(type, components);
     }
 
-    public void deleteEntity(int entityId){
+    public void deleteEntity(int entityId) {
         container.deleteEntity(entityId);
     }
 
-    public int getEntityId(){
+    public void addComponents(int entityId, EcsComponent... components) {
+        container.addComponents(entityId, components);
+    }
+
+    public void deleteComponents(int entityId, EcsComponent... components) {
+        container.deleteComponents(entityId, components);
+    }
+
+    public int getEntityId() {
         return entity.getId();
     }
 
-    // метод будет кидать npe при использовании в конструкторе или полях
-    public <T extends EcsComponent> T getComponent(Class<T> clazz){
+    /**
+     * метод будет кидать npe при использовании в конструкторе или полях
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public <T extends EcsComponent> T getComponent(Class<T> clazz) {
         return entity.getComponent(clazz);
     }
 

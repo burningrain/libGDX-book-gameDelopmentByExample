@@ -39,6 +39,14 @@ public class CrabAnimScript extends EcsScript {
     }
 
     @Override
+    public void dispose() {
+        physics = null;
+        renderer = null;
+        controller = null;
+        context = null;
+    }
+
+    @Override
     public void update(float delta) {
         if(Gdx.input.isKeyPressed(Input.Keys.ENTER) && !attack){
             attack = true;

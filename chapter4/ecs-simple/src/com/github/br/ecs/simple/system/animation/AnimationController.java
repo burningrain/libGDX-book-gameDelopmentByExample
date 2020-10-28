@@ -1,5 +1,6 @@
 package com.github.br.ecs.simple.system.animation;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import com.github.br.ecs.simple.fsm.*;
 
 import java.util.HashMap;
@@ -9,13 +10,13 @@ import java.util.HashMap;
  */
 public class AnimationController {
 
-    private HashMap<String, Animator> animators = new HashMap<String, Animator>();
+    private ObjectMap<String, Animator> animators = new ObjectMap<String, Animator>();
     private FSM fsm;
 
     private Animator currentAnimator;
 
-    public AnimationController(Animator[] animators, FSM fsm){
-        for(Animator animator : animators){
+    public AnimationController(Animator[] animators, FSM fsm) {
+        for (Animator animator : animators) {
             this.animators.put(animator.getName(), animator);
         }
         this.fsm = fsm;
@@ -33,7 +34,7 @@ public class AnimationController {
         });
     }
 
-    void update(){
+    void update() {
         this.fsm.udpate();
         this.currentAnimator.update();
     }
@@ -42,7 +43,7 @@ public class AnimationController {
         return this.fsm.getContext();
     }
 
-    public Animator getCurrentAnimator(){
+    public Animator getCurrentAnimator() {
         return currentAnimator;
     }
 

@@ -2,8 +2,8 @@ package com.github.br.ecs.simple.engine.debug;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.utils.Array;
-import com.github.br.ecs.simple.engine.IDebugSystem;
-import com.github.br.ecs.simple.engine.IEcsSystem;
+import com.github.br.ecs.simple.engine.EcsSystem;
+import com.github.br.ecs.simple.engine.DebugSystem;
 import com.github.br.ecs.simple.utils.InputProcessorWrapper;
 
 /**
@@ -17,7 +17,7 @@ public class EcsDebug {
     private DebugService debugService;
     private DebugUI debugUI;
 
-    public EcsDebug(Array<IEcsSystem> systems) {
+    public EcsDebug(Array<EcsSystem> systems) {
         debugService = new DebugService(systems);
         debugUI = new DebugUI(debugService);
         inputProcessorWrapper = new InputProcessorWrapper(
@@ -30,12 +30,12 @@ public class EcsDebug {
                 });
     }
 
-    public void addSystem(IDebugSystem system) {
+    public void addSystem(DebugSystem system) {
         debugService.addSystem(system);
     }
 
     public void update(float delta) {
-        debugUI.update(delta);
+        debugUI.render(delta);
     }
 
     public boolean isDebugActive() {
@@ -46,12 +46,16 @@ public class EcsDebug {
         this.isDebugActive = isActive;
     }
 
-    public void setDebugMode(Class<? extends IEcsSystem> system, boolean active) {
+    public void setDebugMode(Class<? extends EcsSystem> system, boolean active) {
         debugService.setDebugMode(system, active);
     }
 
     public InputProcessor getInputProcessor() {
         return inputProcessorWrapper;
+    }
+
+    public void resize(int width, int height) {
+        debugUI.resize(width, height);
     }
 
 }

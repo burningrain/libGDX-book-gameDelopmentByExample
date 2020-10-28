@@ -9,7 +9,8 @@ import com.github.br.gdx.simple.console.exception.CommandExecutionException;
  */
 public final class CommandsFactory {
 
-    private CommandsFactory(){}
+    private CommandsFactory() {
+    }
 
     public static Command[] getCommands(EcsContainer container) {
         return new Command[]{

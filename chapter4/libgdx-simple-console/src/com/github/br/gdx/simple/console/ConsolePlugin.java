@@ -7,7 +7,7 @@ import com.badlogic.gdx.InputProcessor;
  */
 public interface ConsolePlugin {
 
-    void update(float delta);
+    void render(float delta);
 
     InputProcessor getInputProcessor();
 

@@ -3,13 +3,15 @@ package com.github.br.gdx.simple.console;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Created by user on 03.01.2019.
  */
-public class Console {
+public class Console extends ScreenAdapter {
 
     private boolean isConsoleActive;
     private InputProcessor inputProcessor;
@@ -26,8 +28,8 @@ public class Console {
     private ConsoleService consoleService;
     private ConsoleUI consoleUI;
 
-    public Console(int activationKeyCode, Skin skin, Viewport viewport) {
-        this(activationKeyCode, skin, viewport, null);
+    public Console(int activationKeyCode, Skin skin, ConsoleOffOnCallback offOnCallback) {
+        this(activationKeyCode, skin, new ScreenViewport(), offOnCallback);
     }
 
     public Console(int activationKeyCode, Skin skin, Viewport viewport, ConsoleOffOnCallback offOnCallback) {
@@ -61,13 +63,19 @@ public class Console {
         return new InputProcessorWrapper(inputProcessor, predicate);
     }
 
-    public void update(float delta) {
+    @Override
+    public void render(float delta) {
         if (isConsoleActive) {
-            consoleUI.update(delta);
+            consoleUI.render(delta);
             for (ConsolePlugin plugin : plugins) {
-                plugin.update(delta);
+                plugin.render(delta);
             }
         }
+    }
+
+    @Override
+    public void resize (int width, int height) {
+        consoleUI.resize(width, height);
     }
 
     public InputProcessor getInputProcessor() {

@@ -5,16 +5,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.OrderedMap;
-import com.github.br.ecs.simple.engine.IDebugSystem;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.br.ecs.simple.engine.DebugSystem;
+import com.github.br.ecs.simple.engine.EcsEntity;
 import com.github.br.ecs.simple.engine.debug.DebugDataContainer;
 import com.github.br.ecs.simple.engine.debug.data.TableData;
+import com.github.br.ecs.simple.system.transform.TransformComponent;
 
 import static java.lang.String.format;
 
 /**
  * Created by user on 02.04.2017.
  */
-public class RenderSystem implements IDebugSystem<RendererNode> {
+public class RenderSystem extends DebugSystem {
 
     private Array<Layer> layersList = new Array<Layer>();
     private OrderedMap<String, Layer> layersMap = new OrderedMap<String, Layer>();
@@ -27,8 +30,9 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
 
     private ShaderSubsystem shaderSubsystem;
 
-    public RenderSystem(LayerData[] layers) {
-        shaderSubsystem = new ShaderSubsystem(layers);
+    public RenderSystem(Viewport viewport, LayerData[] layers) {
+        super(TransformComponent.class, RendererComponent.class);
+        shaderSubsystem = new ShaderSubsystem(viewport, layers);
         for (LayerData layerData : layers) {
             addLayer(layerData.title);
         }
@@ -36,26 +40,21 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
     }
 
     @Override
-    public void addNode(RendererNode node) {
-        String layerTitle = node.renderer.layer;
+    public void addEntity(EcsEntity entity) {
+        String layerTitle = entity.getComponent(RendererComponent.class).layer;
         Layer layer = layersMap.get(layerTitle);
         if (layer == null) {
             throw new IllegalArgumentException(format("Слой '%s' не найден", layerTitle));
         }
 
-        layer.addNode(node);
-        entityLayerMap.put(node.entityId, layerTitle);
+        layer.addEntity(entity);
+        entityLayerMap.put(entity.getId(), layerTitle);
     }
 
     @Override
-    public void removeNode(int entityId) {
+    public void removeEntity(int entityId) {
         String layerTitle = entityLayerMap.get(entityId);
-        layersMap.get(layerTitle).removeNode(entityId);
-    }
-
-    @Override
-    public Class<RendererNode> getNodeClass() {
-        return RendererNode.class;
+        layersMap.get(layerTitle).removeEntity(entityId);
     }
 
     @Override
@@ -69,7 +68,7 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
     }
 
     @Override
-    public void update(float delta) {
+    public void render(float delta) {
         long before = 0;
         TableData.Builder builder = null;
         if (isDebugMode()) {
@@ -78,7 +77,7 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
             nodesAmount = 0;
             builder = new TableData.Builder();
         }
-        final TableData.Builder finalBuilder = builder;
+        final TableData.Builder tableBuilder = builder;
 
         shaderSubsystem.update(new ShaderSubsystem.BatchListener() {
             @Override
@@ -87,7 +86,7 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
                 layer.render(batch);
                 if (isDebugMode()) {
                     nodesAmount += layer.getNodesAmount();
-                    finalBuilder.put(layer.getTitle(), "");
+                    tableBuilder.put(layer.getTitle(), String.valueOf(layer.getNodesAmount()));
                 }
             }
         });
@@ -96,6 +95,16 @@ public class RenderSystem implements IDebugSystem<RendererNode> {
             executionTime = System.nanoTime() - before;
             debugDataContainer.put(builder.build());
         }
+    }
+
+    //fixme косяк архитектуры, при переопределении render метод update не используется
+    @Override
+    protected void update(float delta, IntMap.Values<EcsEntity> nodes) {
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        shaderSubsystem.resize(width, height);
     }
 
     @Override
