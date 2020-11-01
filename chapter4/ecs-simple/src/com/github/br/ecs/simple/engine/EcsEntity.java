@@ -1,6 +1,7 @@
 package com.github.br.ecs.simple.engine;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class EcsEntity {
@@ -14,7 +15,8 @@ public class EcsEntity {
 
     void addComponent(EcsComponent component) {
         if (components.containsKey(component.getClass())) {
-            throw new IllegalArgumentException("Объект уже содержит компонент: " + component.getClass().getSimpleName());
+            Gdx.app.log("warn", "Объект уже содержит компонент: " + component.getClass().getSimpleName());
+            return;
         }
         components.put(component.getClass(), component);
     }

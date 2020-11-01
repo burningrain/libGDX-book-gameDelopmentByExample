@@ -42,11 +42,11 @@ public class EcsDebug {
         return isDebugActive;
     }
 
-    public void setDebugMode(boolean isActive) {
+    public void setSystemDebugMode(boolean isActive) {
         this.isDebugActive = isActive;
     }
 
-    public void setDebugMode(Class<? extends EcsSystem> system, boolean active) {
+    public void setSystemDebugMode(Class<? extends EcsSystem> system, boolean active) {
         debugService.setDebugMode(system, active);
     }
 

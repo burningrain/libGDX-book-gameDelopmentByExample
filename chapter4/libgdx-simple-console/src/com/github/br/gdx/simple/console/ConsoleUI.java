@@ -6,10 +6,12 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.gdx.simple.console.exception.ConsoleException;
+import sun.text.normalizer.VersionInfo;
 
 /**
  * Created by user on 03.01.2019.
@@ -17,6 +19,12 @@ import com.github.br.gdx.simple.console.exception.ConsoleException;
 public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOutput {
 
     public static final String FPS = "FPS: ";
+    public static final String DRAW_CALLS = "DC: ";
+    public static final String SHADER_SWITCHES = "SHSW: ";
+    public static final String TEXTURE_BINDINGS = "TB: ";
+    public static final String VERTEX_COUNT = "VC: ";
+
+    private boolean isShowDebugData;
 
     private Viewport viewport;
 
@@ -28,6 +36,10 @@ public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOu
     private Label textArea;
 
     private Label fpsLabel;
+    private Label drawCallsLabel;
+    private Label shaderSwitchesLabel;
+    private Label textureBindingsLabel;
+    private Label vertexCountLabel;
 
     private ConsoleService consoleService;
 
@@ -35,8 +47,9 @@ public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOu
     private static final float PAUSE_TIME = 0.6f;
     private float time = 0f;
 
-    public ConsoleUI(ConsoleService consoleService, Skin skin, Viewport viewport) {
+    public ConsoleUI(ConsoleService consoleService, Skin skin, Viewport viewport, boolean isShowDebugData) {
         this.viewport = viewport;
+        this.isShowDebugData = isShowDebugData;
         initUI(skin, viewport);
         this.consoleService = consoleService;
         this.consoleService.setConsoleOutput(this);
@@ -54,8 +67,15 @@ public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOu
         viewport.apply(true);
         stage.getBatch().setProjectionMatrix(viewport.getCamera().projection);
         stage.getBatch().setTransformMatrix(viewport.getCamera().view);
+        if(isShowDebugData) {
+            fpsLabel.setText("" + Gdx.graphics.getFramesPerSecond());
+            drawCallsLabel.setText("" + GLProfiler.drawCalls);
+            shaderSwitchesLabel.setText("" + GLProfiler.shaderSwitches);
+            textureBindingsLabel.setText("" + GLProfiler.textureBindings);
+            vertexCountLabel.setText("" + GLProfiler.vertexCount.total);
 
-        fpsLabel.setText(FPS + Gdx.graphics.getFramesPerSecond()); //todo поправить частое обновление
+            GLProfiler.reset();
+        }
         stage.draw();
     }
 
@@ -75,14 +95,39 @@ public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOu
         consoleGroup = new VerticalGroup();
         consoleTextField = new TextField("", skin);
         textArea = new Label(" ", skin);
-        fpsLabel = new Label(FPS, skin);
 
         consoleGroup.addActor(textArea);
         consoleGroup.addActor(consoleTextField);
         consoleGroup.fill();
 
         windowTable.add().top().expand();
-        windowTable.add(fpsLabel).top().right().expand();
+        if(isShowDebugData) {
+            GLProfiler.enable();
+
+            fpsLabel = new Label(FPS, skin);
+            drawCallsLabel = new Label(DRAW_CALLS, skin);
+            shaderSwitchesLabel = new Label(SHADER_SWITCHES, skin);
+            textureBindingsLabel = new Label(TEXTURE_BINDINGS, skin);
+            vertexCountLabel = new Label(VERTEX_COUNT, skin);
+
+            Table table = new Table(skin);
+            table.add(FPS).right();
+            table.add(fpsLabel).right();
+            table.row();
+            table.add(DRAW_CALLS).right();
+            table.add(drawCallsLabel).right();
+            table.row();
+            table.add(SHADER_SWITCHES).right();
+            table.add(shaderSwitchesLabel).right();
+            table.row();
+            table.add(TEXTURE_BINDINGS).right();
+            table.add(textureBindingsLabel).right();
+            table.row();
+            table.add(VERTEX_COUNT).right();
+            table.add(vertexCountLabel).right();
+            windowTable.add(table).top().right().expand();
+        }
+
         windowTable.row();
         windowTable.add(consoleGroup).colspan(2).bottom().fill();
 

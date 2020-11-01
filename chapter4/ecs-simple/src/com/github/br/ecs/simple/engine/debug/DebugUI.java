@@ -127,7 +127,7 @@ public class DebugUI extends ScreenAdapter {
             nodesAmount.update(system.getNodesAmount(), delta);
             executionTime.update(system.getExecutionTime(), delta);
 
-            nodesAmountLabel.setText("a: " + String.valueOf(nodesAmount.getValue()));
+            nodesAmountLabel.setText("e: " + String.valueOf(nodesAmount.getValue()));
             execTimeLabel.setText("t: " + String.valueOf(executionTime.getValue() >>> 10)); // делим на 1024, почти мкс
         }
 

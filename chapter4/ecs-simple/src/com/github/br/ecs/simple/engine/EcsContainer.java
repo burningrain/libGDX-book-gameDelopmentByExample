@@ -73,11 +73,11 @@ public class EcsContainer implements Screen {
     };
 
     public void setDebugMode(boolean active) {
-        ecsDebug.setDebugMode(active);
+        ecsDebug.setSystemDebugMode(active);
     }
 
-    public void setDebugMode(Class<? extends EcsSystem> system, boolean active) {
-        ecsDebug.setDebugMode(system, active);
+    public void setSystemDebugMode(Class<? extends EcsSystem> system, boolean active) {
+        ecsDebug.setSystemDebugMode(system, active);
     }
 
     public EcsContainer(EcsSettings settings) {

@@ -48,6 +48,7 @@ public class GameWorld extends ScreenAdapter {
         console = new Console(
                 Input.Keys.F9,
                 DebugDrawObject.DEFAULT_SKIN,
+                true,
                 new ConsoleOffOnCallback() {
                     @Override
                     public void call(boolean isActive) {
@@ -58,9 +59,6 @@ public class GameWorld extends ScreenAdapter {
     }
 
     private void initEcsContainer() {
-        // инициализация настроек
-        EcsSettings settings = new EcsSettings();
-
         ShaderData waveShader = new ShaderData();
         waveShader.title = "wave";
         waveShader.vertexShader = Gdx.files.internal("shaders/wave_shader.vsh");
@@ -78,6 +76,8 @@ public class GameWorld extends ScreenAdapter {
 
         };
 
+        // инициализация настроек
+        EcsSettings settings = new EcsSettings();
         settings.layers = new LayerData[]{
                 new LayerData(BACKGROUND.name()),
                 new LayerData(PRE_BACKGROUND.name()),

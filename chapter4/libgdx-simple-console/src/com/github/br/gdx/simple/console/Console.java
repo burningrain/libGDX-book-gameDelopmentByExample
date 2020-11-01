@@ -32,17 +32,25 @@ public class Console extends ScreenAdapter {
         this(activationKeyCode, skin, new ScreenViewport(), offOnCallback);
     }
 
+    public Console(int activationKeyCode, Skin skin, boolean isActiveDebugData, ConsoleOffOnCallback offOnCallback) {
+        this(activationKeyCode, skin, new ScreenViewport(), isActiveDebugData, offOnCallback);
+    }
+
     public Console(int activationKeyCode, Skin skin, Viewport viewport, ConsoleOffOnCallback offOnCallback) {
-        this(activationKeyCode, skin, viewport, offOnCallback, new ConsolePlugin[0]);
+        this(activationKeyCode, skin, viewport, offOnCallback, false, new ConsolePlugin[0]);
+    }
+
+    public Console(int activationKeyCode, Skin skin, Viewport viewport, boolean isShowDebugData, ConsoleOffOnCallback offOnCallback) {
+        this(activationKeyCode, skin, viewport, offOnCallback, isShowDebugData, new ConsolePlugin[0]);
     }
 
     public Console(int activationKeyCode, Skin skin, Viewport viewport,
-                   ConsoleOffOnCallback offOnCallback, ConsolePlugin... plugins) {
+                   ConsoleOffOnCallback offOnCallback, boolean isShowDebugData, ConsolePlugin... plugins) {
         this.offOnCallback = offOnCallback;
         this.plugins = plugins;
 
         consoleService = new ConsoleService();
-        consoleUI = new ConsoleUI(consoleService, skin, viewport);
+        consoleUI = new ConsoleUI(consoleService, skin, viewport, isShowDebugData);
 
         ActivateConsoleInputProcessor activateConsoleInputProcessor = new ActivateConsoleInputProcessor(activationKeyCode);
         InputProcessorWrapper inputProcessorWrapper = createInputProcessorWrapper(consoleUI.getInputProcessor());
@@ -74,7 +82,7 @@ public class Console extends ScreenAdapter {
     }
 
     @Override
-    public void resize (int width, int height) {
+    public void resize(int width, int height) {
         consoleUI.resize(width, height);
     }
 
