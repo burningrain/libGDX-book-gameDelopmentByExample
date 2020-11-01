@@ -1,6 +1,7 @@
 package com.github.br.ecs.simple.system.render;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.github.br.ecs.simple.engine.EcsEntity;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
@@ -21,11 +22,11 @@ public class Layer {
         nodes.put(entity.getId(), entity);
     }
 
-    public void removeEntity(int entityId) {
-        nodes.remove(entityId);
+    public EcsEntity removeEntity(int entityId) {
+        return nodes.remove(entityId);
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch, Array<EcsEntity> changeLayerEntities) {
         for (EcsEntity entity : nodes.values()) {
             TransformComponent transform = entity.getComponent(TransformComponent.class);
             RendererComponent renderer = entity.getComponent(RendererComponent.class);
@@ -47,6 +48,10 @@ public class Layer {
                     renderer.flipX,
                     renderer.flipY
             );
+
+            if(renderer.newLayerTitle != null) {
+                changeLayerEntities.add(entity);
+            }
         }
     }
 

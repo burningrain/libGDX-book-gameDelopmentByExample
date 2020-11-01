@@ -82,8 +82,8 @@ public class GameWorld extends ScreenAdapter {
                 new LayerData(BACKGROUND.name()),
                 new LayerData(PRE_BACKGROUND.name()),
                 new LayerData(BACK_EFFECTS.name()),
-                new LayerData(MAIN_LAYER.name(), waveShader),
-                new LayerData(FRONT_EFFECTS.name())
+                new LayerData(MAIN_LAYER.name()),
+                new LayerData(FRONT_EFFECTS.name(), waveShader)
         };
         settings.isDebugEnabled = true;
 

@@ -62,11 +62,15 @@ public class ShaderSubsystem {
         for (int i = 0; i < size; i++) {
             SpriteBatch batch = batches.get(i);
             if (batch != lastBatch) {
+                if(!batchListener.isNeedPaintLayer(i)) {
+                    continue;
+                }
+
                 if (lastBatch != null) {
                     lastBatch.end();
                 }
                 lastBatch = batch;
-                ViewHelper.applyCameraAndViewPort(lastBatch, viewport);
+                ViewHelper.applyCameraAndViewPort(lastBatch, viewport); // todo может и не нужно каждый апдейт обновлять камеру?
                 lastBatch.begin();
                 if (shaderUpdaters.get(i) != null) {
                     shaderUpdaters.get(i).update(batch.getShader());
@@ -85,6 +89,8 @@ public class ShaderSubsystem {
 
     public interface BatchListener {
         void update(int layerNumber, SpriteBatch batch);
+
+        boolean isNeedPaintLayer(int layerNumber);
     }
 
 }

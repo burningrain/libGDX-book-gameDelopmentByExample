@@ -79,17 +79,28 @@ public class RenderSystem extends DebugSystem {
         }
         final TableData.Builder tableBuilder = builder;
 
+        final Array<EcsEntity> ecsEntities = new Array<EcsEntity>();
         shaderSubsystem.update(new ShaderSubsystem.BatchListener() {
             @Override
             public void update(int layerNumber, SpriteBatch batch) {
                 Layer layer = layersList.get(layerNumber);
-                layer.render(batch);
+                layer.render(batch, ecsEntities);
                 if (isDebugMode()) {
                     nodesAmount += layer.getNodesAmount();
                     tableBuilder.put(layer.getTitle(), String.valueOf(layer.getNodesAmount()));
                 }
             }
+
+            @Override
+            public boolean isNeedPaintLayer(int layerNumber) {
+                return layersList.get(layerNumber).getNodesAmount() != 0;
+            }
         });
+
+        // меняем слои у сущностей. В частности - для шейдерных эффектов, так как "шейдер на слой"
+        for (EcsEntity ecsEntity : ecsEntities) {
+            changeLayerForEntity(ecsEntity);
+        }
 
         if (isDebugMode()) {
             executionTime = System.nanoTime() - before;
@@ -126,6 +137,14 @@ public class RenderSystem extends DebugSystem {
         Layer layer = new Layer(title);
         layersList.add(layer);
         layersMap.put(title, layer);
+    }
+
+    private void changeLayerForEntity(EcsEntity ecsEntity) {
+        removeEntity(ecsEntity.getId());
+        RendererComponent component = ecsEntity.getComponent(RendererComponent.class);
+        component.layer = component.newLayerTitle;
+        component.newLayerTitle = null;
+        addEntity(ecsEntity);
     }
 
 }

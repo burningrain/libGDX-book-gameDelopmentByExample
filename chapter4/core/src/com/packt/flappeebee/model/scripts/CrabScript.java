@@ -8,6 +8,7 @@ import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
 import com.packt.flappeebee.model.GameConstants;
+import com.packt.flappeebee.model.LayerEnum;
 
 /**
  * Created by user on 16.04.2017.
@@ -17,13 +18,13 @@ public class CrabScript extends EcsScript {
     private TransformComponent transform;
     private PhysicsComponent physics;
 
-    private RendererComponent testComponent;
+    private RendererComponent rendererComponent;
 
     @Override
     public void init() {
         transform = getComponent(TransformComponent.class);
         physics = getComponent(PhysicsComponent.class);
-        testComponent = getComponent(RendererComponent.class);
+        rendererComponent = getComponent(RendererComponent.class);
     }
 
     @Override
@@ -44,6 +45,13 @@ public class CrabScript extends EcsScript {
             physics.movement.x = -50 * delta;
         } else {
             physics.movement.x = 0;
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.F)) {
+            rendererComponent.newLayerTitle = LayerEnum.FRONT_EFFECTS.name();
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.G)) {
+            rendererComponent.newLayerTitle = LayerEnum.MAIN_LAYER.name();
         }
     }
 
