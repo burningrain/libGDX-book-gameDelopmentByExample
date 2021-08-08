@@ -16,5 +16,5 @@ void main() {
     //texColor.rgb = 1.0 - texColor.rgb;
 
     //final color
-    gl_FragColor = v_color * vec4(texColor.rgb, texColor.a*sin(u_time));
+    gl_FragColor = v_color * vec4(texColor.rgb, texColor.a*abs(sin(u_time * 2)));
 }

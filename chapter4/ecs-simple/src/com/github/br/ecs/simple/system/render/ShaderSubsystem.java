@@ -62,6 +62,7 @@ public class ShaderSubsystem {
         for (int i = 0; i < size; i++) {
             SpriteBatch batch = batches.get(i);
             if (batch != lastBatch) {
+                // не рисовать, если нету на этом слое сущностей
                 if(!batchListener.isNeedPaintLayer(i)) {
                     continue;
                 }
@@ -76,7 +77,6 @@ public class ShaderSubsystem {
                     shaderUpdaters.get(i).update(batch.getShader());
                 }
             }
-            //todo не рисовать, если нету на этом слое сущностей
             batchListener.update(i, lastBatch);
         }
         lastBatch.end();
