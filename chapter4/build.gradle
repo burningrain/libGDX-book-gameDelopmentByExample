@@ -46,6 +46,7 @@ project(":ecs-simple") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+        compile project(":libgdx-simple-animation")
     }
 }
 

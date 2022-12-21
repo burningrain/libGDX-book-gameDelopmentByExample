@@ -3,7 +3,6 @@ package com.packt.flappeebee.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
@@ -13,38 +12,27 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.github.br.ecs.simple.engine.EcsComponent;
 import com.github.br.ecs.simple.engine.EcsScript;
-import com.github.br.ecs.simple.fsm.FSM;
-import com.github.br.ecs.simple.fsm.FsmContext;
-import com.github.br.ecs.simple.fsm.FsmPredicate;
-import com.github.br.ecs.simple.fsm.FsmState;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
-import com.github.br.ecs.simple.system.animation.AnimationController;
-import com.github.br.ecs.simple.system.animation.Animator;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
+import com.github.br.gdx.simple.animation.component.AnimatorDynamicPart;
+import com.github.br.gdx.simple.animation.component.SimpleAnimationComponent;
+import com.github.br.gdx.simple.animation.fsm.FsmContext;
+import com.packt.flappeebee.animation.Animations;
 import com.packt.flappeebee.model.scripts.*;
-
-import java.util.Arrays;
-import java.util.List;
 
 public final class GameObjectFactory {
 
     private GameObjectFactory() {
     }
 
-    private static TextureAtlas packedimages;
-    private static TextureAtlas animAtlas;
-    private static TextureAtlas crabAtlas;
-
-    private static Texture background;
+    private static final TextureAtlas packedimages;
+    private static final Texture background;
 
     static {
         packedimages = new TextureAtlas(Gdx.files.internal("packedimages/example.atlas"));
-        animAtlas = new TextureAtlas(Gdx.files.internal("packedimages/anim_example.atlas"));
-        crabAtlas = new TextureAtlas(Gdx.files.internal("crab/crab.atlas"));
-
         background = new Texture(Gdx.files.internal("background.png"));
     }
 
@@ -58,7 +46,7 @@ public final class GameObjectFactory {
         rendererComponent.layer = LayerEnum.PRE_BACKGROUND.name();
 
         ScriptComponent scriptComponent = new ScriptComponent();
-        scriptComponent.scripts = Arrays.<EcsScript>asList(new CloudScript());
+        scriptComponent.scripts = new Array<EcsScript>(new EcsScript[]{new CloudScript()});
 
         return new EcsComponent[]{transformComponent, rendererComponent, scriptComponent};
     }
@@ -89,7 +77,7 @@ public final class GameObjectFactory {
         physicsComponent.shape = new Circle(new Vector2(32f, 32f), 32f);
 
         ScriptComponent scriptComponent = new ScriptComponent();
-        scriptComponent.scripts = Arrays.<EcsScript>asList(new FlappeeScript());
+        scriptComponent.scripts = new Array<EcsScript>(new EcsScript[]{new FlappeeScript()});
 
         RendererComponent rendererComponent = new RendererComponent();
         rendererComponent.textureRegion = packedimages.findRegion("bee");
@@ -111,30 +99,21 @@ public final class GameObjectFactory {
 
         ScriptComponent scriptComponent = new ScriptComponent();
         if ((plantCount & 1) == 1) {
-            scriptComponent.scripts = Arrays.<EcsScript>asList(new FlowerScript2());
+            scriptComponent.scripts = new Array<EcsScript>(new EcsScript[]{new FlowerScript2()});
         } else {
-            scriptComponent.scripts = Arrays.<EcsScript>asList(new FlowerScript());
+            scriptComponent.scripts = new Array<EcsScript>(new EcsScript[]{new FlowerScript()});
         }
 
         RendererComponent rendererComponent = new RendererComponent();
-        rendererComponent.textureRegion = animAtlas.findRegion("anim", 0);
+        //rendererComponent.textureRegion = animAtlas.findRegion("anim", 0);
         rendererComponent.layer = (plantCount & 1) == 1 ? LayerEnum.PRE_BACKGROUND.name() : LayerEnum.FRONT_EFFECTS.name();
+
         // АНИМАЦИЯ
+        // динамика анимации
         AnimationComponent animationComponent = new AnimationComponent();
-        Animator animatorGrow = new Animator("grow", animAtlas.getRegions(), 1f / 30);
-        animatorGrow.setPlayMode(Animation.PlayMode.LOOP_PINGPONG);
-        animatorGrow.setLooping(true);
-
-        FsmContext fsmContext = new FsmContext();
-        FSM.Builder builder = new FSM.Builder();
-        FsmState.Builder stateBuilder = new FsmState.Builder();
-        stateBuilder.setName("grow").setStartState(true).setEndState(false);
-        builder.addState(stateBuilder.build());
-        builder.addContext(fsmContext);
-        FSM fsm = builder.build();
-
-        AnimationController animationController = new AnimationController(new Animator[]{animatorGrow}, fsm);
-        animationComponent.controller = animationController;
+        AnimatorDynamicPart animatorDynamicPart = new AnimatorDynamicPart( /*animatorGrow */);
+        animationComponent.simpleAnimationComponent = new SimpleAnimationComponent(Animations.PLANT, new FsmContext(), animatorDynamicPart);
+        // динамика анимации
 
         return new EcsComponent[]{
                 transformComponent,
@@ -155,128 +134,25 @@ public final class GameObjectFactory {
         physicsComponent.shape = new Rectangle(0, 0, 75, 64);
 
         ScriptComponent scriptComponent = new ScriptComponent();
-        scriptComponent.scripts = Arrays.asList(new CrabScript(), new CrabAnimScript());
+        scriptComponent.scripts = new Array<EcsScript>(new EcsScript[]{new CrabScript(), new CrabAnimScript()});
 
         RendererComponent rendererComponent = new RendererComponent();
-        rendererComponent.textureRegion = crabAtlas.findRegion("crab", 1);
+        //rendererComponent.textureRegion = crabAtlas.findRegion("crab", 1);
         rendererComponent.layer = LayerEnum.MAIN_LAYER.name();
 
         // АНИМАЦИЯ
-        AnimationComponent animationComponent = new AnimationComponent();
-        Array<TextureAtlas.AtlasRegion> atlasRegions = crabAtlas.getRegions();
-        List<TextureAtlas.AtlasRegion> atlasList = Arrays.asList(atlasRegions.items);
-
-        Array<TextureAtlas.AtlasRegion> movementArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(0, 44).toArray(new TextureAtlas.AtlasRegion[0]));
-        Array<TextureAtlas.AtlasRegion> attackArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(45, 75).toArray(new TextureAtlas.AtlasRegion[0]));
-        Array<TextureAtlas.AtlasRegion> jumpArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(76, 86).toArray(new TextureAtlas.AtlasRegion[0]));
-        Array<TextureAtlas.AtlasRegion> flyArray = new Array<TextureAtlas.AtlasRegion>(atlasList.subList(87, 104).toArray(new TextureAtlas.AtlasRegion[0]));
-
-        Animator animatorIdle = new Animator(CrabAnimScript.IDLE, jumpArray, 1f / 10);
-        animatorIdle.setPlayMode(Animation.PlayMode.LOOP);
-        animatorIdle.setLooping(true);
-        Animator animatorMovement = new Animator(CrabAnimScript.MOVEMENT, movementArray, 1f / 60);
-        animatorMovement.setPlayMode(Animation.PlayMode.LOOP);
-        animatorMovement.setLooping(true);
-        Animator animatorAttack = new Animator(CrabAnimScript.ATTACK, attackArray, 1f / 30);
-        Animator animatorJump = new Animator(CrabAnimScript.JUMP, jumpArray, 1f / 60);
-        Animator animatorFly = new Animator(CrabAnimScript.FLY, flyArray, 1f / 30);
-        animatorFly.setPlayMode(Animation.PlayMode.LOOP);
-        animatorFly.setLooping(true);
-
+        // динамика анимации
         FsmContext fsmContext = new FsmContext();
         fsmContext.insert(CrabAnimScript.MOVEMENT, 0f);
         fsmContext.insert(CrabAnimScript.ATTACK, false);
         fsmContext.insert(CrabAnimScript.JUMP, false);
         fsmContext.insert(CrabAnimScript.FLY, false);
 
-        FSM.Builder builder = new FSM.Builder();
-        FsmState.Builder stateIdleBuilder = new FsmState.Builder();
-        stateIdleBuilder.setName(CrabAnimScript.IDLE).setStartState(true);
-        FsmState.Builder stateMovementBuilder = new FsmState.Builder();
-        stateMovementBuilder.setName(CrabAnimScript.MOVEMENT);
-        FsmState.Builder stateAttackBuilder = new FsmState.Builder();
-        stateAttackBuilder.setName(CrabAnimScript.ATTACK);
-        FsmState.Builder stateJumpBuilder = new FsmState.Builder();
-        stateJumpBuilder.setName(CrabAnimScript.JUMP);
-        FsmState.Builder stateFlyBuilder = new FsmState.Builder();
-        stateFlyBuilder.setName(CrabAnimScript.FLY);
+        AnimationComponent animationComponent = new AnimationComponent();
+        AnimatorDynamicPart animatorDynamicPart = new AnimatorDynamicPart(/*animatorIdle*/);
+        animationComponent.simpleAnimationComponent = new SimpleAnimationComponent(Animations.CRAB, fsmContext, animatorDynamicPart);
+        // динамика анимации
 
-        builder.addContext(fsmContext)
-                .addState(stateIdleBuilder.build())
-                .addState(stateMovementBuilder.build())
-                .addState(stateAttackBuilder.build())
-                .addState(stateJumpBuilder.build())
-                .addState(stateFlyBuilder.build())
-
-                .addTransition(CrabAnimScript.IDLE, CrabAnimScript.MOVEMENT, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;
-                    }
-                })
-                .addTransition(CrabAnimScript.MOVEMENT, CrabAnimScript.IDLE, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;
-                    }
-                })
-                .addTransition(CrabAnimScript.IDLE, CrabAnimScript.JUMP, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.JUMP)) == true;
-                    }
-                })
-                .addTransition(CrabAnimScript.MOVEMENT, CrabAnimScript.JUMP, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.JUMP)) == true;
-                    }
-                })
-                .addTransition(CrabAnimScript.JUMP, CrabAnimScript.FLY, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
-                    }
-                })
-                .addTransition(CrabAnimScript.IDLE, CrabAnimScript.FLY, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
-                    }
-                })
-                .addTransition(CrabAnimScript.MOVEMENT, CrabAnimScript.FLY, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
-                    }
-                })
-                .addTransition(CrabAnimScript.FLY, CrabAnimScript.IDLE, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;
-                    }
-                })
-                .addTransition(CrabAnimScript.FLY, CrabAnimScript.MOVEMENT, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;
-                    }
-                })
-                .addTransitionFromAnyState(CrabAnimScript.ATTACK, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == true;
-                    }
-                })
-                .addTransition(CrabAnimScript.ATTACK, CrabAnimScript.IDLE, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;
-                    }
-                })
-                .addTransition(CrabAnimScript.ATTACK, CrabAnimScript.MOVEMENT, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;
-                    }
-                })
-                .addTransition(CrabAnimScript.ATTACK, CrabAnimScript.FLY, new FsmPredicate() {
-                    public boolean predicate(FsmContext context) {
-                        return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;
-                    }
-                });
-
-        AnimationController animationController = new AnimationController(
-                new Animator[]{animatorIdle, animatorMovement, animatorAttack, animatorJump, animatorFly}, builder.build());
-        animationComponent.controller = animationController;
         // АНИМАЦИЯ
 
         return new EcsComponent[]{transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent};

@@ -1,8 +1,7 @@
-package com.github.br.ecs.simple.fsm;
+package com.github.br.gdx.simple.animation.fsm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
+
 import java.util.UUID;
 
 /**
@@ -10,7 +9,7 @@ import java.util.UUID;
  */
 public class FsmStateSubFsm extends FsmState {
 
-    private FSM innerFsm;
+    private final FSM innerFsm;
 
     public FsmStateSubFsm(String name,
                           boolean startState,
@@ -22,12 +21,14 @@ public class FsmStateSubFsm extends FsmState {
     }
 
     @Override
-    public void update() {
-        super.update();
-        List<FsmTransition> transitions = innerFsm.currentState.getTransitions();
+    public void update(FsmContext context) {
+        super.update(context);
+
+        FsmContext subContext = context.getSubContext(this.getName());
+        Array<FsmTransition> transitions = innerFsm.getState(subContext.getCurrentState()).getTransitions();
         for (FsmTransition t : transitions) {
-            if (t.getPredicate().predicate(innerFsm.context)) {
-                innerFsm.changeState(t.getTo());
+            if (t.getPredicate().predicate(subContext)) {
+                innerFsm.changeState(t.getTo(), subContext);
             }
         }
     }
@@ -35,7 +36,7 @@ public class FsmStateSubFsm extends FsmState {
     public static class Builder {
 
         private String name = UUID.randomUUID().toString();
-        private ArrayList<FsmTransition> transitions = null;
+        private Array<FsmTransition> transitions = null;
 
         private boolean startState = false;
         private boolean endState = false;
@@ -48,17 +49,17 @@ public class FsmStateSubFsm extends FsmState {
             return this;
         }
 
-        public Builder addTranstion(FsmTransition transition) {
+        public Builder addTransition(FsmTransition transition) {
             if (this.transitions == null) {
-                this.transitions = new ArrayList<FsmTransition>();
+                this.transitions = new Array<FsmTransition>();
             }
             this.transitions.add(transition);
             return this;
         }
 
-        public Builder addTransitions(Collection<FsmTransition> transitions) {
+        public Builder addTransitions(Array<FsmTransition> transitions) {
             if (this.transitions == null) {
-                this.transitions = new ArrayList<FsmTransition>();
+                this.transitions = new Array<FsmTransition>();
             }
             this.transitions.addAll(transitions);
             return this;

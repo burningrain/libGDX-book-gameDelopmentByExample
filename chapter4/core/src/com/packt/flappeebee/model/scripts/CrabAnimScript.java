@@ -3,11 +3,11 @@ package com.packt.flappeebee.model.scripts;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.github.br.ecs.simple.engine.EcsScript;
-import com.github.br.ecs.simple.system.animation.AnimationController;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
-import com.github.br.ecs.simple.fsm.FsmContext;
+import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
+import com.github.br.gdx.simple.animation.fsm.FsmContext;
 
 /**
  * Created by user on 17.04.2017.
@@ -23,8 +23,7 @@ public class CrabAnimScript extends EcsScript {
 
     private PhysicsComponent physics;
     private RendererComponent renderer;
-    private AnimationController controller;
-    private FsmContext context;
+    private AnimationComponent animation;
 
     private boolean attack = false;
     private boolean jump = false;
@@ -33,22 +32,20 @@ public class CrabAnimScript extends EcsScript {
     public void init() {
         physics = getComponent(PhysicsComponent.class);
         renderer = getComponent(RendererComponent.class);
-        AnimationComponent animation = getComponent(AnimationComponent.class);
-        controller = animation.controller;
-        context = controller.getAnimationContext();
+        animation = getComponent(AnimationComponent.class);
     }
 
     @Override
     public void dispose() {
         physics = null;
         renderer = null;
-        controller = null;
-        context = null;
+        animation = null;
     }
 
     @Override
     public void update(float delta) {
-        if(Gdx.input.isKeyPressed(Input.Keys.ENTER) && !attack){
+        FsmContext context = animation.simpleAnimationComponent.fsmContext;
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER) && !attack) {
             attack = true;
             context.update(ATTACK, true);
         }
@@ -57,27 +54,27 @@ public class CrabAnimScript extends EcsScript {
             context.update(JUMP, true);
         }
 
-        if(physics.movement.x < 0){
+        if (physics.movement.x < 0) {
             renderer.flipX = true;
         } else {
             renderer.flipX = false;
         }
         context.update(MOVEMENT, Math.abs(physics.movement.x));
 
-        if(physics.movement.y < -0.3){
+        if (physics.movement.y < -0.3) {
             context.update(FLY, true);
-        } else if(physics.movement.y == 0){
+        } else if (physics.movement.y == 0) {
             context.update(FLY, false);
         }
 
-        if(ATTACK.equals(controller.getCurrentAnimator().getName())){
-            if(controller.getCurrentAnimator().isAnimationFinished()){
+        if (ATTACK.equals(context.getCurrentState())) {
+            if (SimpleAnimatorUtils.isAnimationFinished(animation.simpleAnimationComponent.animatorDynamicPart)) {
                 attack = false;
                 context.update(ATTACK, false);
             }
         }
-        if(JUMP.equals(controller.getCurrentAnimator().getName())){
-            if(controller.getCurrentAnimator().isAnimationFinished()){
+        if (JUMP.equals(context.getCurrentState())) {
+            if (SimpleAnimatorUtils.isAnimationFinished(animation.simpleAnimationComponent.animatorDynamicPart)) {
                 jump = false;
                 context.update(JUMP, false);
                 context.update(FLY, true);

@@ -1,8 +1,7 @@
-package com.github.br.ecs.simple.fsm;
+package com.github.br.gdx.simple.animation.fsm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
+
 import java.util.UUID;
 
 /**
@@ -10,15 +9,14 @@ import java.util.UUID;
  */
 public class FsmState {
 
-    private String name;
+    private final String name;
     private FSM fsm;
-    private ArrayList<FsmTransition> transitions;
+    private Array<FsmTransition> transitions;
 
-    private boolean startState;
-    private boolean endState;
+    private final boolean startState;
+    private final boolean endState;
 
     private StateScript stateScript;
-
 
 
     FsmState(String name, boolean startState, boolean endState, StateScript stateScript) {
@@ -38,14 +36,14 @@ public class FsmState {
 
     void addTransition(FsmTransition transition) {
         if (transitions == null) {
-            transitions = new ArrayList<FsmTransition>();
+            transitions = new Array<FsmTransition>();
         }
         transitions.add(transition);
     }
 
-    void addTransitions(Collection<FsmTransition> transition) {
+    void addTransitions(Array<FsmTransition> transition) {
         if (transitions == null) {
-            transitions = new ArrayList<FsmTransition>();
+            transitions = new Array<FsmTransition>();
         }
         transitions.addAll(transition);
     }
@@ -62,14 +60,14 @@ public class FsmState {
         }
     }
 
-    public void update() {
+    public void update(FsmContext context) {
         if (stateScript != null) {
-            stateScript.update();
+            stateScript.update(context);
         }
         if (transitions != null) {
             for (FsmTransition t : transitions) {
-                if (t.getPredicate().predicate(fsm.context)) {
-                    fsm.changeState(t.getTo());
+                if (t.getPredicate().predicate(context)) {
+                    fsm.changeState(t.getTo(), context);
                 }
             }
         }
@@ -91,7 +89,7 @@ public class FsmState {
         return endState;
     }
 
-    public List<FsmTransition> getTransitions() {
+    public Array<FsmTransition> getTransitions() {
         return transitions;
     }
 
@@ -115,7 +113,7 @@ public class FsmState {
     public static class Builder {
 
         private String name = UUID.randomUUID().toString();
-        private ArrayList<FsmTransition> transitions = null;
+        private Array<FsmTransition> transitions = null;
 
         private boolean startState = false;
         private boolean endState = false;
@@ -128,17 +126,17 @@ public class FsmState {
             return this;
         }
 
-        Builder addTranstion(FsmTransition transition) {
-            if(this.transitions == null){
-                this.transitions = new ArrayList<FsmTransition>();
+        Builder addTransition(FsmTransition transition) {
+            if (this.transitions == null) {
+                this.transitions = new Array<FsmTransition>();
             }
             this.transitions.add(transition);
             return this;
         }
 
-        Builder addTransitions(Collection<FsmTransition> transitions) {
-            if(this.transitions == null){
-                this.transitions = new ArrayList<FsmTransition>();
+        Builder addTransitions(Array<FsmTransition> transitions) {
+            if (this.transitions == null) {
+                this.transitions = new Array<FsmTransition>();
             }
             this.transitions.addAll(transitions);
             return this;
@@ -160,13 +158,14 @@ public class FsmState {
         }
 
 
-        public FsmState build(){
-            if(this.name == null){
+        public FsmState build() {
+            if (this.name == null) {
                 throw new IllegalArgumentException("name не должен быть null");
             }
             FsmState fsmState = new FsmState(this.name, this.startState, this.endState, this.stateScript);
             fsmState.transitions = this.transitions;
             return fsmState;
         }
+
     }
 }

@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.gdx.simple.console.exception.ConsoleException;
-import sun.text.normalizer.VersionInfo;
 
 /**
  * Created by user on 03.01.2019.

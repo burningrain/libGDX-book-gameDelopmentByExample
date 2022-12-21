@@ -1,4 +1,4 @@
-package com.github.br.ecs.simple.fsm;
+package com.github.br.gdx.simple.animation.fsm;
 
 /**
  * Created by user on 09.04.2017.
@@ -9,7 +9,7 @@ public class FsmTransition {
     private String to;
     private FsmPredicate predicate;
 
-    public FsmTransition(String from, String to, FsmPredicate predicate){
+    public FsmTransition(String from, String to, FsmPredicate predicate) {
         this.from = from;
         this.to = to;
         this.predicate = predicate;

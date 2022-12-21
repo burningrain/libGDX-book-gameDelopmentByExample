@@ -1,10 +1,8 @@
 package com.packt.flappeebee.model.scripts;
 
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.github.br.ecs.simple.engine.EcsScript;
-import com.github.br.ecs.simple.system.animation.AnimationController;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
@@ -17,7 +15,6 @@ public class FlowerScript2 extends EcsScript {
     private TransformComponent transform;
     private PhysicsComponent physics;
     private AnimationComponent animation;
-    private AnimationController animator;
 
     private Rectangle flower;
     private float count = 0f;
@@ -27,8 +24,8 @@ public class FlowerScript2 extends EcsScript {
         transform = getComponent(TransformComponent.class);
         physics = getComponent(PhysicsComponent.class);
         animation = getComponent(AnimationComponent.class);
-        animator = animation.controller;
-        animator.getCurrentAnimator().gotoAndStop(5);
+//        animator = animation.controller;
+//        animator.getCurrentAnimator().gotoAndStop(5);
 
         flower = (Rectangle) physics.shape;
     }
@@ -38,7 +35,6 @@ public class FlowerScript2 extends EcsScript {
         transform = null;
         physics = null;
         animation = null;
-        animator = null;
         flower = null;
     }
 
@@ -56,4 +52,5 @@ public class FlowerScript2 extends EcsScript {
             physics.movement.y = 10;
         }
     }
+
 }

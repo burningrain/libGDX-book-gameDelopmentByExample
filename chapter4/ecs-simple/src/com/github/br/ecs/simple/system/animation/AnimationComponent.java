@@ -1,13 +1,10 @@
 package com.github.br.ecs.simple.system.animation;
 
 import com.github.br.ecs.simple.engine.EcsComponent;
-import com.github.br.ecs.simple.fsm.FSM;
+import com.github.br.gdx.simple.animation.component.SimpleAnimationComponent;
 
-/**
- * Created by user on 09.04.2017.
- */
 public class AnimationComponent implements EcsComponent {
 
-    public AnimationController controller;
+    public SimpleAnimationComponent simpleAnimationComponent;
 
 }

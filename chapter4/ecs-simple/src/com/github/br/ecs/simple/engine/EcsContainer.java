@@ -12,11 +12,11 @@ import com.github.br.ecs.simple.system.script.ScriptComponent;
  */
 public class EcsContainer implements Screen {
 
-    private EcsSettings settings;
+    private final EcsSettings settings;
 
     private EcsDebug ecsDebug;
-    private Array<EcsSystem> systems = new Array<EcsSystem>();
-    private EntityManager entityManager = new EntityManager();
+    private final Array<EcsSystem> systems = new Array<EcsSystem>();
+    private final EntityManager entityManager = new EntityManager();
     private InputMultiplexer inputMultiplexer;
 
     private EntityManager.EntityEventCallback createEntityEventCallback = new EntityManager.EntityEventCallback() {
@@ -40,7 +40,7 @@ public class EcsContainer implements Screen {
         }
     };
 
-    private EntityManager.EntityEventCallback deleteEntityEventCallback = new EntityManager.EntityEventCallback() {
+    private final EntityManager.EntityEventCallback deleteEntityEventCallback = new EntityManager.EntityEventCallback() {
         @Override
         public void call(EcsEntity entity) {
             // fixme перебор всех систем, неоптимально.
@@ -50,7 +50,7 @@ public class EcsContainer implements Screen {
         }
     };
 
-    private EntityManager.ComponentEventCallback addedComponentEventCallback = new EntityManager.ComponentEventCallback() {
+    private final EntityManager.ComponentEventCallback addedComponentEventCallback = new EntityManager.ComponentEventCallback() {
         @Override
         public void call(EntityManager.ComponentChangeEvent componentChangeEvent) {
             for (EcsSystem system : systems) {
@@ -61,7 +61,7 @@ public class EcsContainer implements Screen {
         }
     };
 
-    private EntityManager.ComponentEventCallback deletedComponentEventCallback = new EntityManager.ComponentEventCallback() {
+    private final EntityManager.ComponentEventCallback deletedComponentEventCallback = new EntityManager.ComponentEventCallback() {
         @Override
         public void call(EntityManager.ComponentChangeEvent componentChangeEvent) {
             for (EcsSystem system : systems) {

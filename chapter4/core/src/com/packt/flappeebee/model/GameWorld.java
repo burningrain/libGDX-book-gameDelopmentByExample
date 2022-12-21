@@ -22,13 +22,14 @@ import com.github.br.ecs.simple.system.render.ShaderUpdater;
 import com.github.br.ecs.simple.system.script.ScriptSystem;
 import com.github.br.gdx.simple.console.Console;
 import com.github.br.gdx.simple.console.ConsoleOffOnCallback;
+import com.packt.flappeebee.animation.AnimationFactory;
 
 import static com.packt.flappeebee.model.LayerEnum.*;
 
 
 public class GameWorld extends ScreenAdapter {
 
-    private GameWorldSettings gameWorldSettings;
+    private final GameWorldSettings gameWorldSettings;
 
     private EcsContainer container;
     private Console console;
@@ -87,12 +88,17 @@ public class GameWorld extends ScreenAdapter {
         };
         settings.isDebugEnabled = true;
 
-        container = new EcsContainer(settings);
+        // загрузка анимаций
+        AnimationSystem animationSystem = new AnimationSystem();
+        animationSystem.load(Gdx.files.internal("animation"));
+        animationSystem.addAnimation(AnimationFactory.createCrab());
+        animationSystem.addAnimation(AnimationFactory.createPlant());
 
+        container = new EcsContainer(settings);
         // инициализация систем. Порядок очень важен!
         container.addSystem(ScriptSystem.class);
         container.addSystem(PhysicsSystem.class);
-        container.addSystem(AnimationSystem.class);
+        container.addSystem(animationSystem);
         container.addSystem(
                 new RenderSystem(
                         createViewport(gameWorldSettings.virtualWidth, gameWorldSettings.virtualHeight),
