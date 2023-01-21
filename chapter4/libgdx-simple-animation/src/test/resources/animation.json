@@ -1,0 +1,135 @@
+{
+  "animators": [
+    {
+      "name": "MOVEMENT",
+      "frameFrequency": 60,
+      "mode": "LOOP",
+      "from": 0,
+      "to": 45
+    },
+    {
+      "name": "ATTACK",
+      "frameFrequency": 30,
+      "mode": "NORMAL",
+      "from": 46,
+      "to": 75
+    },
+    {
+      "name": "JUMP",
+      "frameFrequency": 60,
+      "mode": "NORMAL",
+      "from": 76,
+      "to": 86
+    },
+    {
+      "name": "FLY",
+      "frameFrequency": 30,
+      "mode": "LOOP",
+      "from": 87,
+      "to": 104
+    },
+    {
+      "name": "IDLE",
+      "frameFrequency": 10,
+      "mode": "LOOP",
+      "from": 76,
+      "to": 86
+    }
+  ],
+  "subFsm": {
+    "IDLE": {
+      "states": [
+      ],
+      "startState": "IDLE",
+      "endState": "",
+      "transitions": [
+      ]
+    },
+    "IDLE.VARIANT1": {
+      "states": [
+      ],
+      "startState": "IDLE",
+      "endState": "",
+      "transitions": [
+      ]
+    }
+  },
+  "fsm": {
+    "states": [
+      "IDLE",
+      "MOVEMENT",
+      "ATTACK",
+      "JUMP",
+      "FLY"
+    ],
+    "startState": "IDLE",
+    "endState": "",
+    "transitions": [
+      {
+        "from": "IDLE",
+        "to": "MOVEMENT",
+        "fsmPredicate": "return Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;"
+      },
+      {
+        "from": "MOVEMENT",
+        "to": "IDLE",
+        "fsmPredicate": "return Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;"
+      },
+      {
+        "from": "IDLE",
+        "to": "JUMP",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.JUMP)) == true;"
+      },
+      {
+        "from": "MOVEMENT",
+        "to": "JUMP",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.JUMP)) == true;"
+      },
+      {
+        "from": "JUMP",
+        "to": "FLY",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;"
+      },
+      {
+        "from": "IDLE",
+        "to": "FLY",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;"
+      },
+      {
+        "from": "MOVEMENT",
+        "to": "FLY",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;"
+      },
+      {
+        "from": "FLY",
+        "to": "IDLE",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;"
+      },
+      {
+        "from": "FLY",
+        "to": "MOVEMENT",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.FLY)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;"
+      },
+      {
+        "from": "ANY_STATE",
+        "to": "ATTACK",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == true;"
+      },
+      {
+        "from": "ATTACK",
+        "to": "IDLE",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) <= 0;"
+      },
+      {
+        "from": "ATTACK",
+        "to": "MOVEMENT",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Float.class.cast(context.get(CrabAnimScript.MOVEMENT)) > 0;"
+      },
+      {
+        "from": "ATTACK",
+        "to": "FLY",
+        "fsmPredicate": "return Boolean.class.cast(context.get(CrabAnimScript.ATTACK)) == false && Boolean.class.cast(context.get(CrabAnimScript.FLY)) == true;"
+      }
+    ]
+  }
+}
