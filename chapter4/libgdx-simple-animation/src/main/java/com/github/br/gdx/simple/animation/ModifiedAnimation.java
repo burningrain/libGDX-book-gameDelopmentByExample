@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
  * TODO причина существования данного класса-клона в том, что нету возможности "обнулить" com.badlogic.gdx.graphics.g2d.Animation
  * TODO а плодить каждый раз new Animation() и терять 16+ байт при смене анимации нету никакого желания
  */
-public class AnimationModified {
+public class ModifiedAnimation {
 
     Object[] keyFrames; // TextureRegion[] компилятор трет тип из-за забыотого в либе <>   убран final. поле можно изменять
     private float frameDuration;
@@ -26,7 +26,7 @@ public class AnimationModified {
      * @param keyFrames     the {@link TextureRegion}s representing the frames.
      * @param playMode      the animation playback mode.
      */
-    public AnimationModified(float frameDuration, Object[] keyFrames, Animation.PlayMode playMode) {
+    public ModifiedAnimation(float frameDuration, Object[] keyFrames, Animation.PlayMode playMode) {
         this.frameDuration = frameDuration;
         this.animationDuration = keyFrames.length * frameDuration;
         this.keyFrames = keyFrames;
@@ -40,7 +40,7 @@ public class AnimationModified {
      * @param frameDuration the time between frames in seconds.
      * @param keyFrames     the {@link TextureRegion}s representing the frames.
      */
-    public AnimationModified(float frameDuration, TextureRegion... keyFrames) {
+    public ModifiedAnimation(float frameDuration, TextureRegion... keyFrames) {
         this.frameDuration = frameDuration;
         this.animationDuration = keyFrames.length * frameDuration;
         this.keyFrames = keyFrames;
@@ -225,11 +225,11 @@ public class AnimationModified {
                 new TextureRegion()
         };
 
-        AnimationModified animationModified = new AnimationModified(1 / 60f, array);
-        System.out.println(animationModified.getAnimationDuration());
+        ModifiedAnimation modifiedAnimation = new ModifiedAnimation(1 / 60f, array);
+        System.out.println(modifiedAnimation.getAnimationDuration());
 
-        animationModified.reset(1 / 60f, array2, Animation.PlayMode.LOOP);
-        System.out.println(animationModified.getAnimationDuration());
+        modifiedAnimation.reset(1 / 60f, array2, Animation.PlayMode.LOOP);
+        System.out.println(modifiedAnimation.getAnimationDuration());
     }
 
 

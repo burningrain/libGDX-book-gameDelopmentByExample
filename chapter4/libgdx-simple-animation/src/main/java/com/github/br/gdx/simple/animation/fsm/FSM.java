@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class FSM {
 
-    public static final String ANY_STATE = "anyState";
+    public static final String ANY_STATE = "ANY_STATE";
 
     private final FsmState anyState;
     private final FsmState startState;
@@ -190,7 +190,7 @@ public class FSM {
         public FSM build() {
             //todo проверить на null и выкинуть ошибки
             if (startState == null) {
-                throw new IllegalStateException("начальное состояние должно быть!");
+                throw new IllegalStateException("начальное состояние должно быть задано!");
             }
 
             return new FSM(states, transitions, startState, endState, fsmStateCallbacks, rules, anyStateTransitionBag);

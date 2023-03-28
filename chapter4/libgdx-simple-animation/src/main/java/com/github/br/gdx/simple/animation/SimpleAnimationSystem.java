@@ -1,14 +1,17 @@
 package com.github.br.gdx.simple.animation;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.br.gdx.simple.animation.component.AnimatorStaticPart;
 import com.github.br.gdx.simple.animation.component.SimpleAnimationComponent;
 import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
+import com.github.br.gdx.simple.animation.io.AnimationLoader;
 
 public class SimpleAnimationSystem {
 
+    private final AnimationLoader loader = new AnimationLoader();
     private final ObjectMap<String, SimpleAnimation> animations = new ObjectMap<String, SimpleAnimation>();
 
     public void update(float delta, SimpleAnimationComponent animationComponent) {
@@ -16,7 +19,7 @@ public class SimpleAnimationSystem {
         FsmContext fsmContext = animationComponent.fsmContext;
         String stateBefore = fsmContext.getCurrentState();
         // если не инициализирован компонент, то выставляем ему начальное состояние
-        if(stateBefore == null) {
+        if (stateBefore == null) {
             stateBefore = simpleAnimation.fsm.getStartState();
             fsmContext.setCurrentState(stateBefore);
             SimpleAnimatorUtils.reset(simpleAnimation.animatorStaticParts.get(stateBefore), animationComponent.animatorDynamicPart);
@@ -28,7 +31,7 @@ public class SimpleAnimationSystem {
         String stateAfter = fsmContext.getCurrentState();
         AnimatorStaticPart animatorStaticPart = simpleAnimation.animatorStaticParts.get(stateAfter);
         // если было переключение состояния анимации, то надо сбросить по нулям параметры
-        if(!stateAfter.equals(stateBefore)) {
+        if (!stateAfter.equals(stateBefore)) {
             SimpleAnimatorUtils.reset(animatorStaticPart, animationComponent.animatorDynamicPart);
             SimpleAnimatorUtils.play(animationComponent.animatorDynamicPart);
         }
@@ -42,8 +45,12 @@ public class SimpleAnimationSystem {
     }
 
     public void load(FileHandle animationsDir) {
-        for (FileHandle entry: animationsDir.list()) {
-            //TODO
+        Array<SimpleAnimation> items = loader.load(animationsDir);
+        if(items == null || items.size == 0) {
+            return;
+        }
+        for (SimpleAnimation simpleAnimation : items) {
+            addAnimation(simpleAnimation);
         }
     }
 

@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.github.br.gdx.simple.animation.io.dto.AnimationDto;
 
-public class InputOutputConverter {
+public class JsonConverter implements Converter<String, AnimationDto> {
 
     private final Json JSON = new Json(JsonWriter.OutputType.json);
 

@@ -7,9 +7,18 @@ import java.util.Map;
 
 public class AnimationDto implements Serializable {
 
+    private String name;
     private AnimatorDto[] animators;
     private FsmDto fsm;
     private ObjectMap<String, FsmDto> subFsm;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public AnimatorDto[] getAnimators() {
         return animators;

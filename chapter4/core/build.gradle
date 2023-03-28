@@ -9,3 +9,5 @@ sourceSets.main.resources.srcDirs = ['assets/']
 eclipse.project {
     name = appName + "-core"
 }
+
+

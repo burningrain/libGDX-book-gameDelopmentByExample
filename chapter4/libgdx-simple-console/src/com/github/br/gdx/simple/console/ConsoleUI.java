@@ -42,11 +42,15 @@ public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOu
 
     private ConsoleService consoleService;
 
+    private GLProfiler glProfiler;
+
     // устраняем множественное срабатывание при длительном нажатии
     private static final float PAUSE_TIME = 0.6f;
     private float time = 0f;
 
     public ConsoleUI(ConsoleService consoleService, Skin skin, Viewport viewport, boolean isShowDebugData) {
+        this.glProfiler = new GLProfiler(Gdx.graphics);
+
         this.viewport = viewport;
         this.isShowDebugData = isShowDebugData;
         initUI(skin, viewport);
@@ -68,12 +72,12 @@ public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOu
         stage.getBatch().setTransformMatrix(viewport.getCamera().view);
         if(isShowDebugData) {
             fpsLabel.setText("" + Gdx.graphics.getFramesPerSecond());
-            drawCallsLabel.setText("" + GLProfiler.drawCalls);
-            shaderSwitchesLabel.setText("" + GLProfiler.shaderSwitches);
-            textureBindingsLabel.setText("" + GLProfiler.textureBindings);
-            vertexCountLabel.setText("" + GLProfiler.vertexCount.total);
+            drawCallsLabel.setText("" + glProfiler.getDrawCalls());
+            shaderSwitchesLabel.setText("" + glProfiler.getShaderSwitches());
+            textureBindingsLabel.setText("" + glProfiler.getTextureBindings());
+            vertexCountLabel.setText("" + glProfiler.getVertexCount().total);
 
-            GLProfiler.reset();
+            glProfiler.reset();
         }
         stage.draw();
     }
@@ -101,7 +105,7 @@ public class ConsoleUI extends ScreenAdapter implements ConsoleService.ConsoleOu
 
         windowTable.add().top().expand();
         if(isShowDebugData) {
-            GLProfiler.enable();
+            glProfiler.enable();
 
             fpsLabel = new Label(FPS, skin);
             drawCallsLabel = new Label(DRAW_CALLS, skin);

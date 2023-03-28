@@ -13,8 +13,8 @@
       "name": "ATTACK",
       "frameFrequency": 30,
       "mode": "NORMAL",
-      "from": 46,
-      "to": 75,
+      "from": 45,
+      "to": 76,
       "looping": false
     },
     {
@@ -22,7 +22,7 @@
       "frameFrequency": 60,
       "mode": "NORMAL",
       "from": 76,
-      "to": 86,
+      "to": 87,
       "looping": false
     },
     {
@@ -30,7 +30,7 @@
       "frameFrequency": 30,
       "mode": "LOOP",
       "from": 87,
-      "to": 104,
+      "to": 105,
       "looping": true
     },
     {
@@ -38,32 +38,10 @@
       "frameFrequency": 10,
       "mode": "LOOP",
       "from": 76,
-      "to": 86,
+      "to": 87,
       "looping": true
     }
   ],
-  "subFsm": {
-    "IDLE": {
-      "states": [
-        "IDLE.VARIANT1",
-        "IDLE.VARIANT2",
-        "IDLE.VARIANT3"
-      ],
-      "startState": "IDLE.VARIANT1",
-      "endState": "",
-      "transitions": [
-      ]
-    },
-    "IDLE.VARIANT1": {
-      "states": [
-        "IDLE.VARIANT1.PATH1"
-      ],
-      "startState": "IDLE.VARIANT1.PATH1",
-      "endState": "",
-      "transitions": [
-      ]
-    }
-  },
   "fsm": {
     "states": [
       "IDLE",
@@ -78,7 +56,7 @@
       {
         "from": "IDLE",
         "to": "MOVEMENT",
-        "fsmPredicate": "return Float.class.cast(context.get(\"MOVEMENT\")) <= 0;"
+        "fsmPredicate": "return Float.class.cast(context.get(\"MOVEMENT\")) > 0;"
       },
       {
         "from": "MOVEMENT",

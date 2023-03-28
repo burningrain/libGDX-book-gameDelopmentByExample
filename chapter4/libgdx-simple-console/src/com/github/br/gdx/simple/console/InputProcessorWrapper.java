@@ -72,11 +72,11 @@ public class InputProcessorWrapper implements InputProcessor {
     }
 
     @Override
-    public boolean scrolled(int amount) {
+    public boolean scrolled(float amountX, float amountY) {
         if(predicate.apply()) {
             return false;
         }
-        return inputProcessor.scrolled(amount);
+        return inputProcessor.scrolled(amountX, amountY);
     }
 
     public interface Predicate {

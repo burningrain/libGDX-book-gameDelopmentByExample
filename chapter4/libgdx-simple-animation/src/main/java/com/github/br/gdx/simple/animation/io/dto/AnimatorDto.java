@@ -11,6 +11,7 @@ public class AnimatorDto implements Serializable {
     private Animation.PlayMode mode;
     private int from;
     private int to;
+    private boolean looping;
 
     public String getName() {
         return name;
@@ -50,6 +51,14 @@ public class AnimatorDto implements Serializable {
 
     public void setTo(int to) {
         this.to = to;
+    }
+
+    public boolean isLooping() {
+        return looping;
+    }
+
+    public void setLooping(boolean looping) {
+        this.looping = looping;
     }
 
 }

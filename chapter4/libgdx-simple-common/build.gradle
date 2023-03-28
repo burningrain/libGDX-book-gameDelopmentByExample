@@ -15,7 +15,6 @@ dependencies {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-        compile project(":libgdx-simple-common")
 
         compile  "junit:junit:4.11"
     }

@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import java.io.InputStream;
 
-public class InputOutputConverterTest {
+public class JsonConverterTest {
 
-    private final InputOutputConverter converter = new InputOutputConverter();
+    private final JsonConverter converter = new JsonConverter();
 
     @Test
     public void testReadingJson() {

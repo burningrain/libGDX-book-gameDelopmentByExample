@@ -14,7 +14,7 @@ allprojects {
     version = '1.0'
     ext {
         appName = "flappee-bee"
-        gdxVersion = '1.7.0'
+        gdxVersion = '1.11.0'
         roboVMVersion = '1.8.0'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.6.0'
@@ -36,6 +36,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile project(":ecs-simple")
         compile project(":libgdx-simple-console")
+        compile project(":libgdx-simple-common")
     }
 }
 

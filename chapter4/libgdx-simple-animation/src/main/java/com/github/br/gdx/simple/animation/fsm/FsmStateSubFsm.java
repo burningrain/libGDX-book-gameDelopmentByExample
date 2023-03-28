@@ -86,7 +86,10 @@ public class FsmStateSubFsm extends FsmState {
                 throw new IllegalArgumentException("name не должен быть null");
             }
             FsmStateSubFsm fsmState = new FsmStateSubFsm(this.name, this.startState, this.endState, this.stateScript, innerFsm);
-            fsmState.addTransitions(this.transitions);
+            if(this.transitions != null) {
+                fsmState.addTransitions(this.transitions);
+            }
+
             return fsmState;
         }
     }

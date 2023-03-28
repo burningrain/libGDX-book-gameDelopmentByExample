@@ -20,6 +20,7 @@ import com.github.br.ecs.simple.system.render.RenderSystem;
 import com.github.br.ecs.simple.system.render.ShaderData;
 import com.github.br.ecs.simple.system.render.ShaderUpdater;
 import com.github.br.ecs.simple.system.script.ScriptSystem;
+import com.github.br.gdx.simple.common.SimpleGdx;
 import com.github.br.gdx.simple.console.Console;
 import com.github.br.gdx.simple.console.ConsoleOffOnCallback;
 import com.packt.flappeebee.animation.AnimationFactory;
@@ -90,8 +91,8 @@ public class GameWorld extends ScreenAdapter {
 
         // загрузка анимаций
         AnimationSystem animationSystem = new AnimationSystem();
-        animationSystem.load(Gdx.files.internal("animation"));
-        animationSystem.addAnimation(AnimationFactory.createCrab());
+        animationSystem.load(SimpleGdx.files.internal("animation"));
+        //animationSystem.addAnimation(AnimationFactory.createCrab());
         animationSystem.addAnimation(AnimationFactory.createPlant());
 
         container = new EcsContainer(settings);
