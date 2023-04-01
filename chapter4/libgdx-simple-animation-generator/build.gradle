@@ -1,23 +1,18 @@
 version '1.0'
 
-apply plugin: 'java'
+apply plugin: "java-library"
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.7
 //sourceSets.main.java.srcDirs = ["src/main/java"]
 //sourceSets.test.java.srcDirs = ["src/test/java"]
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     dependencies {
-        compile project(":libgdx-simple-animation")
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+        implementation project(":libgdx-simple-animation")
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
 
-        compile  "junit:junit:4.11"
+        testImplementation  "junit:junit:4.11"
     }
 
 }

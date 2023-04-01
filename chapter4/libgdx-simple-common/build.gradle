@@ -2,21 +2,17 @@ version '1.0'
 
 apply plugin: 'java'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.7
 //sourceSets.main.java.srcDirs = ["src/main/java"]
 //sourceSets.test.java.srcDirs = ["src/test/java"]
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
 
-        compile  "junit:junit:4.11"
+        testImplementation  "junit:junit:4.11"
     }
 
 }
+targetCompatibility = JavaVersion.VERSION_1_7
