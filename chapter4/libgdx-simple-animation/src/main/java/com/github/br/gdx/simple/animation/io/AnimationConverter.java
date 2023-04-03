@@ -1,5 +1,6 @@
 package com.github.br.gdx.simple.animation.io;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.br.gdx.simple.animation.AnimationExtensions;
 import com.github.br.gdx.simple.animation.SimpleAnimation;
@@ -18,11 +19,12 @@ public class AnimationConverter {
 
     private final AnimationClassloader animationClassloader = new AnimationClassloader();
 
-    public SimpleAnimation from(AnimationDto animationDto, Object[] keyFrames, ObjectMap<String, byte[]> javaClasses) {
+    public SimpleAnimation from(AnimationDto animationDto, TextureAtlas atlas, Object[] keyFrames, ObjectMap<String, byte[]> javaClasses) {
         loadTransitionClasses(animationDto.getName(), javaClasses);
         return new SimpleAnimation(
                 animationDto.getName(),
                 createFsm(animationDto.getName(), animationDto.getFsm(), animationDto.getSubFsm()),
+                atlas,
                 createAnimatorStaticParts(animationDto.getAnimators(), keyFrames)
         );
     }
@@ -99,8 +101,7 @@ public class AnimationConverter {
         String fullClassName = AnimationExtensions.ANIMATION_PACKAGE + packageName + "." + classname;
         try {
             Class<?> aClass = Class.forName(fullClassName);
-            FsmPredicate predicate = (FsmPredicate) aClass.newInstance();
-            return predicate;
+            return (FsmPredicate) aClass.newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

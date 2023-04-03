@@ -41,7 +41,7 @@ public class AnimationFactory {
 
         ObjectMap<String, AnimatorStaticPart> map = new ObjectMap<String, AnimatorStaticPart>();
         map.put(animatorGrow.name, animatorGrow);
-        SimpleAnimation simpleAnimation = new SimpleAnimation(Animations.PLANT, fsm, map);
+        SimpleAnimation simpleAnimation = new SimpleAnimation(Animations.PLANT, fsm, animAtlas, map);
         // статика анимации
 
         return simpleAnimation;
@@ -171,7 +171,7 @@ public class AnimationFactory {
         animators.put(animatorJump.name, animatorJump);
         animators.put(animatorFly.name, animatorFly);
 
-        SimpleAnimation simpleAnimation = new SimpleAnimation(Animations.CRAB, fsm, animators);
+        SimpleAnimation simpleAnimation = new SimpleAnimation(Animations.CRAB, fsm, crabAtlas, animators);
         // статика анимации
         return simpleAnimation;
     }

@@ -2,6 +2,7 @@ package com.github.br.gdx.simple.animation;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.br.gdx.simple.animation.component.AnimatorStaticPart;
 import com.github.br.gdx.simple.animation.component.SimpleAnimationComponent;
@@ -9,7 +10,7 @@ import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
 import com.github.br.gdx.simple.animation.io.AnimationLoader;
 
-public class SimpleAnimationSystem {
+public class SimpleAnimationSystem implements Disposable {
 
     private final AnimationLoader loader = new AnimationLoader();
     private final ObjectMap<String, SimpleAnimation> animations = new ObjectMap<String, SimpleAnimation>();
@@ -41,7 +42,6 @@ public class SimpleAnimationSystem {
 
     public void addAnimation(SimpleAnimation simpleAnimation) {
         this.animations.put(simpleAnimation.name, simpleAnimation);
-        //this.animatorService.play(); //todo вопрос изначальной инициализации открыт
     }
 
     public void load(FileHandle animationsDir) {
@@ -52,6 +52,24 @@ public class SimpleAnimationSystem {
         for (SimpleAnimation simpleAnimation : items) {
             addAnimation(simpleAnimation);
         }
+    }
+
+    public void unload(String title) {
+        SimpleAnimation simpleAnimation = animations.remove(title);
+        if(simpleAnimation == null) {
+            throw new IllegalArgumentException("The animation '" + title + "' is not found");
+        }
+
+        simpleAnimation.dispose();
+    }
+
+    @Override
+    public void dispose() {
+        ObjectMap.Entries<String, SimpleAnimation> iterator = animations.iterator();
+        for (ObjectMap.Entry<String, SimpleAnimation> entry : iterator) {
+            entry.value.dispose();
+        }
+        animations.clear();
     }
 
 }

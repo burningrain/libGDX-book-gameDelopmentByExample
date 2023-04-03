@@ -1,5 +1,6 @@
 package com.github.br.gdx.simple.animation.io;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.github.br.gdx.simple.animation.SimpleAnimation;
 import com.github.br.gdx.simple.animation.io.dto.AnimationDto;
 
@@ -10,8 +11,9 @@ public class FolderAnimationConverter {
 
     public SimpleAnimation from(FolderAnimDto anim) {
         AnimationDto animationDto = jsonConverter.from(anim.getFsm());
-        Object[] atlasRegions = anim.getTextureAtlas().getRegions().shrink(); // TextureAtlas[]
-        return animationConverter.from(animationDto, atlasRegions, anim.getJavaClasses());
+        TextureAtlas textureAtlas = anim.getTextureAtlas();
+        Object[] atlasRegions = textureAtlas.getRegions().shrink(); // TextureAtlas[]
+        return animationConverter.from(animationDto, textureAtlas, atlasRegions, anim.getJavaClasses());
     }
 
 }

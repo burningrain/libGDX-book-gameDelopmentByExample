@@ -73,10 +73,9 @@ public class FSM {
     void changeState(String newState, FsmContext context) {
         FsmState currentState = states.get(context.getCurrentState());
         if (currentState.getName().equals(newState)) {
+            //todo писать в логгер, его прокинуть через обертку
             System.out.printf("Вы пытаетесь изменить состояние <%s> на само себя%n", newState);
             return;
-//            throw new IllegalArgumentException(
-//                    String.format("Вы пытаетесь изменить состояние <%s> на само себя", newState));
         }
         currentState.dispose();
         currentState = states.get(newState);
@@ -188,7 +187,6 @@ public class FSM {
         }
 
         public FSM build() {
-            //todo проверить на null и выкинуть ошибки
             if (startState == null) {
                 throw new IllegalStateException("начальное состояние должно быть задано!");
             }

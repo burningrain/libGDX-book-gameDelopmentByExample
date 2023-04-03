@@ -1,7 +1,6 @@
 package com.github.br.gdx.simple.animation.component;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AnimatorStaticPart {
 
