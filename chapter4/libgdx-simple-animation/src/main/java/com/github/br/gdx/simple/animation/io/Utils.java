@@ -1,15 +1,12 @@
 package com.github.br.gdx.simple.animation.io;
 
-import com.github.br.gdx.simple.animation.io.dto.TransitionDto;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 
 public final class Utils {
-
-    public static String createClassName(TransitionDto transition) {
-        return transition.getFrom() + "__" + transition.getTo() + "_Predicate";
-    }
 
     public static String toString(InputStream inputStream) {
         try {

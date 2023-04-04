@@ -8,8 +8,6 @@ import com.badlogic.gdx.files.FileHandle;
 public class ShaderData {
 
     public String title;
-    public FileHandle vertexShader;
-    public FileHandle fragmentShader;
     public ShaderUpdater shaderUpdater;
 
 }

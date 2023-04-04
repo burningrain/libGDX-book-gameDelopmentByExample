@@ -1,8 +1,8 @@
 package com.github.br.gdx.simple.animation.io;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.github.br.gdx.simple.animation.AnimationExtensions;
 import com.github.br.gdx.simple.animation.SimpleAnimation;
 import com.github.br.gdx.simple.animation.component.AnimatorStaticPart;
 import com.github.br.gdx.simple.animation.fsm.FSM;
@@ -13,19 +13,19 @@ import com.github.br.gdx.simple.animation.io.dto.AnimationDto;
 import com.github.br.gdx.simple.animation.io.dto.AnimatorDto;
 import com.github.br.gdx.simple.animation.io.dto.FsmDto;
 import com.github.br.gdx.simple.animation.io.dto.TransitionDto;
+import com.github.br.gdx.simple.animation.io.interpret.PredicateInterpreter;
 
 
 public class AnimationConverter {
 
-    private final AnimationClassloader animationClassloader = new AnimationClassloader();
+    private final PredicateInterpreter interpreter = new PredicateInterpreter();
 
-    public SimpleAnimation from(AnimationDto animationDto, TextureAtlas atlas, Object[] keyFrames, ObjectMap<String, byte[]> javaClasses) {
-        loadTransitionClasses(animationDto.getName(), javaClasses);
+    public SimpleAnimation from(AnimationDto animationDto, TextureAtlas atlas) {
         return new SimpleAnimation(
                 animationDto.getName(),
-                createFsm(animationDto.getName(), animationDto.getFsm(), animationDto.getSubFsm()),
+                createFsm(animationDto.getFsm(), animationDto.getSubFsm()),
                 atlas,
-                createAnimatorStaticParts(animationDto.getAnimators(), keyFrames)
+                createAnimatorStaticParts(animationDto.getAnimators(), atlas.getRegions().shrink())
         );
     }
 
@@ -51,7 +51,7 @@ public class AnimationConverter {
         );
     }
 
-    private FSM createFsm(String name, FsmDto fsm, ObjectMap<String, FsmDto> subFsm) {
+    private FSM createFsm(FsmDto fsm, ObjectMap<String, FsmDto> subFsm) {
         FSM.Builder builder = new FSM.Builder();
         for (String state : fsm.getStates()) {
             FsmState fsmState;
@@ -60,7 +60,7 @@ public class AnimationConverter {
                         .setName(state)
                         .setStartState(fsm.getStartState().equals(state))
                         .setEndState(fsm.getEndState().equals(state));
-                fsmState = subBuilder.build(createFsm(name, subFsm.get(state), subFsm));
+                fsmState = subBuilder.build(createFsm(subFsm.get(state), subFsm));
             } else {
                 fsmState = new FsmState.Builder()
                         .setName(state)
@@ -72,7 +72,7 @@ public class AnimationConverter {
         }
 
         for (TransitionDto transition : fsm.getTransitions()) {
-            FsmPredicate fsmPredicate = createFsmPredicate(name, transition);
+            FsmPredicate fsmPredicate = createFsmPredicate(transition, fsm.getVariables());
             if (FSM.ANY_STATE.equals(transition.getFrom())) {
                 builder.addTransitionFromAnyState(transition.getTo(), fsmPredicate);
             } else {
@@ -83,34 +83,19 @@ public class AnimationConverter {
         return builder.build();
     }
 
-    private void loadTransitionClasses(String packageName, ObjectMap<String, byte[]> javaClasses) {
-        for (ObjectMap.Entry<String, byte[]> entry : javaClasses) {
-            String fullClassName = getFullClassName(packageName, entry.key);
-            animationClassloader.setLoadedClassName(fullClassName);
-            animationClassloader.setLoadedClass(entry.value);
-            try {
-                animationClassloader.loadClass(fullClassName);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+    private FsmPredicate createFsmPredicate(TransitionDto dto, ObjectMap<String, String> variables) {
+        String[] fsmPredicates = dto.getFsmPredicates();
+        if (fsmPredicates == null) {
+            throw new IllegalArgumentException("The transition[" + dto.getFrom() + "->" + dto.getTo() + "], field 'fsmPredicates' must not be null");
         }
-    }
 
-    private FsmPredicate createFsmPredicate(String packageName, TransitionDto transitionDto) {
-        String classname = Utils.createClassName(transitionDto);
-        String fullClassName = AnimationExtensions.ANIMATION_PACKAGE + packageName + "." + classname;
-        try {
-            Class<?> aClass = Class.forName(fullClassName);
-            return (FsmPredicate) aClass.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        FsmPredicate[] predicates = new FsmPredicate[fsmPredicates.length];
+        int counter = 0;
+        for (String fsmPredicate : fsmPredicates) {
+            predicates[counter] = interpreter.interpret(variables, fsmPredicate);
+            counter++;
         }
-    }
-
-    private String getFullClassName(String packageName, String className) {
-        String packageTitle = AnimationExtensions.ANIMATION_PACKAGE + packageName + ".";
-        int classLength = ".class".length();
-        return packageTitle + className.substring(0, className.length() - classLength);
+        return new CompositeFsmPredicate(predicates);
     }
 
 }

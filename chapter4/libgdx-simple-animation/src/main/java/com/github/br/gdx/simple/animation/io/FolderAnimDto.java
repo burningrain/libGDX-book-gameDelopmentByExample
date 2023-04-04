@@ -8,7 +8,6 @@ public class FolderAnimDto {
 
     private TextureAtlas textureAtlas;
     private String fsm;
-    private ObjectMap<String, byte[]> javaClasses = new ObjectMap<String, byte[]>();
 
     public void setTextureAtlas(TextureAtlas textureAtlas) {
         this.textureAtlas = textureAtlas;
@@ -24,14 +23,6 @@ public class FolderAnimDto {
 
     public String getFsm() {
         return fsm;
-    }
-
-    public void addJavaClass(String classname, byte[] readBytes) {
-        javaClasses.put(classname, readBytes);
-    }
-
-    public ObjectMap<String, byte[]> getJavaClasses() {
-        return javaClasses;
     }
 
 }

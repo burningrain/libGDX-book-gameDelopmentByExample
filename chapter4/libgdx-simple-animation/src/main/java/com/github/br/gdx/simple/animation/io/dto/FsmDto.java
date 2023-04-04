@@ -1,5 +1,7 @@
 package com.github.br.gdx.simple.animation.io.dto;
 
+import com.badlogic.gdx.utils.ObjectMap;
+
 import java.io.Serializable;
 
 public class FsmDto implements Serializable {
@@ -8,6 +10,7 @@ public class FsmDto implements Serializable {
     private String startState;
     private String endState;
     private TransitionDto[] transitions;
+    private ObjectMap<String, String> variables;
 
     public String[] getStates() {
         return states;
@@ -41,4 +44,11 @@ public class FsmDto implements Serializable {
         this.transitions = transitions;
     }
 
+    public ObjectMap<String, String> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(ObjectMap<String, String> variables) {
+        this.variables = variables;
+    }
 }

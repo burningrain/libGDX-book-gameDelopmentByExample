@@ -36,6 +36,7 @@ public final class GameObjectFactory {
         background = new Texture(Gdx.files.internal("background.png"));
     }
 
+    @Deprecated // "оставил как пример загрузки региона из атласа"
     public static EcsComponent[] createCloud() {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(660f, 460 - MathUtils.random(0, 200));
@@ -51,13 +52,13 @@ public final class GameObjectFactory {
         return new EcsComponent[]{transformComponent, rendererComponent, scriptComponent};
     }
 
-    public static EcsComponent[] createBackground() {
+    public static EcsComponent[] createBackground(TextureRegion region) {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(0f, 0f);
         transformComponent.rotation = 0f;
 
         RendererComponent rendererComponent = new RendererComponent();
-        rendererComponent.textureRegion = new TextureRegion(background);
+        rendererComponent.textureRegion = region;
         rendererComponent.layer = LayerEnum.BACKGROUND.name();
 
         return new EcsComponent[]{transformComponent, rendererComponent};

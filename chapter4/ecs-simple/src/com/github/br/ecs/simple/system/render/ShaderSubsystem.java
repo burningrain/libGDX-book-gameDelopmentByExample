@@ -1,5 +1,6 @@
 package com.github.br.ecs.simple.system.render;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
@@ -12,15 +13,17 @@ import com.github.br.ecs.simple.utils.ViewHelper;
  */
 public class ShaderSubsystem {
 
-    private Array<SpriteBatch> batches = new Array<SpriteBatch>();
-    private Array<ShaderUpdater> shaderUpdaters = new Array<ShaderUpdater>();
+    private final Array<SpriteBatch> batches = new Array<SpriteBatch>();
+    private final Array<ShaderUpdater> shaderUpdaters = new Array<ShaderUpdater>();
 
     private final SpriteBatch DEFAULT_SHADER_BATCH = new SpriteBatch();
 
-    private Viewport viewport;
+    private final Viewport viewport;
+    private final AssetManager assetManager;
 
-    public ShaderSubsystem(Viewport viewport, LayerData[] layers) {
+    public ShaderSubsystem(AssetManager assetManager, Viewport viewport, LayerData[] layers) {
         this.viewport = viewport;
+        this.assetManager = assetManager;
 
         ObjectMap<String, SpriteBatch> batchMap = new ObjectMap<String, SpriteBatch>();
 
@@ -38,7 +41,7 @@ public class ShaderSubsystem {
                     lastShader = shaderData.title;
                     SpriteBatch spriteBatch = batchMap.get(lastShader);
                     if (spriteBatch == null) {
-                        currentShader = new ShaderProgram(shaderData.vertexShader, shaderData.fragmentShader);
+                        currentShader = getShaderProgram(shaderData);
                         if (!currentShader.isCompiled())
                             throw new IllegalArgumentException("Error compiling shader: " + currentShader.getLog());
                         shaderUpdater = shaderData.shaderUpdater;
@@ -51,6 +54,10 @@ public class ShaderSubsystem {
             batches.add(currentBatch);
             shaderUpdaters.add(shaderUpdater);
         }
+    }
+
+    private ShaderProgram getShaderProgram(ShaderData shaderData) {
+        return assetManager.<ShaderProgram>get(shaderData.title);
     }
 
     public void update(BatchListener batchListener) {

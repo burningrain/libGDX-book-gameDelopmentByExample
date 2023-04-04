@@ -5,8 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -30,6 +34,10 @@ import static com.packt.flappeebee.model.LayerEnum.*;
 
 public class GameWorld extends ScreenAdapter {
 
+    public static final String WAVE_SHADER = "shaders/wave_shader.vert";
+    public static final String BACKGROUND_PNG = "background.png";
+
+    private final AssetManager assetManager = new AssetManager(new InternalFileHandleResolver());
     private final GameWorldSettings gameWorldSettings;
 
     private EcsContainer container;
@@ -38,11 +46,21 @@ public class GameWorld extends ScreenAdapter {
     public GameWorld(GameWorldSettings gameWorldSettings) {
         this.gameWorldSettings = gameWorldSettings;
         //TODO
+        loadAssets();
         initEcsContainer();
         initConsole();
         setInputProcessor();
 
-        container.createEntity("background", GameObjectFactory.createBackground());
+        container.createEntity("background", GameObjectFactory.createBackground(
+                new TextureRegion(assetManager.<Texture>get(BACKGROUND_PNG)))
+        );
+    }
+
+    private void loadAssets() {
+        assetManager.load(BACKGROUND_PNG, Texture.class);
+        assetManager.load(WAVE_SHADER, ShaderProgram.class);
+
+        assetManager.finishLoading();
     }
 
     private void initConsole() {
@@ -62,9 +80,7 @@ public class GameWorld extends ScreenAdapter {
 
     private void initEcsContainer() {
         ShaderData waveShader = new ShaderData();
-        waveShader.title = "wave";
-        waveShader.vertexShader = Gdx.files.internal("shaders/wave_shader.vsh");
-        waveShader.fragmentShader = Gdx.files.internal("shaders/wave_shader.fsh");
+        waveShader.title = WAVE_SHADER;
         waveShader.shaderUpdater = new ShaderUpdater() {
 
             private float time;
@@ -91,7 +107,7 @@ public class GameWorld extends ScreenAdapter {
 
         // загрузка анимаций
         AnimationSystem animationSystem = new AnimationSystem();
-        animationSystem.load(SimpleGdx.files.internal("animation"));
+        animationSystem.load(SimpleGdx.files.internal("animation")); // todo грузить ассет манагером
         //animationSystem.addAnimation(AnimationFactory.createCrab());
         animationSystem.addAnimation(AnimationFactory.createPlant());
 
@@ -102,6 +118,7 @@ public class GameWorld extends ScreenAdapter {
         container.addSystem(animationSystem);
         container.addSystem(
                 new RenderSystem(
+                        assetManager,
                         createViewport(gameWorldSettings.virtualWidth, gameWorldSettings.virtualHeight),
                         settings.layers
                 )

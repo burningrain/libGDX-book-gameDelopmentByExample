@@ -2,6 +2,5 @@ include 'core', 'desktop'
 include 'ecs-simple'
 include 'libgdx-simple-console'
 include 'libgdx-simple-animation'
-include 'libgdx-simple-animation-generator'
 include 'libgdx-simple-common'
 

@@ -12,8 +12,7 @@ public class FolderAnimationConverter {
     public SimpleAnimation from(FolderAnimDto anim) {
         AnimationDto animationDto = jsonConverter.from(anim.getFsm());
         TextureAtlas textureAtlas = anim.getTextureAtlas();
-        Object[] atlasRegions = textureAtlas.getRegions().shrink(); // TextureAtlas[]
-        return animationConverter.from(animationDto, textureAtlas, atlasRegions, anim.getJavaClasses());
+        return animationConverter.from(animationDto, textureAtlas);
     }
 
 }

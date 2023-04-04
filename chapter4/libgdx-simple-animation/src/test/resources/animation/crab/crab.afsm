@@ -13,8 +13,8 @@
       "name": "ATTACK",
       "frameFrequency": 30,
       "mode": "NORMAL",
-      "from": 46,
-      "to": 75,
+      "from": 45,
+      "to": 76,
       "looping": false
     },
     {
@@ -22,7 +22,7 @@
       "frameFrequency": 60,
       "mode": "NORMAL",
       "from": 76,
-      "to": 86,
+      "to": 87,
       "looping": false
     },
     {
@@ -30,7 +30,7 @@
       "frameFrequency": 30,
       "mode": "LOOP",
       "from": 87,
-      "to": 104,
+      "to": 105,
       "looping": true
     },
     {
@@ -38,32 +38,10 @@
       "frameFrequency": 10,
       "mode": "LOOP",
       "from": 76,
-      "to": 86,
+      "to": 87,
       "looping": true
     }
   ],
-  "subFsm": {
-    "IDLE": {
-      "states": [
-        "IDLE.VARIANT1",
-        "IDLE.VARIANT2",
-        "IDLE.VARIANT3"
-      ],
-      "startState": "IDLE.VARIANT1",
-      "endState": "",
-      "transitions": [
-      ]
-    },
-    "IDLE.VARIANT1": {
-      "states": [
-        "IDLE.VARIANT1.PATH1"
-      ],
-      "startState": "IDLE.VARIANT1.PATH1",
-      "endState": "",
-      "transitions": [
-      ]
-    }
-  },
   "fsm": {
     "states": [
       "IDLE",
@@ -74,71 +52,108 @@
     ],
     "startState": "IDLE",
     "endState": "",
+    "variables": {
+      "MOVEMENT": "Float",
+      "JUMP": "Boolean",
+      "FLY": "Boolean",
+      "ATTACK": "Boolean"
+    },
     "transitions": [
       {
         "from": "IDLE",
         "to": "MOVEMENT",
-        "fsmPredicate": "return Float.class.cast(context.get(\"MOVEMENT\")) <= 0;"
+        "fsmPredicates": [
+          "MOVEMENT > 0"
+        ]
       },
       {
         "from": "MOVEMENT",
         "to": "IDLE",
-        "fsmPredicate": "return Float.class.cast(context.get(\"MOVEMENT\")) <= 0;"
+        "fsmPredicates": [
+          "MOVEMENT <= 0"
+        ]
       },
       {
         "from": "IDLE",
         "to": "JUMP",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"JUMP\")) == true;"
+        "fsmPredicates": [
+          "JUMP == true"
+        ]
       },
       {
         "from": "MOVEMENT",
         "to": "JUMP",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"JUMP\")) == true;"
+        "fsmPredicates": [
+          "JUMP == true"
+        ]
       },
       {
         "from": "JUMP",
         "to": "FLY",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"FLY\")) == true;"
+        "fsmPredicates": [
+          "FLY == true"
+        ]
       },
       {
         "from": "IDLE",
         "to": "FLY",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"FLY\")) == true;"
+        "fsmPredicates": [
+          "FLY == true"
+        ]
       },
       {
         "from": "MOVEMENT",
         "to": "FLY",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"FLY\")) == true;"
+        "fsmPredicates": [
+          "FLY == true"
+        ]
       },
       {
         "from": "FLY",
         "to": "IDLE",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"FLY\")) == false && Float.class.cast(context.get(\"MOVEMENT\")) <= 0;"
+        "fsmPredicates": [
+          "FLY == false",
+          "MOVEMENT <= 0"
+        ]
       },
       {
         "from": "FLY",
         "to": "MOVEMENT",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"FLY\")) == false && Float.class.cast(context.get(\"MOVEMENT\")) > 0;"
+        "fsmPredicates": [
+          "FLY == false",
+          "MOVEMENT > 0"
+        ]
       },
       {
         "from": "ANY_STATE",
         "to": "ATTACK",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"ATTACK\")) == true;"
+        "fsmPredicates": [
+          "ATTACK == true"
+        ]
       },
       {
         "from": "ATTACK",
         "to": "IDLE",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"ATTACK\")) == false && Float.class.cast(context.get(\"MOVEMENT\")) <= 0;"
+        "fsmPredicates": [
+          "ATTACK == false",
+          "MOVEMENT <= 0"
+        ]
       },
       {
         "from": "ATTACK",
         "to": "MOVEMENT",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"ATTACK\")) == false && Float.class.cast(context.get(\"MOVEMENT\")) > 0;"
+        "fsmPredicates": [
+          "ATTACK == false",
+          "MOVEMENT > 0"
+        ]
       },
       {
         "from": "ATTACK",
         "to": "FLY",
-        "fsmPredicate": "return Boolean.class.cast(context.get(\"ATTACK\")) == false && Boolean.class.cast(context.get(\"FLY\")) == true;"
+        "fsmPredicates": [
+          "ATTACK == false",
+          "FLY == true"
+        ]
       }
     ]
   }

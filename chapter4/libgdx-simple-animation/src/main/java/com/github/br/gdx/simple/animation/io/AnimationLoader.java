@@ -18,15 +18,11 @@ public class AnimationLoader {
      * |_____ anim_example.atlas
      * |_____ anim_example.png
      * |_____ anim_example.afsm
-     * |_____ A_B.class
-     * |_____ B_C.class
-     * |_____ C_A.class
-     * |_____ ANY_STATE_A.class
-     * |_____ ANY_STATE_B.class
-     * |_____ ANY_STATE_C.class
-     * |_  folder2
+     * |_ folder2
      * |_  ...
      * |_ folderN
+     *
+     * or just from one-level folder
      *
      * @param animationsDir the parent folder that consist of child folders with animation files
      */
@@ -59,7 +55,7 @@ public class AnimationLoader {
             String ext = Utils.getFileExtension(fileHandle.name());
 
             if (AnimationExtensions.ATLAS.equals(ext)) {
-                folderAnimDto.setTextureAtlas(new TextureAtlas(getFileHandler(fileHandle.path())));
+                folderAnimDto.setTextureAtlas(new TextureAtlas(getFileHandler(fileHandle.path()))); // todo так нельзя делать, убрать класс после написания нормальных лоадеров
                 continue;
             }
             if (AnimationExtensions.PNG.equals(ext)) {
@@ -73,11 +69,6 @@ public class AnimationLoader {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-            }
-            if (AnimationExtensions.CLASS.equals(ext)) {
-                FileHandle internal = getFileHandler(fileHandle.path());
-                folderAnimDto.addJavaClass(internal.name(), internal.readBytes());
-                continue;
             }
 
             // to ignore a file with an unknown type

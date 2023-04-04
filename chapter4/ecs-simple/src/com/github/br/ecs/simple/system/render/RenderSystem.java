@@ -1,6 +1,7 @@
 package com.github.br.ecs.simple.system.render;
 
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
@@ -19,20 +20,22 @@ import static java.lang.String.format;
  */
 public class RenderSystem extends DebugSystem {
 
-    private Array<Layer> layersList = new Array<Layer>();
-    private OrderedMap<String, Layer> layersMap = new OrderedMap<String, Layer>();
-    private IntMap<String> entityLayerMap = new IntMap<String>();
+    private final Array<Layer> layersList = new Array<Layer>();
+    private final OrderedMap<String, Layer> layersMap = new OrderedMap<String, Layer>();
+    private final IntMap<String> entityLayerMap = new IntMap<String>();
 
     private boolean debugMode;
-    private DebugDataContainer debugDataContainer;
     private long executionTime;
     private int nodesAmount;
 
-    private ShaderSubsystem shaderSubsystem;
+    private final DebugDataContainer debugDataContainer;
+    private final ShaderSubsystem shaderSubsystem;
+    private final AssetManager assetManager;
 
-    public RenderSystem(Viewport viewport, LayerData[] layers) {
+    public RenderSystem(AssetManager assetManager, Viewport viewport, LayerData[] layers) {
         super(TransformComponent.class, RendererComponent.class);
-        shaderSubsystem = new ShaderSubsystem(viewport, layers);
+        this.assetManager = assetManager;
+        shaderSubsystem = new ShaderSubsystem(assetManager, viewport, layers);
         for (LayerData layerData : layers) {
             addLayer(layerData.title);
         }

@@ -6,7 +6,7 @@ public class TransitionDto implements Serializable {
 
     private String from;
     private String to;
-    private String fsmPredicate;
+    private String[] fsmPredicates;
 
     public String getFrom() {
         return from;
@@ -24,12 +24,12 @@ public class TransitionDto implements Serializable {
         this.to = to;
     }
 
-    public String getFsmPredicate() {
-        return fsmPredicate;
+    public String[] getFsmPredicates() {
+        return fsmPredicates;
     }
 
-    public void setFsmPredicate(String fsmPredicate) {
-        this.fsmPredicate = fsmPredicate;
+    public void setFsmPredicates(String[] fsmPredicates) {
+        this.fsmPredicates = fsmPredicates;
     }
 
 }

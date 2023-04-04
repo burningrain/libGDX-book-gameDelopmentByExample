@@ -8,7 +8,7 @@ import com.packt.flappeebee.FlappeeBeeGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(60);
+		//config.setForegroundFPS(60);
 		config.setTitle("crab");
 
 		//config.width = 1024;

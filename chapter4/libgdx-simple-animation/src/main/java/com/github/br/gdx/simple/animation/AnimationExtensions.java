@@ -5,8 +5,5 @@ public interface AnimationExtensions {
     String ATLAS = "atlas";
     String PNG = "png";
     String ASFM = "afsm";
-    String CLASS = "class";
-
-    String ANIMATION_PACKAGE = "animation.";
 
 }
