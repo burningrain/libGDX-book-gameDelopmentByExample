@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,7 +25,8 @@ import com.github.br.ecs.simple.system.render.RenderSystem;
 import com.github.br.ecs.simple.system.render.ShaderData;
 import com.github.br.ecs.simple.system.render.ShaderUpdater;
 import com.github.br.ecs.simple.system.script.ScriptSystem;
-import com.github.br.gdx.simple.common.SimpleGdx;
+import com.github.br.gdx.simple.animation.SimpleAnimation;
+import com.github.br.gdx.simple.animation.SimpleAnimationSyncLoader;
 import com.github.br.gdx.simple.console.Console;
 import com.github.br.gdx.simple.console.ConsoleOffOnCallback;
 import com.packt.flappeebee.animation.AnimationFactory;
@@ -34,12 +36,16 @@ import static com.packt.flappeebee.model.LayerEnum.*;
 
 public class GameWorld extends ScreenAdapter {
 
+    public static final String CRAB_ANIM = "animation/crab/crab.afsm";
+
     public static final String WAVE_SHADER = "shaders/wave_shader.vert";
     public static final String BACKGROUND_PNG = "background.png";
 
-    private final AssetManager assetManager = new AssetManager(new InternalFileHandleResolver());
-    private final GameWorldSettings gameWorldSettings;
+    private final FileHandleResolver resolver = new InternalFileHandleResolver();
+    private final AssetManager assetManager = new AssetManager(resolver);
 
+
+    private final GameWorldSettings gameWorldSettings;
     private EcsContainer container;
     private Console console;
 
@@ -57,6 +63,9 @@ public class GameWorld extends ScreenAdapter {
     }
 
     private void loadAssets() {
+        assetManager.setLoader(SimpleAnimation.class, new SimpleAnimationSyncLoader(resolver));
+        assetManager.load(CRAB_ANIM, SimpleAnimation.class);
+
         assetManager.load(BACKGROUND_PNG, Texture.class);
         assetManager.load(WAVE_SHADER, ShaderProgram.class);
 
@@ -107,7 +116,7 @@ public class GameWorld extends ScreenAdapter {
 
         // загрузка анимаций
         AnimationSystem animationSystem = new AnimationSystem();
-        animationSystem.load(SimpleGdx.files.internal("animation")); // todo грузить ассет манагером
+        animationSystem.addAnimation(assetManager.<SimpleAnimation>get(CRAB_ANIM));
         //animationSystem.addAnimation(AnimationFactory.createCrab());
         animationSystem.addAnimation(AnimationFactory.createPlant());
 

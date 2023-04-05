@@ -11,8 +11,10 @@ public class SimpleAnimatorUtils {
     public static void update(AnimatorStaticPart animatorStaticPart, AnimatorDynamicPart animatorDynamicPart) {
         if (!animatorDynamicPart.isStopped) {
             animatorDynamicPart.stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
-            animatorDynamicPart.currentFrame =
-                    animatorDynamicPart.animation.getKeyFrame(animatorDynamicPart.stateTime, animatorStaticPart.looping);
+
+            TextureRegion keyFrame = animatorDynamicPart.animation.getKeyFrame(animatorDynamicPart.stateTime, animatorStaticPart.looping);
+            keyFrame.flip(animatorDynamicPart.isFlipX, animatorDynamicPart.isFlipY);
+            animatorDynamicPart.currentFrame = keyFrame;
         }
     }
 
