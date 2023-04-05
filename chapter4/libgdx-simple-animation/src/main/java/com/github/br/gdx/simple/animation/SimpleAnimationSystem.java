@@ -1,18 +1,15 @@
 package com.github.br.gdx.simple.animation;
 
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.br.gdx.simple.animation.component.AnimatorStaticPart;
 import com.github.br.gdx.simple.animation.component.SimpleAnimationComponent;
 import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
-import com.github.br.gdx.simple.animation.io.AnimationLoader;
 
 public class SimpleAnimationSystem implements Disposable {
 
-    private final AnimationLoader loader = new AnimationLoader();
     private final ObjectMap<String, SimpleAnimation> animations = new ObjectMap<String, SimpleAnimation>();
 
     public void update(float delta, SimpleAnimationComponent animationComponent) {
@@ -44,20 +41,11 @@ public class SimpleAnimationSystem implements Disposable {
         this.animations.put(simpleAnimation.name, simpleAnimation);
     }
 
-    public void load(FileHandle animationsDir) {
-        Array<SimpleAnimation> items = loader.load(animationsDir);
-        if(items == null || items.size == 0) {
-            return;
-        }
-        for (SimpleAnimation simpleAnimation : items) {
-            addAnimation(simpleAnimation);
-        }
-    }
-
     public void unload(String title) {
         SimpleAnimation simpleAnimation = animations.remove(title);
         if(simpleAnimation == null) {
-            throw new IllegalArgumentException("The animation '" + title + "' is not found");
+            Gdx.app.debug("WARN " + SimpleAnimationSystem.class.getSimpleName(), "The animation '" + title + "' is not found");
+            return;
         }
 
         simpleAnimation.dispose();

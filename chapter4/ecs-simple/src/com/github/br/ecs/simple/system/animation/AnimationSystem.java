@@ -1,6 +1,5 @@
 package com.github.br.ecs.simple.system.animation;
 
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntMap;
 import com.github.br.ecs.simple.engine.EcsEntity;
@@ -35,12 +34,7 @@ public class AnimationSystem extends EcsSystem implements Disposable {
         simpleAnimationSystem.addAnimation(simpleAnimation);
     }
 
-    public void load(FileHandle animationsDir) {
-        simpleAnimationSystem.load(animationsDir);
-    }
-
     public void unload(String title) {
-        //TODO сделать интеграцию с AssetManager
         simpleAnimationSystem.unload(title);
     }
 
