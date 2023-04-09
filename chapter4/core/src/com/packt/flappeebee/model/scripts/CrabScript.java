@@ -7,6 +7,7 @@ import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
+import com.packt.flappeebee.model.ControllerProxy;
 import com.packt.flappeebee.model.GameConstants;
 import com.packt.flappeebee.model.LayerEnum;
 
@@ -36,21 +37,24 @@ public class CrabScript extends EcsScript {
     @Override
     public void update(float delta) {
         blockFlappeeLeavingTheWorld();
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+
+        // TODO должен быть маппинг кнопок на действия, а в условиях проверять уже сами действия случились или нет, в не кнопки
+        ControllerProxy controller = ControllerProxy.INSTANCE;
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || controller.getButton(controller.getMapping().buttonA)) {
             flyUp();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || controller.getAxis(controller.getMapping().axisLeftX) > 0) {
             physics.movement.x = 50 * delta;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        } else if (Gdx.input.isKeyPressed(Input.Keys.A) || controller.getAxis(controller.getMapping().axisLeftX) < 0) {
             physics.movement.x = -50 * delta;
         } else {
             physics.movement.x = 0;
         }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.F)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.F) || controller.getButton(controller.getMapping().buttonX)) {
             rendererComponent.newLayerTitle = LayerEnum.FRONT_EFFECTS.name();
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.G)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.G) || controller.getButton(controller.getMapping().buttonY)) {
             rendererComponent.newLayerTitle = LayerEnum.MAIN_LAYER.name();
         }
     }

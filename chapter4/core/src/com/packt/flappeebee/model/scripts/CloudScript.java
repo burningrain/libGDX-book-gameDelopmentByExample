@@ -25,8 +25,8 @@ public class CloudScript extends EcsScript {
 
     @Override
     public void update(float delta) {
-        transform.position.x -= velocity*delta;
-        if(transform.position.x <= 0){
+        transform.position.x -= velocity * delta;
+        if (transform.position.x <= 0) {
             deleteEntity(this.getEntityId());
         }
     }

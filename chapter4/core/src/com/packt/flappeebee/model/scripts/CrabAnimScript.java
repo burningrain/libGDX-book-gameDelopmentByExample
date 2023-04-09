@@ -2,12 +2,14 @@ package com.packt.flappeebee.model.scripts;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.controllers.Controllers;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
+import com.packt.flappeebee.model.ControllerProxy;
 
 /**
  * Created by user on 17.04.2017.
@@ -44,12 +46,13 @@ public class CrabAnimScript extends EcsScript {
 
     @Override
     public void update(float delta) {
+        ControllerProxy controller = ControllerProxy.INSTANCE;
         FsmContext context = animation.simpleAnimationComponent.fsmContext;
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER) && !attack) {
+        if ((Gdx.input.isKeyPressed(Input.Keys.ENTER) || controller.getButton(controller.getMapping().buttonB)) && !attack) {
             attack = true;
             context.update(ATTACK, true);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && !jump) {
+        if ((Gdx.input.isKeyPressed(Input.Keys.SPACE) || controller.getButton(controller.getMapping().buttonA)) && !jump) {
             jump = true;
             context.update(JUMP, true);
         }
