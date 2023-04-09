@@ -41,7 +41,7 @@ public class GameLayer extends Layer implements WorldModel.Listener {
     }
 
     private void drawGame() {
-        if(worldState != null){
+        if (worldState != null) {
             Snake snake = worldState.getSnake();
             Apple apple = worldState.getApple();
 

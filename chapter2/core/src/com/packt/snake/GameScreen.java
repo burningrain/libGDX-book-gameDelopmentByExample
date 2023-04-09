@@ -27,7 +27,7 @@ public class GameScreen extends ScreenAdapter {
         worldModel.render(delta);        // обновление состояния модели игрового мира
         renderDispatcher.render(delta);  // а вот рендерить мир надо постоянно
 
-        //TODO пробросить вывод runtime-ошибок на экран
+        //TODO вывод runtime-ошибок в лог Gdx
     }
 
     @Override

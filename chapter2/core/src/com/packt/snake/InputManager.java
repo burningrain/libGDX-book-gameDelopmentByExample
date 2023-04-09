@@ -24,21 +24,21 @@ public class InputManager implements ScreenManager {
                 pressed = Gdx.input.justTouched();
                 break;
         }
-        if(pressed){
+        if (pressed) {
             notifyHandlers();
         }
     }
 
-    public void addHandler(Handler handler){
+    public void addHandler(Handler handler) {
         handlers.put(handler.getClass(), handler);
     }
 
-    public void removeHandler(Handler handler){
+    public void removeHandler(Handler handler) {
         handlers.remove(handler.getClass());
     }
 
-    private void notifyHandlers(){
-        for(Handler handler : handlers.values()){
+    private void notifyHandlers() {
+        for (Handler handler : handlers.values()) {
             handler.handleInput();
         }
     }
