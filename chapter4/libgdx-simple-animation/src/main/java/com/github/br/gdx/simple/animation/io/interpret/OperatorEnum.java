@@ -9,6 +9,10 @@ public enum OperatorEnum {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     public static OperatorEnum getByValue(String value) {
         for (OperatorEnum type : values()) {
             if(type.value.equals(value)) {

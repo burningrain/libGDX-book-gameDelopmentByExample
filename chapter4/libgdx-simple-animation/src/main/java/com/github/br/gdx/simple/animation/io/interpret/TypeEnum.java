@@ -9,6 +9,10 @@ public enum TypeEnum {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     public static TypeEnum getByValue(String value) {
         for (TypeEnum type : values()) {
             if(type.value.equals(value)) {
