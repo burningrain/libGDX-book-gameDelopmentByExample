@@ -1,0 +1,17 @@
+version '1.0'
+
+apply plugin: "java-library"
+
+sourceCompatibility = 1.7
+//sourceSets.main.java.srcDirs = ["src/main/java"]
+//sourceSets.test.java.srcDirs = ["src/test/java"]
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+dependencies {
+    dependencies {
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+        testImplementation  "junit:junit:4.11"
+    }
+
+}
