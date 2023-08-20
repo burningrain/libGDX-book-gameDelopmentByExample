@@ -26,7 +26,7 @@ public class CompositeNode<UC extends UserContext, SM extends ScreenManager> imp
             if(NodeResultType.STAY.equals(nodeResult.getType())) {
                 stayResult = nodeResult;
             }
-            if(nodeResult.getNextId() != null) {
+            if(nodeResult.getSceneTitle() != null) {
                 nextResult = nodeResult;
             }
         }
@@ -43,7 +43,7 @@ public class CompositeNode<UC extends UserContext, SM extends ScreenManager> imp
         }
 
         // нет нод, которые знают, куда им двигаться дальше. Просто идем дальше
-        return new NodeResult(null, NodeResultType.NEXT);
+        return new NodeResult(NodeResultType.NEXT);
     }
 
 }

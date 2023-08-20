@@ -5,16 +5,20 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 
 public class NodeResult {
 
-    private final ElementId nextId;
+    private final ElementId sceneTitle;
     private final NodeResultType type;
 
-    public NodeResult(ElementId nextId, NodeResultType type) {
-        this.nextId = nextId;
-        this.type = Utils.checkNotNull(type, "type");
+    public NodeResult(NodeResultType type) {
+        this(null, type);
     }
 
-    public ElementId getNextId() {
-        return nextId;
+    public NodeResult(ElementId sceneTitle, NodeResultType type) {
+        this.type = Utils.checkNotNull(type, "type");
+        this.sceneTitle = sceneTitle;
+    }
+
+    public ElementId getSceneTitle() {
+        return sceneTitle;
     }
 
     public NodeResultType getType() {

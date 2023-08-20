@@ -35,31 +35,15 @@ public class Graph<N, E> {
         return Utils.checkNotNull(nodes.get(nodeId), "nodeId='" + nodeId + "'").getNode();
     }
 
-    public GraphElementId getNextNodeId(GraphElementId currentNodeId) {
-        NodeWrapper<N, E> nodeWrapper = Utils.checkNotNull(nodes.get(currentNodeId), "nodeId='" + currentNodeId + "'");
-        Array<EdgeWrapper<N, E>> edges = nodeWrapper.getEdges();
-
-        Array<NodeWrapper<N, E>> children = new Array<>();
-        for (EdgeWrapper<N, E> edge : edges) {
-            NodeWrapper<N, E> source = edge.getSource();
-            if(nodeWrapper.equals(source)) {
-                children.add(edge.getDest());
-            }
-        }
-
-        if(children.isEmpty()) {
-            // случай, когда мы пришли к концу и дальше идти некуда
-            return null;
-        }
-
-        // просто берем следующую ноду в цепочке
-        if(children.size == 1) {
-            return children.get(0).getId();
-        }
-
-        // нельзя просто перейти на следующую ноду, ибо их несколько
-        throw new IllegalStateException("current nodeId='" + currentNodeId + "You must choose the next node by nodeId. " + children.size + " nodes are available.");
+    public boolean containsNode(GraphElementId nodeId) {
+        return (nodes.get(nodeId) == null);
     }
+
+    public NodeWrapper<N, E> getNodeWrapper(GraphElementId nodeId) {
+        return Utils.checkNotNull(nodes.get(nodeId), "nodeId='" + nodeId + "'");
+    }
+
+
 
     @Override
     public String toString() {

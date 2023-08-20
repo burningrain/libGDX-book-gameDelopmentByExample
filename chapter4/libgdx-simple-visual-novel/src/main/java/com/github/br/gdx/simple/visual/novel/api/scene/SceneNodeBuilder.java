@@ -34,7 +34,7 @@ public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> 
         Utils.checkNotNull(currentNodeId, "currentNodeId");
 
         if (prevNodeId != null) {
-            edges.add(new Edge(prevNodeId, currentNodeId));
+            edges.add(new Edge<>(prevNodeId, currentNodeId));
             prevNodeId = null;
         }
         currentNodeId = null;
@@ -68,7 +68,7 @@ public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> 
                     SceneUtils.toId(config.getGeneratorEdgeId().nextId(edge.sourceId, edge.destId)),
                     SceneUtils.toId(edge.sourceId),
                     SceneUtils.toId(edge.destId),
-                    new Edge(edge.sourceId, edge.destId)
+                    new Edge(edge.sourceId, edge.destId, edge.predicate)
             );
         }
 

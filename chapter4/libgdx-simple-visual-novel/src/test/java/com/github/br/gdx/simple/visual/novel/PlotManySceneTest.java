@@ -1,6 +1,9 @@
 package com.github.br.gdx.simple.visual.novel;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
+import com.github.br.gdx.simple.visual.novel.api.Pair;
+import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
+import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
 import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
 import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
@@ -9,12 +12,8 @@ import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneNodeBuilder;
-import com.github.br.gdx.simple.visual.novel.impl.TestChooseNode;
-import com.github.br.gdx.simple.visual.novel.impl.TestNode;
-import com.github.br.gdx.simple.visual.novel.impl.TestScreenManager;
-import com.github.br.gdx.simple.visual.novel.impl.TestUserContext;
+import com.github.br.gdx.simple.visual.novel.impl.*;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class PlotManySceneTest {
@@ -37,14 +36,14 @@ public class PlotManySceneTest {
                         .build()
         );
 
-        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode());
-        ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode());
-        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode());
-        ElementId four = innerSceneBuilder.registerNode(ElementId.of("4"), new TestNode());
-        innerSceneBuilder.registerNode(one, new TestNode());
-        innerSceneBuilder.registerNode(two, new TestNode());
-        innerSceneBuilder.registerNode(three, new TestNode());
-        innerSceneBuilder.registerNode(four, new TestNode());
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId four = innerSceneBuilder.registerNode(ElementId.of("4"), new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(one, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(two, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(three, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(four, new TestNode<TestUserContext, TestScreenManager>());
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
@@ -61,9 +60,9 @@ public class PlotManySceneTest {
 
         // основной сценарий
         ElementId mainSceneId = ElementId.of("main_scene");
-        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode());
+        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode<TestUserContext, TestScreenManager>());
         ElementId b = mainSceneBuilder.registerSceneLink(innerSceneId);
-        ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode());
+        ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserContext, TestScreenManager>());
         SceneNodeBuilder<TestUserContext, TestScreenManager> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
@@ -111,7 +110,7 @@ public class PlotManySceneTest {
      */
     @Test
     public void testJumpBackToInnerScene() {
-        TestUserContext userContext = new TestUserContext();
+        final TestUserContext userContext = new TestUserContext();
         TestScreenManager testScreenManager = new TestScreenManager();
         final SceneBuilder<TestUserContext, TestScreenManager> mainSceneBuilder = Scene.builder(
                 SceneConfig.<TestScreenManager>builder()
@@ -126,14 +125,14 @@ public class PlotManySceneTest {
                         .build()
         );
 
-        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode());
-        ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode());
-        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode());
-        ElementId four = innerSceneBuilder.registerNode(ElementId.of("4"), new TestNode());
-        innerSceneBuilder.registerNode(one, new TestNode());
-        innerSceneBuilder.registerNode(two, new TestChooseNode());
-        innerSceneBuilder.registerNode(three, new TestNode());
-        innerSceneBuilder.registerNode(four, new TestNode());
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode<TestUserContext, TestScreenManager>());
+        final ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId four = innerSceneBuilder.registerNode(ElementId.of("4"), new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(one, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(two, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(three, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(four, new TestNode<TestUserContext, TestScreenManager>());
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
@@ -146,7 +145,12 @@ public class PlotManySceneTest {
         // петля назад
         innerBuilder
                 .node(two)
-                .to()
+                .to(three, new Predicate<TestUserContext, TestScreenManager>() {
+                    @Override
+                    public boolean test(PlotContext<TestUserContext, TestScreenManager> context) {
+                        return userContext.nextId == three;
+                    }
+                })
                 .node(three)
                 .to(one)
                 .endBranch()
@@ -159,11 +163,11 @@ public class PlotManySceneTest {
 
         // основной сценарий
         ElementId mainSceneId = ElementId.of("main_scene");
-        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode());
+        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode<TestUserContext, TestScreenManager>());
         ElementId b = mainSceneBuilder.registerSceneLink(innerSceneId);
-        ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestChooseNode());
-        ElementId d = mainSceneBuilder.registerNode(ElementId.of("d"), new TestNode());
-        ElementId e = mainSceneBuilder.registerNode(ElementId.of("e"), new TestNode());
+        ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserContext, TestScreenManager>());
+        final ElementId d = mainSceneBuilder.registerNode(ElementId.of("d"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId e = mainSceneBuilder.registerNode(ElementId.of("e"), new TestNode<TestUserContext, TestScreenManager>());
         SceneNodeBuilder<TestUserContext, TestScreenManager> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
@@ -178,7 +182,12 @@ public class PlotManySceneTest {
         // заворот на внутреннюю сцену
         mainGraphSceneBuilder
                 .node(c)
-                .to()
+                .to(d, new Predicate<TestUserContext, TestScreenManager>() {
+                    @Override
+                    public boolean test(PlotContext<TestUserContext, TestScreenManager> context) {
+                        return userContext.nextId == d;
+                    }
+                })
                 .node(d)
                 .to(b)
                 .endBranch();
@@ -251,12 +260,12 @@ public class PlotManySceneTest {
                         .build()
         );
 
-        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode());
-        ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode());
-        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode());
-        innerSceneBuilder.registerNode(one, new TestChooseNode());
-        innerSceneBuilder.registerNode(two, new TestNode());
-        innerSceneBuilder.registerNode(three, new TestNode());
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(one, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(two, new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(three, new TestNode<TestUserContext, TestScreenManager>());
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
@@ -280,11 +289,11 @@ public class PlotManySceneTest {
 
         // основной сценарий
         ElementId mainSceneId = ElementId.of("main_scene");
-        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestChooseNode());
-        ElementId b = mainSceneBuilder.registerNode(ElementId.of("b"), new TestNode());
+        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode<TestUserContext, TestScreenManager>());
+        ElementId b = mainSceneBuilder.registerNode(ElementId.of("b"), new TestNode<TestUserContext, TestScreenManager>());
         ElementId c = ElementId.of("c");
         mainSceneBuilder.registerSceneLink(c, innerSceneId);
-        ElementId d = mainSceneBuilder.registerNode(ElementId.of("d"), new TestNode());
+        ElementId d = mainSceneBuilder.registerNode(ElementId.of("d"), new TestNode<TestUserContext, TestScreenManager>());
         SceneNodeBuilder<TestUserContext, TestScreenManager> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
@@ -358,8 +367,8 @@ public class PlotManySceneTest {
                         .build()
         );
 
-        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode());
-        innerSceneBuilder.registerNode(one, new TestNode());
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode<TestUserContext, TestScreenManager>());
+        innerSceneBuilder.registerNode(one, new TestNode<TestUserContext, TestScreenManager>());
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
@@ -373,7 +382,7 @@ public class PlotManySceneTest {
 
         // основной сценарий
         ElementId mainSceneId = ElementId.of("main_scene");
-        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode());
+        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode<TestUserContext, TestScreenManager>());
         ElementId b = mainSceneBuilder.registerSceneLink(ElementId.of("b"), innerSceneId);
         SceneNodeBuilder<TestUserContext, TestScreenManager> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
@@ -416,66 +425,90 @@ public class PlotManySceneTest {
      * digraph graphname {2;1;3;1 -> 2;1 -> 3;} - внутренний
      * digraph graphname {a;c;b;a -> c;a -> b;} - основной
      */
-    @Ignore("Сейчас кейс не поддержан. Исправить после добавления условий на ребра графа и выбор перехода по условию ребра")
     @Test
     public void testInnerSceneAsStartNode() {
-        TestUserContext userContext = new TestUserContext();
+        TestUserMapContext<ElementId, Boolean> userContext = new TestUserMapContext<>();
         TestScreenManager testScreenManager = new TestScreenManager();
-        final SceneBuilder<TestUserContext, TestScreenManager> mainSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserMapContext<ElementId, Boolean>, TestScreenManager> mainSceneBuilder = Scene.builder(
                 SceneConfig.<TestScreenManager>builder()
                         .setScreenManager(testScreenManager)
                         .build()
         );
 
         // внутренняя сцена
-        final SceneBuilder<TestUserContext, TestScreenManager> innerSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserMapContext<ElementId, Boolean>, TestScreenManager> innerSceneBuilder = Scene.builder(
                 SceneConfig.<TestScreenManager>builder()
                         .setScreenManager(testScreenManager)
                         .build()
         );
 
-        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestChooseNode());
-        ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode());
-        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestChooseNode());
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode<TestUserMapContext<ElementId, Boolean>, TestScreenManager>());
+        final ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode<TestUserMapContext<ElementId, Boolean>, TestScreenManager>());
+        final ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode<TestUserMapContext<ElementId, Boolean>, TestScreenManager>());
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
-        SceneNodeBuilder<TestUserContext, TestScreenManager> innerBuilder = innerSceneBuilder.graph()
+        SceneNodeBuilder<TestUserMapContext<ElementId, Boolean>, TestScreenManager> innerBuilder = innerSceneBuilder.graph()
                 .node(one)
-                .to(two, three)
+                .to(new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>>(two, new Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>() {
+                            @Override
+                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>, TestScreenManager> context) {
+                                return context.getUserContext().getNextId() == two;
+                            }
+                        }),
+                        new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>>(three, new Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>() {
+                            @Override
+                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>, TestScreenManager> context) {
+                                return context.getUserContext().getNextId() == three;
+                            }
+                        })
+                )
                 .endBranch();
 
-        final Scene<TestUserContext, TestScreenManager> innerScene = innerBuilder.build();
+        final Scene<TestUserMapContext<ElementId, Boolean>, TestScreenManager> innerScene = innerBuilder.build();
         System.out.println("inner scene: " + innerScene.toString());
         // внутренний сценарий
 
         // основной сценарий
         ElementId mainSceneId = ElementId.of("main_scene");
         ElementId a = mainSceneBuilder.registerSceneLink(ElementId.of("a"), innerSceneId);
-        ElementId b = mainSceneBuilder.registerNode(ElementId.of("b"), new TestNode());
-        ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode());
-        SceneNodeBuilder<TestUserContext, TestScreenManager> mainGraphSceneBuilder = mainSceneBuilder.graph();
+        final ElementId b = mainSceneBuilder.registerNode(ElementId.of("b"), new TestNode<TestUserMapContext<ElementId, Boolean>, TestScreenManager>());
+        final ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserMapContext<ElementId, Boolean>, TestScreenManager>());
+        SceneNodeBuilder<TestUserMapContext<ElementId, Boolean>, TestScreenManager> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
-                .to(b, c)
+                .to(
+                        new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>>(b, new Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>() {
+                            @Override
+                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>, TestScreenManager> context) {
+                                return context.getUserContext().getNextId() == b;
+                            }
+                        }),
+                        new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>>(c, new Predicate<TestUserMapContext<ElementId, Boolean>, TestScreenManager>() {
+                            @Override
+                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>, TestScreenManager> context) {
+                                return context.getUserContext().getNextId() == c;
+                            }
+                        })
+                )
                 .endBranch();
 
-        final Scene<TestUserContext, TestScreenManager> scene = mainGraphSceneBuilder.build();
+        final Scene<TestUserMapContext<ElementId, Boolean>, TestScreenManager> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
+        Plot<TestUserMapContext<ElementId, Boolean>, TestScreenManager> plot = Plot.<TestUserMapContext<ElementId, Boolean>, TestScreenManager>builder(PlotConfig.builder().build())
                 .setUserContext(userContext)
-                .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
-                        .addScene(mainSceneId, new SceneSupplier<TestUserContext, TestScreenManager>() {
+                .setSceneManager(new DefaultSceneManager<TestUserMapContext<ElementId, Boolean>, TestScreenManager>()
+                        .addScene(mainSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, TestScreenManager>() {
                                     @Override
-                                    public Scene<TestUserContext, TestScreenManager> get() {
+                                    public Scene<TestUserMapContext<ElementId, Boolean>, TestScreenManager> get() {
                                         return scene;
                                     }
                                 }
                         )
-                        .addScene(innerSceneId, new SceneSupplier<TestUserContext, TestScreenManager>() {
+                        .addScene(innerSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, TestScreenManager>() {
                                     @Override
-                                    public Scene<TestUserContext, TestScreenManager> get() {
+                                    public Scene<TestUserMapContext<ElementId, Boolean>, TestScreenManager> get() {
                                         return innerScene;
                                     }
                                 }
@@ -484,11 +517,10 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        userContext.nextId = three;
+        userContext.setNextId(three);
         plot.execute(1f); // 1
-        userContext.nextId = c; // FIXME !!! это чисто логическая ошибка. Не должен подсценарий знать ноды основного
+        userContext.setNextId(c);
         plot.execute(1f); // 3
-
         Assert.assertTrue(plot.execute(1f)); // c
     }
 

@@ -8,7 +8,7 @@ public class EmptyPredicate<UC extends UserContext, SM extends ScreenManager> im
 
     @Override
     public boolean test(PlotContext<UC, SM> context) {
-        return false;
+        return true;
     }
 
     public static <UC extends UserContext, SM extends ScreenManager> Predicate<UC, SM> empty() {

@@ -3,6 +3,7 @@ package com.github.br.gdx.simple.visual.novel.api.plot;
 import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
+import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
 import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 import com.github.br.gdx.simple.visual.novel.api.context.*;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
@@ -58,7 +59,7 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
         Utils.checkNotNull(currentNodeId, "nodeId");
 
         Scene<UC, SC> scene = sceneManager.getScene(nextSceneId);
-        return scene.getNextNodeId(currentNodeId);
+        return scene.getNextNodeId(SceneUtils.toId(currentNodeId), plotContext);
     }
 
     public static <UC extends UserContext, SC extends ScreenManager> Builder<UC, SC> builder(PlotConfig config) {
@@ -88,7 +89,7 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
         NodeResult nodeResult = currentScene.execute(delta, plotContext);
         NodeResultType type = nodeResult.getType();
         if (NodeResultType.CHANGE_SCENE_IN == type) {
-            ElementId nextSceneId = nodeResult.getNextId();
+            ElementId nextSceneId = nodeResult.getSceneTitle();
             changeCurrentSceneToChild(nextSceneId);
             executeSceneStep(delta, nextSceneId);
         } else if(NodeResultType.CHANGE_SCENE_OUT == type) {
