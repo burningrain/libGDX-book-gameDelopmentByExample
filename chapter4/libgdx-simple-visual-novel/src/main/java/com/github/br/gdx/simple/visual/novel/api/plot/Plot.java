@@ -21,7 +21,7 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
         this.config = builder.config;
 
         ServiceContext<SC> serviceContext = new ServiceContext<>();
-        plotContext = new PlotContext<>(builder.userContext, serviceContext, builder.beginSceneId, this.config.isMarkVisitedNodes());
+        plotContext = new PlotContext<>(serviceContext, builder.beginSceneId, this.config.isMarkVisitedNodes());
 
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         CurrentState currentState = auxiliaryContext.currentState;
@@ -68,7 +68,8 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
     }
 
     // return окончился the plot или еще нет. 'true' если окончился
-    public boolean execute(float delta) {
+    public boolean execute(float delta, UC userContext) {
+        plotContext.setUserContext(userContext);
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         if(auxiliaryContext.isProcessFinished()) {
             return true;
@@ -100,18 +101,12 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
     public static class Builder<UC extends UserContext, SC extends ScreenManager> {
 
         private final PlotConfig config;
-        private UC userContext;
         private SceneManager<UC, SC> sceneManager;
         private ElementId beginSceneId;
 
 
         public Builder(PlotConfig config) {
             this.config = Utils.checkNotNull(config, "config");
-        }
-
-        public Builder<UC, SC> setUserContext(UC userContext) {
-            this.userContext = Utils.checkNotNull(userContext, "userContext");
-            return this;
         }
 
         public Builder<UC, SC> setSceneManager(SceneManager<UC, SC> sceneManager) {

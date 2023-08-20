@@ -7,12 +7,11 @@ import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 public class PlotContext<UC extends UserContext, SM extends ScreenManager> {
 
     private final ServiceContext<SM> serviceContext;
-    private final UC userContext;
     private final AuxiliaryContext auxiliaryContext;
+    private UC userContext;
 
-    public PlotContext(UC userContext, ServiceContext<SM> serviceContext, ElementId sceneId, boolean isMarkVisitedNodes) {
+    public PlotContext(ServiceContext<SM> serviceContext, ElementId sceneId, boolean isMarkVisitedNodes) {
         this.serviceContext = Utils.checkNotNull(serviceContext, "serviceContext");
-        this.userContext = Utils.checkNotNull(userContext, "userContext");
         Utils.checkNotNull(sceneId, "sceneId");
 
         auxiliaryContext = new AuxiliaryContext(isMarkVisitedNodes);
@@ -21,6 +20,10 @@ public class PlotContext<UC extends UserContext, SM extends ScreenManager> {
 
     public ServiceContext<SM> getServiceContext() {
         return serviceContext;
+    }
+
+    public void setUserContext(UC userContext) {
+        this.userContext = Utils.checkNotNull(userContext, "userContext");
     }
 
     public UC getUserContext() {

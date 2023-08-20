@@ -74,7 +74,6 @@ public class PlotManySceneTest {
         System.out.println("main scene: " + scene.toString());
 
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, TestScreenManager>() {
                                     @Override
@@ -94,14 +93,14 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(1f); // a
-        plot.execute(1f); // 1
-        plot.execute(1f); // 2
-        plot.execute(1f); // 3
-        plot.execute(1f); // 4
-        plot.execute(1f); // c
-        Assert.assertTrue(plot.execute(1f));
-        Assert.assertTrue(plot.execute(1f)); // проверка, что остается в оконченном состоянии
+        plot.execute(1f, userContext); // a
+        plot.execute(1f, userContext); // 1
+        plot.execute(1f, userContext); // 2
+        plot.execute(1f, userContext); // 3
+        plot.execute(1f, userContext); // 4
+        plot.execute(1f, userContext); // c
+        Assert.assertTrue(plot.execute(1f, userContext));
+        Assert.assertTrue(plot.execute(1f, userContext)); // проверка, что остается в оконченном состоянии
     }
 
     /**
@@ -196,7 +195,6 @@ public class PlotManySceneTest {
         System.out.println("main scene: " + scene.toString());
 
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, TestScreenManager>() {
                                     @Override
@@ -216,27 +214,27 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(1f); // a
-        plot.execute(1f); // 1
+        plot.execute(1f, userContext); // a
+        plot.execute(1f, userContext); // 1
         userContext.nextId = three;
-        plot.execute(1f); // 2
-        plot.execute(1f); // 3
-        plot.execute(1f); // 1
+        plot.execute(1f, userContext); // 2
+        plot.execute(1f, userContext); // 3
+        plot.execute(1f, userContext); // 1
         userContext.nextId = four;
-        plot.execute(1f); // 2
-        plot.execute(1f); // 4
+        plot.execute(1f, userContext); // 2
+        plot.execute(1f, userContext); // 4
         userContext.nextId = d;
-        plot.execute(1f); // c
-        plot.execute(1f); // d
-        plot.execute(1f); // 1
+        plot.execute(1f, userContext); // c
+        plot.execute(1f, userContext); // d
+        plot.execute(1f, userContext); // 1
         userContext.nextId = four;
-        plot.execute(1f); // 2
-        plot.execute(1f); // 4
+        plot.execute(1f, userContext); // 2
+        plot.execute(1f, userContext); // 4
         userContext.nextId = e;
-        plot.execute(1f); // c
-        plot.execute(1f); // e
+        plot.execute(1f, userContext); // c
+        plot.execute(1f, userContext); // e
 
-        Assert.assertTrue(plot.execute(1f));
+        Assert.assertTrue(plot.execute(1f, userContext));
     }
 
     /**
@@ -315,7 +313,6 @@ public class PlotManySceneTest {
         System.out.println("main scene: " + scene.toString());
 
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, TestScreenManager>() {
                                     @Override
@@ -336,14 +333,14 @@ public class PlotManySceneTest {
                 .build();
 
         userContext.nextId = c;
-        plot.execute(1f); // a
+        plot.execute(1f, userContext); // a
 
         userContext.nextId = three;
-        plot.execute(1f); // 1
-        plot.execute(1f); // 3
-        plot.execute(1f); // d
+        plot.execute(1f, userContext); // 1
+        plot.execute(1f, userContext); // 3
+        plot.execute(1f, userContext); // d
 
-        Assert.assertTrue(plot.execute(1f));
+        Assert.assertTrue(plot.execute(1f, userContext));
     }
 
     /**
@@ -395,7 +392,6 @@ public class PlotManySceneTest {
         System.out.println("main scene: " + scene.toString());
 
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, TestScreenManager>() {
                                     @Override
@@ -415,10 +411,10 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(1f); // a
-        plot.execute(1f); // 1
+        plot.execute(1f, userContext); // a
+        plot.execute(1f, userContext); // 1
 
-        Assert.assertTrue(plot.execute(1f));
+        Assert.assertTrue(plot.execute(1f, userContext));
     }
 
     /**
@@ -497,7 +493,6 @@ public class PlotManySceneTest {
         System.out.println("main scene: " + scene.toString());
 
         Plot<TestUserMapContext<ElementId, Boolean>, TestScreenManager> plot = Plot.<TestUserMapContext<ElementId, Boolean>, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserMapContext<ElementId, Boolean>, TestScreenManager>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, TestScreenManager>() {
                                     @Override
@@ -518,10 +513,10 @@ public class PlotManySceneTest {
                 .build();
 
         userContext.setNextId(three);
-        plot.execute(1f); // 1
+        plot.execute(1f, userContext); // 1
         userContext.setNextId(c);
-        plot.execute(1f); // 3
-        Assert.assertTrue(plot.execute(1f)); // c
+        plot.execute(1f, userContext); // 3
+        Assert.assertTrue(plot.execute(1f, userContext)); // c
     }
 
 

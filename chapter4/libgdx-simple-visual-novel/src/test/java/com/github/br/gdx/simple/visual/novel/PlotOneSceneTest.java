@@ -37,7 +37,6 @@ public class PlotOneSceneTest {
 
         ElementId one = ElementId.of("one");
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(one, new SceneSupplier<TestUserContext, TestScreenManager>() {
 
@@ -51,7 +50,7 @@ public class PlotOneSceneTest {
                 .build();
 
 
-        boolean result = plot.execute(1f);
+        boolean result = plot.execute(1f, userContext);
         Assert.assertTrue(result);
     }
 
@@ -75,7 +74,6 @@ public class PlotOneSceneTest {
 
         ElementId one = ElementId.of("one");
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(one, new SceneSupplier<TestUserContext, TestScreenManager>() {
 
@@ -88,8 +86,8 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f);
-        boolean result = plot.execute(1f);
+        plot.execute(1f, userContext);
+        boolean result = plot.execute(1f, userContext);
         Assert.assertTrue(result);
     }
 
@@ -119,7 +117,6 @@ public class PlotOneSceneTest {
 
         ElementId one = ElementId.of("one");
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(one, new SceneSupplier<TestUserContext, TestScreenManager>() {
 
@@ -132,10 +129,10 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f);
-        plot.execute(1f);
-        plot.execute(1f);
-        boolean result = plot.execute(1f);
+        plot.execute(1f, userContext);
+        plot.execute(1f, userContext);
+        plot.execute(1f, userContext);
+        boolean result = plot.execute(1f, userContext);
         Assert.assertTrue(result);
     }
 
@@ -165,7 +162,6 @@ public class PlotOneSceneTest {
 
         ElementId one = ElementId.of("one");
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(one, new SceneSupplier<TestUserContext, TestScreenManager>() {
 
@@ -178,9 +174,9 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f);
-        plot.execute(1f);
-        boolean result = plot.execute(1f);
+        plot.execute(1f, userContext);
+        plot.execute(1f, userContext);
+        boolean result = plot.execute(1f, userContext);
         Assert.assertFalse(result);
     }
 
@@ -235,7 +231,6 @@ public class PlotOneSceneTest {
 
         ElementId one = ElementId.of("one");
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(one, new SceneSupplier<TestUserContext, TestScreenManager>() {
                                     @Override
@@ -247,14 +242,14 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f); // a
+        plot.execute(1f, userContext); // a
         userContext.nextId = c;
-        plot.execute(1f); // b
-        plot.execute(1f); // c
-        plot.execute(1f); // a
+        plot.execute(1f, userContext); // b
+        plot.execute(1f, userContext); // c
+        plot.execute(1f, userContext); // a
         userContext.nextId = d;
-        plot.execute(1f); // b
-        boolean result = plot.execute(1f); // d
+        plot.execute(1f, userContext); // b
+        boolean result = plot.execute(1f, userContext); // d
         Assert.assertTrue(result);
     }
 
@@ -312,7 +307,6 @@ public class PlotOneSceneTest {
 
         ElementId one = ElementId.of("one");
         Plot<TestUserContext, TestScreenManager> plot = Plot.<TestUserContext, TestScreenManager>builder(PlotConfig.builder().build())
-                .setUserContext(userContext)
                 .setSceneManager(new DefaultSceneManager<TestUserContext, TestScreenManager>()
                         .addScene(one, new SceneSupplier<TestUserContext, TestScreenManager>() {
                                     @Override
@@ -325,10 +319,9 @@ public class PlotOneSceneTest {
                 .build();
 
         userContext.nextId = d;
-        plot.execute(1f); // a
-        boolean result = plot.execute(1f); // d
+        plot.execute(1f, userContext); // a
+        boolean result = plot.execute(1f, userContext); // d
         Assert.assertTrue(result);
     }
-
 
 }
