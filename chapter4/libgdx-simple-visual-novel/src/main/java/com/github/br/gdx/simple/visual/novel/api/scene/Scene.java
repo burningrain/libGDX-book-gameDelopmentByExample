@@ -1,6 +1,5 @@
 package com.github.br.gdx.simple.visual.novel.api.scene;
 
-import com.badlogic.gdx.utils.Array;
 import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.AuxiliaryContext;
@@ -15,6 +14,9 @@ import com.github.br.gdx.simple.visual.novel.graph.EdgeWrapper;
 import com.github.br.gdx.simple.visual.novel.graph.Graph;
 import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
 import com.github.br.gdx.simple.visual.novel.graph.NodeWrapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Scene<UC extends UserContext, SM extends ScreenManager> {
 
@@ -109,10 +111,10 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
     @SuppressWarnings("unchecked")
     public GraphElementId getGraphNextNodeId(GraphElementId currentNodeId, PlotContext<UC, SM> plotContext) {
         NodeWrapper<Node<UC, SM>, Edge> nodeWrapper = Utils.checkNotNull(graph.getNodeWrapper(currentNodeId), "nodeId='" + currentNodeId + "'");
-        Array<EdgeWrapper<Node<UC, SM>, Edge>> edges = nodeWrapper.getEdges();
+        List<EdgeWrapper<Node<UC, SM>, Edge>> edges = nodeWrapper.getEdges();
 
         NodeWrapper<Node<UC, SM>, Edge> defaultTransition = null;
-        Array<NodeWrapper<Node<UC, SM>, Edge>> children = new Array<>(edges.size);
+        ArrayList<NodeWrapper<Node<UC, SM>, Edge>> children = new ArrayList<>(edges.size());
         for (EdgeWrapper<Node<UC, SM>, Edge> edge : edges) {
             NodeWrapper<Node<UC, SM>, Edge> source = edge.getSource();
             if (nodeWrapper.equals(source)) {
@@ -127,7 +129,7 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
             }
         }
 
-        if (children.size == 0) {
+        if (children.size() == 0) {
             // случай, когда мы пришли к концу и дальше идти некуда
             if (defaultTransition == null) {
                 return null;
@@ -135,13 +137,13 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
                 // просто берем следующую ноду в цепочке
                 return defaultTransition.getId();
             }
-        } else if (children.size == 1) {
+        } else if (children.size() == 1) {
             // по приоритету над дефолтовым переходом берем ноду с выполненным условием перехода
             return children.get(0).getId();
         }
 
         // нельзя просто перейти на следующую ноду, ибо их несколько
-        throw new IllegalStateException("current nodeId=[" + currentNodeId + "] You must choose the next node by nodeId. " + children.size + " nodes are available.");
+        throw new IllegalStateException("current nodeId=[" + currentNodeId + "] You must choose the next node by nodeId. " + children.size() + " nodes are available.");
     }
 
 }

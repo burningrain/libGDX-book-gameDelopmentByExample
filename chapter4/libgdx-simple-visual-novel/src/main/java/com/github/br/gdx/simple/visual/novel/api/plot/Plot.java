@@ -2,12 +2,12 @@ package com.github.br.gdx.simple.visual.novel.api.plot;
 
 import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
-import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
-import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 import com.github.br.gdx.simple.visual.novel.api.context.*;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
+import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
+import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
+import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
 public class Plot<UC extends UserContext, SC extends ScreenManager> {
 

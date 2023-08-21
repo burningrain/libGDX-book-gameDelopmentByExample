@@ -12,7 +12,10 @@ import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneNodeBuilder;
-import com.github.br.gdx.simple.visual.novel.impl.*;
+import com.github.br.gdx.simple.visual.novel.impl.TestNode;
+import com.github.br.gdx.simple.visual.novel.impl.TestScreenManager;
+import com.github.br.gdx.simple.visual.novel.impl.TestUserContext;
+import com.github.br.gdx.simple.visual.novel.impl.TestUserMapContext;
 import org.junit.Assert;
 import org.junit.Test;
 

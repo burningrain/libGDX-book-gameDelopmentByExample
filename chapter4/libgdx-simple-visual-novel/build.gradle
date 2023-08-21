@@ -9,8 +9,6 @@ sourceCompatibility = 1.7
 
 dependencies {
     dependencies {
-        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-
         testImplementation  "junit:junit:4.11"
     }
 

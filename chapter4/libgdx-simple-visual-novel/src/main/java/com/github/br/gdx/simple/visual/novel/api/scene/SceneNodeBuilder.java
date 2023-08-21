@@ -1,6 +1,5 @@
 package com.github.br.gdx.simple.visual.novel.api.scene;
 
-import com.badlogic.gdx.utils.ObjectSet;
 import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
@@ -9,11 +8,13 @@ import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 import com.github.br.gdx.simple.visual.novel.graph.Graph;
 import com.github.br.gdx.simple.visual.novel.inner.SceneLinkNode;
 
+import java.util.HashSet;
+
 public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> {
 
     final SceneConfig<SM> config;
     final Graph<Node<UC, SM>, Edge> graph = new Graph<>();
-    final ObjectSet<Edge> edges = new ObjectSet<>();
+    final HashSet<Edge> edges = new HashSet<>();
 
     ElementId beginNodeId;
 

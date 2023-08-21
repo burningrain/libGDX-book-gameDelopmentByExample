@@ -1,9 +1,9 @@
 package com.github.br.gdx.simple.visual.novel.api.node;
 
 import com.github.br.gdx.simple.visual.novel.Utils;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
+import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
 public class CompositeNode<UC extends UserContext, SM extends ScreenManager> implements Node<UC, SM> {
 

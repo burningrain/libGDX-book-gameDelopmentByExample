@@ -1,15 +1,16 @@
 package com.github.br.gdx.simple.visual.novel.graph;
 
-import com.badlogic.gdx.utils.Array;
 import com.github.br.gdx.simple.visual.novel.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class NodeWrapper<N, E> {
 
     private final GraphElementId id;
     private final N node;
-    private final Array<EdgeWrapper<N, E>> edges = new Array<>();
+    private final ArrayList<EdgeWrapper<N, E>> edges = new ArrayList<>();
 
     public NodeWrapper(GraphElementId id, N node) {
         this.id = Utils.checkNotNull(id, "id");
@@ -24,7 +25,7 @@ public class NodeWrapper<N, E> {
         return node;
     }
 
-    public Array<EdgeWrapper<N, E>> getEdges() {
+    public List<EdgeWrapper<N, E>> getEdges() {
         return edges;
     }
 

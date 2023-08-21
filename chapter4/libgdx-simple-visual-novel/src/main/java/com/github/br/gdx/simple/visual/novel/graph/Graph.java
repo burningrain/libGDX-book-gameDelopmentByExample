@@ -1,13 +1,14 @@
 package com.github.br.gdx.simple.visual.novel.graph;
 
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
 import com.github.br.gdx.simple.visual.novel.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Graph<N, E> {
 
-    private final ObjectMap<GraphElementId, NodeWrapper<N, E>> nodes = new ObjectMap<>();
-    private final ObjectMap<GraphElementId, EdgeWrapper<N, E>> edges = new ObjectMap<>();
+    private final HashMap<GraphElementId, NodeWrapper<N, E>> nodes = new HashMap<>();
+    private final HashMap<GraphElementId, EdgeWrapper<N, E>> edges = new HashMap<>();
 
     public void addNode(GraphElementId elementId, N node) {
         Utils.checkNotNull(elementId, "elementId");
@@ -49,11 +50,11 @@ public class Graph<N, E> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("digraph graphname {");
-        for (ObjectMap.Entry<GraphElementId, NodeWrapper<N, E>> node : nodes) {
-            builder.append(node.key.getId()).append(";");
+        for (Map.Entry<GraphElementId, NodeWrapper<N, E>> node : nodes.entrySet()) {
+            builder.append(node.getKey().getId()).append(";");
         }
-        for (ObjectMap.Entry<GraphElementId, EdgeWrapper<N, E>> edge : edges) {
-            EdgeWrapper<N, E> value = edge.value;
+        for (Map.Entry<GraphElementId, EdgeWrapper<N, E>> edge : edges.entrySet()) {
+            EdgeWrapper<N, E> value = edge.getValue();
             builder.append(value.getSource().getId()).append(" -> ").append(value.getDest().getId()).append(";");
         }
         builder.append("}");
