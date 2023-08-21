@@ -11,7 +11,7 @@ import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 public class TestNode<T extends UserContext, SC extends ScreenManager> implements Node<T, SC> {
 
     @Override
-    public NodeResult execute(float delta, PlotContext<T, SC> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<T, SC> plotContext, boolean isVisited) {
         CurrentState currentState = plotContext.getAuxiliaryContext().currentState;
         System.out.println("execute: " + currentState);
 

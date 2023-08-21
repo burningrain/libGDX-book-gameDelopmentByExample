@@ -17,12 +17,12 @@ public class CompositeNode<UC extends UserContext, SM extends ScreenManager> imp
     }
 
     @Override
-    public NodeResult execute(float delta, PlotContext<UC, SM> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<UC, SM> plotContext, boolean isVisited) {
         NodeResult stayResult = null;
         NodeResult nextResult = null;
 
         for (Node<UC, SM> node : nodes) {
-            NodeResult nodeResult = node.execute(delta, plotContext, isVisited);
+            NodeResult nodeResult = node.execute(plotContext, isVisited);
             if(NodeResultType.STAY.equals(nodeResult.getType())) {
                 stayResult = nodeResult;
             }

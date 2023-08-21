@@ -18,7 +18,7 @@ public class SceneLinkNode<UC extends UserContext, SC extends ScreenManager> imp
     }
 
     @Override
-    public NodeResult execute(float delta, PlotContext<UC, SC> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<UC, SC> plotContext, boolean isVisited) {
         return new NodeResult(sceneTitle, NodeResultType.CHANGE_SCENE_IN);
     }
 

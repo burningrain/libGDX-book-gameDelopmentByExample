@@ -68,7 +68,7 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
     }
 
     // return окончился the plot или еще нет. 'true' если окончился
-    public boolean execute(float delta, UC userContext) {
+    public boolean execute(UC userContext) {
         plotContext.setUserContext(userContext);
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         if(auxiliaryContext.isProcessFinished()) {
@@ -77,7 +77,7 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
         CurrentState currentState = auxiliaryContext.currentState;
         ElementId sceneId = currentState.sceneId;
 
-        executeSceneStep(delta, sceneId);
+        executeSceneStep(sceneId);
 
         if(currentState.nodeId == null && currentState.parentState == null) {
             auxiliaryContext.setProcessFinished(true);
@@ -85,14 +85,14 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
         return auxiliaryContext.isProcessFinished();
     }
 
-    private void executeSceneStep(float delta, ElementId sceneId) {
+    private void executeSceneStep(ElementId sceneId) {
         Scene<UC, SC> currentScene = sceneManager.getScene(sceneId);
-        NodeResult nodeResult = currentScene.execute(delta, plotContext);
+        NodeResult nodeResult = currentScene.execute(plotContext);
         NodeResultType type = nodeResult.getType();
         if (NodeResultType.CHANGE_SCENE_IN == type) {
             ElementId nextSceneId = nodeResult.getSceneTitle();
             changeCurrentSceneToChild(nextSceneId);
-            executeSceneStep(delta, nextSceneId);
+            executeSceneStep(nextSceneId);
         } else if(NodeResultType.CHANGE_SCENE_OUT == type) {
             changeCurrentSceneToParent();
         }

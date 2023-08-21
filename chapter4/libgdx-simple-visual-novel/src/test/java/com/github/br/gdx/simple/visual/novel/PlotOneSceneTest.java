@@ -53,7 +53,7 @@ public class PlotOneSceneTest {
                 .build();
 
 
-        boolean result = plot.execute(1f, userContext);
+        boolean result = plot.execute(userContext);
         Assert.assertTrue(result);
     }
 
@@ -89,8 +89,8 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f, userContext);
-        boolean result = plot.execute(1f, userContext);
+        plot.execute(userContext);
+        boolean result = plot.execute(userContext);
         Assert.assertTrue(result);
     }
 
@@ -132,10 +132,10 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f, userContext);
-        plot.execute(1f, userContext);
-        plot.execute(1f, userContext);
-        boolean result = plot.execute(1f, userContext);
+        plot.execute(userContext);
+        plot.execute(userContext);
+        plot.execute(userContext);
+        boolean result = plot.execute(userContext);
         Assert.assertTrue(result);
     }
 
@@ -177,9 +177,9 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f, userContext);
-        plot.execute(1f, userContext);
-        boolean result = plot.execute(1f, userContext);
+        plot.execute(userContext);
+        plot.execute(userContext);
+        boolean result = plot.execute(userContext);
         Assert.assertFalse(result);
     }
 
@@ -245,14 +245,14 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(1f, userContext); // a
+        plot.execute(userContext); // a
         userContext.nextId = c;
-        plot.execute(1f, userContext); // b
-        plot.execute(1f, userContext); // c
-        plot.execute(1f, userContext); // a
+        plot.execute(userContext); // b
+        plot.execute(userContext); // c
+        plot.execute(userContext); // a
         userContext.nextId = d;
-        plot.execute(1f, userContext); // b
-        boolean result = plot.execute(1f, userContext); // d
+        plot.execute(userContext); // b
+        boolean result = plot.execute(userContext); // d
         Assert.assertTrue(result);
     }
 
@@ -322,8 +322,8 @@ public class PlotOneSceneTest {
                 .build();
 
         userContext.nextId = d;
-        plot.execute(1f, userContext); // a
-        boolean result = plot.execute(1f, userContext); // d
+        plot.execute(userContext); // a
+        boolean result = plot.execute(userContext); // d
         Assert.assertTrue(result);
     }
 

@@ -51,7 +51,7 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
         return new SceneBuilder<>(config);
     }
 
-    public NodeResult execute(float delta, PlotContext<UC, SM> plotContext) {
+    public NodeResult execute(PlotContext<UC, SM> plotContext) {
         plotContext.getServiceContext().setCurrentScreenManager(this.config.getScreenManager());
 
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
@@ -62,7 +62,7 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
 
         GraphElementId graphElementId = SceneUtils.toId(currentState.nodeId);
         Node<UC, SM> node = graph.getNode(graphElementId);
-        NodeResult nodeResult = node.execute(delta, plotContext, auxiliaryContext.isVisited(currentState.sceneId, currentState.nodeId));
+        NodeResult nodeResult = node.execute(plotContext, auxiliaryContext.isVisited(currentState.sceneId, currentState.nodeId));
         auxiliaryContext.addToVisited(currentState.sceneId, currentState.nodeId);
         if (NodeResultType.NEXT != nodeResult.getType()) {
             return nodeResult;

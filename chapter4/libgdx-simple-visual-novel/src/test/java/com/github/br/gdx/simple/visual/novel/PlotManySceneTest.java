@@ -96,14 +96,14 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(1f, userContext); // a
-        plot.execute(1f, userContext); // 1
-        plot.execute(1f, userContext); // 2
-        plot.execute(1f, userContext); // 3
-        plot.execute(1f, userContext); // 4
-        plot.execute(1f, userContext); // c
-        Assert.assertTrue(plot.execute(1f, userContext));
-        Assert.assertTrue(plot.execute(1f, userContext)); // проверка, что остается в оконченном состоянии
+        plot.execute(userContext); // a
+        plot.execute(userContext); // 1
+        plot.execute(userContext); // 2
+        plot.execute(userContext); // 3
+        plot.execute(userContext); // 4
+        plot.execute(userContext); // c
+        Assert.assertTrue(plot.execute(userContext));
+        Assert.assertTrue(plot.execute(userContext)); // проверка, что остается в оконченном состоянии
     }
 
     /**
@@ -217,27 +217,27 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(1f, userContext); // a
-        plot.execute(1f, userContext); // 1
+        plot.execute(userContext); // a
+        plot.execute(userContext); // 1
         userContext.nextId = three;
-        plot.execute(1f, userContext); // 2
-        plot.execute(1f, userContext); // 3
-        plot.execute(1f, userContext); // 1
+        plot.execute(userContext); // 2
+        plot.execute(userContext); // 3
+        plot.execute(userContext); // 1
         userContext.nextId = four;
-        plot.execute(1f, userContext); // 2
-        plot.execute(1f, userContext); // 4
+        plot.execute(userContext); // 2
+        plot.execute(userContext); // 4
         userContext.nextId = d;
-        plot.execute(1f, userContext); // c
-        plot.execute(1f, userContext); // d
-        plot.execute(1f, userContext); // 1
+        plot.execute(userContext); // c
+        plot.execute(userContext); // d
+        plot.execute(userContext); // 1
         userContext.nextId = four;
-        plot.execute(1f, userContext); // 2
-        plot.execute(1f, userContext); // 4
+        plot.execute(userContext); // 2
+        plot.execute(userContext); // 4
         userContext.nextId = e;
-        plot.execute(1f, userContext); // c
-        plot.execute(1f, userContext); // e
+        plot.execute(userContext); // c
+        plot.execute(userContext); // e
 
-        Assert.assertTrue(plot.execute(1f, userContext));
+        Assert.assertTrue(plot.execute(userContext));
     }
 
     /**
@@ -336,14 +336,14 @@ public class PlotManySceneTest {
                 .build();
 
         userContext.nextId = c;
-        plot.execute(1f, userContext); // a
+        plot.execute(userContext); // a
 
         userContext.nextId = three;
-        plot.execute(1f, userContext); // 1
-        plot.execute(1f, userContext); // 3
-        plot.execute(1f, userContext); // d
+        plot.execute(userContext); // 1
+        plot.execute(userContext); // 3
+        plot.execute(userContext); // d
 
-        Assert.assertTrue(plot.execute(1f, userContext));
+        Assert.assertTrue(plot.execute(userContext));
     }
 
     /**
@@ -414,10 +414,10 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(1f, userContext); // a
-        plot.execute(1f, userContext); // 1
+        plot.execute(userContext); // a
+        plot.execute(userContext); // 1
 
-        Assert.assertTrue(plot.execute(1f, userContext));
+        Assert.assertTrue(plot.execute(userContext));
     }
 
     /**
@@ -516,10 +516,10 @@ public class PlotManySceneTest {
                 .build();
 
         userContext.setNextId(three);
-        plot.execute(1f, userContext); // 1
+        plot.execute(userContext); // 1
         userContext.setNextId(c);
-        plot.execute(1f, userContext); // 3
-        Assert.assertTrue(plot.execute(1f, userContext)); // c
+        plot.execute(userContext); // 3
+        Assert.assertTrue(plot.execute(userContext)); // c
     }
 
 
