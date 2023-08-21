@@ -7,9 +7,8 @@ import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
-public class SceneLinkNode<UC extends UserContext, SC extends ScreenManager> implements Node<UC, SC> {
+public class SceneLinkNode<UC extends UserContext> implements Node<UC> {
 
     private final ElementId sceneTitle;
 
@@ -18,7 +17,7 @@ public class SceneLinkNode<UC extends UserContext, SC extends ScreenManager> imp
     }
 
     @Override
-    public NodeResult execute(PlotContext<UC, SC> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<UC> plotContext, boolean isVisited) {
         return new NodeResult(sceneTitle, NodeResultType.CHANGE_SCENE_IN);
     }
 

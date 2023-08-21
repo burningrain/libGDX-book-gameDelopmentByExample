@@ -6,25 +6,24 @@ import com.github.br.gdx.simple.visual.novel.api.Pair;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.EmptyPredicate;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
-public class SceneEdgeBuilder<UC extends UserContext, SM extends ScreenManager> {
+public class SceneEdgeBuilder<UC extends UserContext> {
 
-    private final SceneNodeBuilder<UC, SM> nodeBuilder;
+    private final SceneNodeBuilder<UC> nodeBuilder;
 
-    public SceneEdgeBuilder(SceneNodeBuilder<UC, SM> nodeBuilder) {
+    public SceneEdgeBuilder(SceneNodeBuilder<UC> nodeBuilder) {
         this.nodeBuilder = nodeBuilder;
     }
 
-    public SceneNodeBuilder<UC, SM> to(ElementId nodeId) {
-        return this.to(nodeId, EmptyPredicate.<UC, SM>empty());
+    public SceneNodeBuilder<UC> to(ElementId nodeId) {
+        return this.to(nodeId, EmptyPredicate.<UC>empty());
     }
 
-    public SceneNodeBuilder<UC, SM> to(ElementId nodeId, Predicate<UC, SM> predicate) {
+    public SceneNodeBuilder<UC> to(ElementId nodeId, Predicate<UC> predicate) {
         Utils.checkNotNull(nodeId, "nodeId");
         Utils.checkNotNull(nodeBuilder.currentNodeId, "prevNodeId");
 
-        Edge<UC, SM> edge = new Edge<>(nodeBuilder.currentNodeId, nodeId, predicate);
+        Edge<UC> edge = new Edge<>(nodeBuilder.currentNodeId, nodeId, predicate);
         if(nodeBuilder.edges.contains(edge)) {
             // TODO в логгер вывести warning о попытке переопределить существующее ребро
             return nodeBuilder;
@@ -34,19 +33,19 @@ public class SceneEdgeBuilder<UC extends UserContext, SM extends ScreenManager> 
         return nodeBuilder;
     }
 
-    public SceneNodeBuilder<UC, SM> to(Pair<ElementId, Predicate<UC, SM>>... pares) {
-        for (Pair<ElementId, Predicate<UC, SM>> pair : pares) {
+    public SceneNodeBuilder<UC> to(Pair<ElementId, Predicate<UC>>... pares) {
+        for (Pair<ElementId, Predicate<UC>> pair : pares) {
             this.to(pair.getFirst(), pair.getSecond());
         }
         return nodeBuilder;
     }
 
-    public SceneNodeBuilder<UC, SM> to() {
+    public SceneNodeBuilder<UC> to() {
         nodeBuilder.lazyBinding = true;
         return nodeBuilder;
     }
 
-    public SceneNodeBuilder<UC, SM> end() {
+    public SceneNodeBuilder<UC> end() {
         return nodeBuilder.endBranch();
     }
 

@@ -3,13 +3,12 @@ package com.github.br.gdx.simple.visual.novel.api.node;
 import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
-public class CompositeNode<UC extends UserContext, SM extends ScreenManager> implements Node<UC, SM> {
+public class CompositeNode<UC extends UserContext> implements Node<UC> {
 
-    private final Node<UC, SM>[] nodes;
+    private final Node<UC>[] nodes;
 
-    public CompositeNode(Node<UC, SM>[] nodes) {
+    public CompositeNode(Node<UC>[] nodes) {
         this.nodes = Utils.checkNotNull(nodes, "nodes");
         if(this.nodes.length == 0) {
             throw new IllegalArgumentException("The array of nodes must not be empty");
@@ -17,11 +16,11 @@ public class CompositeNode<UC extends UserContext, SM extends ScreenManager> imp
     }
 
     @Override
-    public NodeResult execute(PlotContext<UC, SM> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<UC> plotContext, boolean isVisited) {
         NodeResult stayResult = null;
         NodeResult nextResult = null;
 
-        for (Node<UC, SM> node : nodes) {
+        for (Node<UC> node : nodes) {
             NodeResult nodeResult = node.execute(plotContext, isVisited);
             if(NodeResultType.STAY.equals(nodeResult.getType())) {
                 stayResult = nodeResult;

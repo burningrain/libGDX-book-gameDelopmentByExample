@@ -9,7 +9,6 @@ import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 import com.github.br.gdx.simple.visual.novel.graph.EdgeWrapper;
 import com.github.br.gdx.simple.visual.novel.graph.Graph;
 import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
@@ -18,20 +17,20 @@ import com.github.br.gdx.simple.visual.novel.graph.NodeWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scene<UC extends UserContext, SM extends ScreenManager> {
+public class Scene<UC extends UserContext> {
 
-    private final SceneConfig<SM> config;
-    private final Graph<Node<UC, SM>, Edge> graph;
+    private final SceneConfig config;
+    private final Graph<Node<UC>, Edge> graph;
 
     private final GraphElementId beginNodeId;
 
-    public Scene(SceneConfig<SM> config, Graph<Node<UC, SM>, Edge> graph, GraphElementId beginNodeId) {
+    public Scene(SceneConfig config, Graph<Node<UC>, Edge> graph, GraphElementId beginNodeId) {
         this.config = Utils.checkNotNull(config, "config");
         this.graph = Utils.checkNotNull(graph, "graph");
         this.beginNodeId = Utils.checkNotNull(beginNodeId, "beginNodeId");
     }
 
-    public SceneConfig<SM> getConfig() {
+    public SceneConfig getConfig() {
         return config;
     }
 
@@ -45,15 +44,13 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
     }
 
 
-    public static <UC extends UserContext, SM extends ScreenManager> SceneBuilder<UC, SM> builder(SceneConfig<SM> config) {
+    public static <UC extends UserContext> SceneBuilder<UC> builder(SceneConfig config) {
         Utils.checkNotNull(config, "config");
 
         return new SceneBuilder<>(config);
     }
 
-    public NodeResult execute(PlotContext<UC, SM> plotContext) {
-        plotContext.getServiceContext().setCurrentScreenManager(this.config.getScreenManager());
-
+    public NodeResult execute(PlotContext<UC> plotContext) {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         CurrentState currentState = auxiliaryContext.currentState;
         if (currentState.nodeId == null) {
@@ -61,7 +58,7 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
         }
 
         GraphElementId graphElementId = SceneUtils.toId(currentState.nodeId);
-        Node<UC, SM> node = graph.getNode(graphElementId);
+        Node<UC> node = graph.getNode(graphElementId);
         NodeResult nodeResult = node.execute(plotContext, auxiliaryContext.isVisited(currentState.sceneId, currentState.nodeId));
         auxiliaryContext.addToVisited(currentState.sceneId, currentState.nodeId);
         if (NodeResultType.NEXT != nodeResult.getType()) {
@@ -99,7 +96,7 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
         return nodeResult;
     }
 
-    public ElementId getNextNodeId(GraphElementId graphElementId, PlotContext<UC, SM> plotContext) {
+    public ElementId getNextNodeId(GraphElementId graphElementId, PlotContext<UC> plotContext) {
         GraphElementId nextNodeId = getGraphNextNodeId(graphElementId, plotContext);
         if (nextNodeId == null) {
             return null;
@@ -109,14 +106,14 @@ public class Scene<UC extends UserContext, SM extends ScreenManager> {
     }
 
     @SuppressWarnings("unchecked")
-    public GraphElementId getGraphNextNodeId(GraphElementId currentNodeId, PlotContext<UC, SM> plotContext) {
-        NodeWrapper<Node<UC, SM>, Edge> nodeWrapper = Utils.checkNotNull(graph.getNodeWrapper(currentNodeId), "nodeId='" + currentNodeId + "'");
-        List<EdgeWrapper<Node<UC, SM>, Edge>> edges = nodeWrapper.getEdges();
+    public GraphElementId getGraphNextNodeId(GraphElementId currentNodeId, PlotContext<UC> plotContext) {
+        NodeWrapper<Node<UC>, Edge> nodeWrapper = Utils.checkNotNull(graph.getNodeWrapper(currentNodeId), "nodeId='" + currentNodeId + "'");
+        List<EdgeWrapper<Node<UC>, Edge>> edges = nodeWrapper.getEdges();
 
-        NodeWrapper<Node<UC, SM>, Edge> defaultTransition = null;
-        ArrayList<NodeWrapper<Node<UC, SM>, Edge>> children = new ArrayList<>(edges.size());
-        for (EdgeWrapper<Node<UC, SM>, Edge> edge : edges) {
-            NodeWrapper<Node<UC, SM>, Edge> source = edge.getSource();
+        NodeWrapper<Node<UC>, Edge> defaultTransition = null;
+        ArrayList<NodeWrapper<Node<UC>, Edge>> children = new ArrayList<>(edges.size());
+        for (EdgeWrapper<Node<UC>, Edge> edge : edges) {
+            NodeWrapper<Node<UC>, Edge> source = edge.getSource();
             if (nodeWrapper.equals(source)) {
                 Edge e = edge.getEdge();
                 if (e.isTransitionAvailable(plotContext)) {

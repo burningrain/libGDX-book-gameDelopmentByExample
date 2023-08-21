@@ -4,16 +4,15 @@ import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 import com.github.br.gdx.simple.visual.novel.graph.Graph;
 import com.github.br.gdx.simple.visual.novel.inner.SceneLinkNode;
 
 import java.util.HashSet;
 
-public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> {
+public class SceneNodeBuilder<UC extends UserContext> {
 
-    final SceneConfig<SM> config;
-    final Graph<Node<UC, SM>, Edge> graph = new Graph<>();
+    final SceneConfig config;
+    final Graph<Node<UC>, Edge> graph = new Graph<>();
     final HashSet<Edge> edges = new HashSet<>();
 
     ElementId beginNodeId;
@@ -23,15 +22,15 @@ public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> 
 
     boolean lazyBinding = false;
 
-    private final SceneEdgeBuilder<UC, SM> edgeBuilder;
+    private final SceneEdgeBuilder<UC> edgeBuilder;
 
-    public SceneNodeBuilder(SceneConfig<SM> config) {
+    public SceneNodeBuilder(SceneConfig config) {
         this.config = Utils.checkNotNull(config, "config");
         edgeBuilder = new SceneEdgeBuilder<>(this);
     }
 
 
-    public SceneNodeBuilder<UC, SM> endBranch() {
+    public SceneNodeBuilder<UC> endBranch() {
         Utils.checkNotNull(currentNodeId, "currentNodeId");
 
         if (prevNodeId != null) {
@@ -43,7 +42,7 @@ public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> 
         return this;
     }
 
-    public SceneEdgeBuilder<UC, SM> node(ElementId nodeId) {
+    public SceneEdgeBuilder<UC> node(ElementId nodeId) {
         Utils.checkNotNull(nodeId, "nodeId");
 
         if (beginNodeId == null) {
@@ -61,7 +60,7 @@ public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> 
         return edgeBuilder;
     }
 
-    public Scene<UC, SM> build() {
+    public Scene<UC> build() {
         Utils.checkNotNull(beginNodeId, "beginNodeId");
 
         for (Edge edge : edges) {
@@ -73,14 +72,14 @@ public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> 
             );
         }
 
-        return new Scene<UC, SM>(config, graph, SceneUtils.toId(beginNodeId));
+        return new Scene<UC>(config, graph, SceneUtils.toId(beginNodeId));
     }
 
-    ElementId addNode(Node<UC, SM> node) {
+    ElementId addNode(Node<UC> node) {
         return this.addNode(config.getGeneratorNodeId().nextId(), node);
     }
 
-    ElementId addNode(ElementId nodeId, Node<UC, SM> node) {
+    ElementId addNode(ElementId nodeId, Node<UC> node) {
         Utils.checkNotNull(nodeId, "nodeId");
         Utils.checkNotNull(node, "node");
 
@@ -98,7 +97,7 @@ public class SceneNodeBuilder<UC extends UserContext, SM extends ScreenManager> 
     }
 
     ElementId addScene(ElementId nodeId, ElementId sceneId) {
-        this.addNode(nodeId, new SceneLinkNode<UC, SM>(sceneId));
+        this.addNode(nodeId, new SceneLinkNode<UC>(sceneId));
 
         return nodeId;
     }

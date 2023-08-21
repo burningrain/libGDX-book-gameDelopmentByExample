@@ -6,20 +6,19 @@ import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.EmptyPredicate;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
 import java.util.Objects;
 
-public class Edge<UC extends UserContext, SC extends ScreenManager> implements Comparable<Edge<UC,SC>> {
+public class Edge<UC extends UserContext> implements Comparable<Edge<UC>> {
     ElementId sourceId;
     ElementId destId;
-    final Predicate<UC, SC> predicate;
+    final Predicate<UC> predicate;
 
     public Edge(ElementId sourceId, ElementId destId) {
-        this(sourceId, destId, EmptyPredicate.<UC, SC>empty());
+        this(sourceId, destId, EmptyPredicate.<UC>empty());
     }
 
-    public Edge(ElementId sourceId, ElementId destId, Predicate<UC, SC> predicate) {
+    public Edge(ElementId sourceId, ElementId destId, Predicate<UC> predicate) {
         this.sourceId = Utils.checkNotNull(sourceId, "sourceId");
         this.destId = Utils.checkNotNull(destId, "destId");
         this.predicate = Utils.checkNotNull(predicate, "predicate");
@@ -56,7 +55,7 @@ public class Edge<UC extends UserContext, SC extends ScreenManager> implements C
         }
     }
 
-    public boolean isTransitionAvailable(PlotContext<UC, SC> plotContext) {
+    public boolean isTransitionAvailable(PlotContext<UC> plotContext) {
         return predicate.test(plotContext);
     }
 

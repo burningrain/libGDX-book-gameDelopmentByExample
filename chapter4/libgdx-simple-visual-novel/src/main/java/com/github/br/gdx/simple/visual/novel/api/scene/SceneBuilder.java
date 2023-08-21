@@ -3,22 +3,20 @@ package com.github.br.gdx.simple.visual.novel.api.scene;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManagerConsumer;
 
-public class SceneBuilder<UC extends UserContext, SM extends ScreenManager> implements NodeRegistrationBuilder<UC, SM> {
+public class SceneBuilder<UC extends UserContext> implements NodeRegistrationBuilder<UC> {
 
-    private final SceneNodeBuilder<UC, SM> sceneNodeBuilder;
+    private final SceneNodeBuilder<UC> sceneNodeBuilder;
 
-    public SceneBuilder(SceneConfig<SM> config) {
+    public SceneBuilder(SceneConfig config) {
         sceneNodeBuilder = new SceneNodeBuilder<>(config);
     }
 
-    public ElementId registerNode(Node<UC, SM> node) {
+    public ElementId registerNode(Node<UC> node) {
         return this.sceneNodeBuilder.addNode(node);
     }
 
-    public ElementId registerNode(ElementId nodeId, Node<UC, SM> node) {
+    public ElementId registerNode(ElementId nodeId, Node<UC> node) {
         return this.sceneNodeBuilder.addNode(nodeId, node);
     }
 
@@ -30,21 +28,13 @@ public class SceneBuilder<UC extends UserContext, SM extends ScreenManager> impl
         return this.sceneNodeBuilder.addScene(nodeId, sceneId);
     }
 
-    public ElementId registerScreenNode(ScreenManagerConsumer<UC, SM> consumer) {
-        return this.sceneNodeBuilder.addNode(consumer);
-    }
-
-    public ElementId registerScreenNode(ElementId nodeId, ScreenManagerConsumer<UC, SM> consumer) {
-        return this.sceneNodeBuilder.addNode(nodeId, consumer);
-    }
-
-    public SceneNodeBuilder<UC, SM> graph(RegisterConsumer<UC, SM> registerConsumer) {
+    public SceneNodeBuilder<UC> graph(RegisterConsumer<UC> registerConsumer) {
         registerConsumer.consume(this);
 
         return graph();
     }
 
-    public SceneNodeBuilder<UC, SM> graph() {
+    public SceneNodeBuilder<UC> graph() {
         return sceneNodeBuilder;
     }
 

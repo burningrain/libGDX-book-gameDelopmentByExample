@@ -4,15 +4,14 @@ import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
 import java.util.HashMap;
 
-public class DefaultSceneManager<UC extends UserContext, SC extends ScreenManager> implements SceneManager<UC, SC> {
+public class DefaultSceneManager<UC extends UserContext> implements SceneManager<UC> {
 
-    private final HashMap<ElementId, SceneSupplier<UC, SC>> scenes = new HashMap<>();
+    private final HashMap<ElementId, SceneSupplier<UC>> scenes = new HashMap<>();
 
-    public DefaultSceneManager<UC, SC> addScene(ElementId elementId, SceneSupplier<UC, SC> supplier) {
+    public DefaultSceneManager<UC> addScene(ElementId elementId, SceneSupplier<UC> supplier) {
         Utils.checkNotNull(elementId, "elementId");
         Utils.checkNotNull(supplier, "supplier");
         scenes.put(elementId, supplier);
@@ -21,8 +20,8 @@ public class DefaultSceneManager<UC extends UserContext, SC extends ScreenManage
     }
 
     @Override
-    public Scene<UC, SC> getScene(ElementId nextSceneId) {
-        SceneSupplier<UC, SC> sceneSupplier = Utils.checkNotNull(scenes.get(nextSceneId), "nextSceneId=" + nextSceneId);
+    public Scene<UC> getScene(ElementId nextSceneId) {
+        SceneSupplier<UC> sceneSupplier = Utils.checkNotNull(scenes.get(nextSceneId), "nextSceneId=" + nextSceneId);
         return Utils.checkNotNull(sceneSupplier.get(), "nextSceneId=" + nextSceneId);
     }
 

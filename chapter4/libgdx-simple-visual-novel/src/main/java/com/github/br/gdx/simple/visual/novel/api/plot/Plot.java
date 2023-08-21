@@ -7,21 +7,19 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
-import com.github.br.gdx.simple.visual.novel.api.screen.ScreenManager;
 
-public class Plot<UC extends UserContext, SC extends ScreenManager> {
+public class Plot<UC extends UserContext> {
 
-    private final SceneManager<UC, SC> sceneManager;
+    private final SceneManager<UC> sceneManager;
     private final PlotConfig config;
 
-    private final PlotContext<UC, SC> plotContext;
+    private final PlotContext<UC> plotContext;
 
-    public Plot(Builder<UC, SC> builder) {
+    public Plot(Builder<UC> builder) {
         this.sceneManager = Utils.checkNotNull(builder.sceneManager, "sceneManager");
         this.config = builder.config;
 
-        ServiceContext<SC> serviceContext = new ServiceContext<>();
-        plotContext = new PlotContext<>(serviceContext, builder.beginSceneId, this.config.isMarkVisitedNodes());
+        plotContext = new PlotContext<>(builder.beginSceneId, this.config.isMarkVisitedNodes());
 
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         CurrentState currentState = auxiliaryContext.currentState;
@@ -58,11 +56,11 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
         Utils.checkNotNull(nextSceneId, "nextSceneId");
         Utils.checkNotNull(currentNodeId, "nodeId");
 
-        Scene<UC, SC> scene = sceneManager.getScene(nextSceneId);
+        Scene<UC> scene = sceneManager.getScene(nextSceneId);
         return scene.getNextNodeId(SceneUtils.toId(currentNodeId), plotContext);
     }
 
-    public static <UC extends UserContext, SC extends ScreenManager> Builder<UC, SC> builder(PlotConfig config) {
+    public static <UC extends UserContext> Builder<UC> builder(PlotConfig config) {
         Utils.checkNotNull(config, "config");
         return new Builder<>(config);
     }
@@ -86,7 +84,7 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
     }
 
     private void executeSceneStep(ElementId sceneId) {
-        Scene<UC, SC> currentScene = sceneManager.getScene(sceneId);
+        Scene<UC> currentScene = sceneManager.getScene(sceneId);
         NodeResult nodeResult = currentScene.execute(plotContext);
         NodeResultType type = nodeResult.getType();
         if (NodeResultType.CHANGE_SCENE_IN == type) {
@@ -98,10 +96,10 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
         }
     }
 
-    public static class Builder<UC extends UserContext, SC extends ScreenManager> {
+    public static class Builder<UC extends UserContext> {
 
         private final PlotConfig config;
-        private SceneManager<UC, SC> sceneManager;
+        private SceneManager<UC> sceneManager;
         private ElementId beginSceneId;
 
 
@@ -109,17 +107,17 @@ public class Plot<UC extends UserContext, SC extends ScreenManager> {
             this.config = Utils.checkNotNull(config, "config");
         }
 
-        public Builder<UC, SC> setSceneManager(SceneManager<UC, SC> sceneManager) {
+        public Builder<UC> setSceneManager(SceneManager<UC> sceneManager) {
             this.sceneManager = Utils.checkNotNull(sceneManager, "sceneManager");
             return this;
         }
 
-        public Builder<UC, SC> setBeginSceneId(ElementId beginSceneId) {
+        public Builder<UC> setBeginSceneId(ElementId beginSceneId) {
             this.beginSceneId = Utils.checkNotNull(beginSceneId, "beginSceneId");
             return this;
         }
 
-        public Plot<UC, SC> build() {
+        public Plot<UC> build() {
             Utils.checkNotNull(beginSceneId, "beginSceneId");
             Utils.checkNotNull(sceneManager, "sceneManager");
 
