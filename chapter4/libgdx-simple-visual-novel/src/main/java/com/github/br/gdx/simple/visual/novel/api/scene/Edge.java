@@ -10,9 +10,10 @@ import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
 import java.util.Objects;
 
 public class Edge<UC extends UserContext> implements Comparable<Edge<UC>> {
-    ElementId sourceId;
-    ElementId destId;
-    final Predicate<UC> predicate;
+
+    private final  ElementId sourceId;
+    private final  ElementId destId;
+    private final Predicate<UC> predicate;
 
     public Edge(ElementId sourceId, ElementId destId) {
         this(sourceId, destId, EmptyPredicate.<UC>empty());
@@ -22,6 +23,18 @@ public class Edge<UC extends UserContext> implements Comparable<Edge<UC>> {
         this.sourceId = Utils.checkNotNull(sourceId, "sourceId");
         this.destId = Utils.checkNotNull(destId, "destId");
         this.predicate = Utils.checkNotNull(predicate, "predicate");
+    }
+
+    public ElementId getSourceId() {
+        return sourceId;
+    }
+
+    public ElementId getDestId() {
+        return destId;
+    }
+
+    public Predicate<UC> getPredicate() {
+        return predicate;
     }
 
     @Override

@@ -3,20 +3,21 @@ package com.github.br.gdx.simple.visual.novel.api.scene;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 
-public class SceneBuilder<UC extends UserContext> implements NodeRegistrationBuilder<UC> {
+public class SceneBuilder<UC extends UserContext, V extends NodeVisitor<?>> implements NodeRegistrationBuilder<UC, V> {
 
-    private final SceneNodeBuilder<UC> sceneNodeBuilder;
+    private final SceneNodeBuilder<UC, V> sceneNodeBuilder;
 
     public SceneBuilder(SceneConfig config) {
         sceneNodeBuilder = new SceneNodeBuilder<>(config);
     }
 
-    public ElementId registerNode(Node<UC> node) {
+    public ElementId registerNode(Node<UC, V> node) {
         return this.sceneNodeBuilder.addNode(node);
     }
 
-    public ElementId registerNode(ElementId nodeId, Node<UC> node) {
+    public ElementId registerNode(ElementId nodeId, Node<UC, V> node) {
         return this.sceneNodeBuilder.addNode(nodeId, node);
     }
 
@@ -28,13 +29,13 @@ public class SceneBuilder<UC extends UserContext> implements NodeRegistrationBui
         return this.sceneNodeBuilder.addScene(nodeId, sceneId);
     }
 
-    public SceneNodeBuilder<UC> graph(RegisterConsumer<UC> registerConsumer) {
+    public SceneNodeBuilder<UC, V> graph(RegisterConsumer<UC, V> registerConsumer) {
         registerConsumer.consume(this);
 
         return graph();
     }
 
-    public SceneNodeBuilder<UC> graph() {
+    public SceneNodeBuilder<UC, V> graph() {
         return sceneNodeBuilder;
     }
 

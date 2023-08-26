@@ -1,18 +1,23 @@
 package com.github.br.gdx.simple.visual.novel.api.node;
 
 import com.github.br.gdx.simple.visual.novel.Utils;
+import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 
-public class CompositeNode<UC extends UserContext> implements Node<UC> {
+public class CompositeNode<UC extends UserContext, V extends NodeVisitor> implements Node<UC, V> {
 
-    private final Node<UC>[] nodes;
+    private final Node<UC, V>[] nodes;
 
-    public CompositeNode(Node<UC>[] nodes) {
+    public CompositeNode(Node<UC, V>[] nodes) {
         this.nodes = Utils.checkNotNull(nodes, "nodes");
         if(this.nodes.length == 0) {
             throw new IllegalArgumentException("The array of nodes must not be empty");
         }
+    }
+
+    public Node<UC, V>[] getNodes() {
+        return nodes;
     }
 
     @Override
@@ -20,7 +25,7 @@ public class CompositeNode<UC extends UserContext> implements Node<UC> {
         NodeResult stayResult = null;
         NodeResult nextResult = null;
 
-        for (Node<UC> node : nodes) {
+        for (Node<UC, V> node : nodes) {
             NodeResult nodeResult = node.execute(plotContext, isVisited);
             if(NodeResultType.STAY.equals(nodeResult.getType())) {
                 stayResult = nodeResult;
@@ -43,6 +48,11 @@ public class CompositeNode<UC extends UserContext> implements Node<UC> {
 
         // нет нод, которые знают, куда им двигаться дальше. Просто идем дальше
         return new NodeResult(NodeResultType.NEXT);
+    }
+
+    @Override
+    public void accept(ElementId sceneId, ElementId nodeId, V visitor) {
+        visitor.visit(sceneId, nodeId, this);
     }
 
 }

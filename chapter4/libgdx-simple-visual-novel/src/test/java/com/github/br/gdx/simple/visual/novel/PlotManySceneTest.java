@@ -12,6 +12,7 @@ import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneNodeBuilder;
+import com.github.br.gdx.simple.visual.novel.impl.CustomNodeVisitor;
 import com.github.br.gdx.simple.visual.novel.impl.TestNode;
 import com.github.br.gdx.simple.visual.novel.impl.TestUserContext;
 import com.github.br.gdx.simple.visual.novel.impl.TestUserMapContext;
@@ -24,13 +25,13 @@ public class PlotManySceneTest {
     @Test
     public void testInnerScene() {
         TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> mainSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
 
         // внутренняя сцена
-        final SceneBuilder<TestUserContext> innerSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -46,7 +47,7 @@ public class PlotManySceneTest {
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
-        final Scene<TestUserContext> innerScene = innerSceneBuilder.graph()
+        final Scene<TestUserContext, CustomNodeVisitor> innerScene = innerSceneBuilder.graph()
                 .node(one)
                 .to()
                 .node(two)
@@ -62,28 +63,28 @@ public class PlotManySceneTest {
         ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode<TestUserContext>());
         ElementId b = mainSceneBuilder.registerSceneLink(innerSceneId);
         ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserContext>());
-        SceneNodeBuilder<TestUserContext> mainGraphSceneBuilder = mainSceneBuilder.graph();
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
                 .to()
                 .node(b)
                 .to()
                 .node(c).end();
-        final Scene<TestUserContext> scene = mainGraphSceneBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(mainSceneId, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
                         )
-                        .addScene(innerSceneId, new SceneSupplier<TestUserContext>() {
+                        .addScene(innerSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return innerScene;
                                     }
                                 }
@@ -109,13 +110,13 @@ public class PlotManySceneTest {
     @Test
     public void testJumpBackToInnerScene() {
         final TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> mainSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
 
         // внутренняя сцена
-        final SceneBuilder<TestUserContext> innerSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -131,7 +132,7 @@ public class PlotManySceneTest {
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
-        SceneNodeBuilder<TestUserContext> innerBuilder = innerSceneBuilder.graph()
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> innerBuilder = innerSceneBuilder.graph()
                 .node(one)
                 .to()
                 .node(two)
@@ -151,7 +152,7 @@ public class PlotManySceneTest {
                 .endBranch()
         ;
 
-        final Scene<TestUserContext> innerScene = innerBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> innerScene = innerBuilder.build();
 
         System.out.println("inner scene: " + innerScene.toString());
         // внутренний сценарий
@@ -163,7 +164,7 @@ public class PlotManySceneTest {
         ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserContext>());
         final ElementId d = mainSceneBuilder.registerNode(ElementId.of("d"), new TestNode<TestUserContext>());
         ElementId e = mainSceneBuilder.registerNode(ElementId.of("e"), new TestNode<TestUserContext>());
-        SceneNodeBuilder<TestUserContext> mainGraphSceneBuilder = mainSceneBuilder.graph();
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
                 .to()
@@ -187,21 +188,21 @@ public class PlotManySceneTest {
                 .to(b)
                 .endBranch();
 
-        final Scene<TestUserContext> scene = mainGraphSceneBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(mainSceneId, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
                         )
-                        .addScene(innerSceneId, new SceneSupplier<TestUserContext>() {
+                        .addScene(innerSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return innerScene;
                                     }
                                 }
@@ -240,13 +241,13 @@ public class PlotManySceneTest {
     @Test
     public void testJumpForwardToInnerScene() {
         TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> mainSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
 
         // внутренняя сцена
-        final SceneBuilder<TestUserContext> innerSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -260,7 +261,7 @@ public class PlotManySceneTest {
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
-        SceneNodeBuilder<TestUserContext> innerBuilder = innerSceneBuilder.graph()
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> innerBuilder = innerSceneBuilder.graph()
                 .node(one)
                 .to()
                 .node(two)
@@ -273,7 +274,7 @@ public class PlotManySceneTest {
                 .endBranch()
         ;
 
-        final Scene<TestUserContext> innerScene = innerBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> innerScene = innerBuilder.build();
 
         System.out.println("inner scene: " + innerScene.toString());
         // внутренний сценарий
@@ -285,7 +286,7 @@ public class PlotManySceneTest {
         ElementId c = ElementId.of("c");
         mainSceneBuilder.registerSceneLink(c, innerSceneId);
         ElementId d = mainSceneBuilder.registerNode(ElementId.of("d"), new TestNode<TestUserContext>());
-        SceneNodeBuilder<TestUserContext> mainGraphSceneBuilder = mainSceneBuilder.graph();
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
                 .to()
@@ -302,21 +303,21 @@ public class PlotManySceneTest {
                 .to(c)
                 .endBranch();
 
-        final Scene<TestUserContext> scene = mainGraphSceneBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(mainSceneId, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
                         )
-                        .addScene(innerSceneId, new SceneSupplier<TestUserContext>() {
+                        .addScene(innerSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return innerScene;
                                     }
                                 }
@@ -343,13 +344,13 @@ public class PlotManySceneTest {
     @Test
     public void testInnerSceneAsEndNode() {
         TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> mainSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
 
         // внутренняя сцена
-        final SceneBuilder<TestUserContext> innerSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -359,11 +360,11 @@ public class PlotManySceneTest {
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
-        SceneNodeBuilder<TestUserContext> innerBuilder = innerSceneBuilder.graph()
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> innerBuilder = innerSceneBuilder.graph()
                 .node(one)
                 .end();
 
-        final Scene<TestUserContext> innerScene = innerBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> innerScene = innerBuilder.build();
         System.out.println("inner scene: " + innerScene.toString());
         // внутренний сценарий
 
@@ -371,28 +372,28 @@ public class PlotManySceneTest {
         ElementId mainSceneId = ElementId.of("main_scene");
         ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), new TestNode<TestUserContext>());
         ElementId b = mainSceneBuilder.registerSceneLink(ElementId.of("b"), innerSceneId);
-        SceneNodeBuilder<TestUserContext> mainGraphSceneBuilder = mainSceneBuilder.graph();
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
                 .to()
                 .node(b)
                 .end();
 
-        final Scene<TestUserContext> scene = mainGraphSceneBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(mainSceneId, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
                         )
-                        .addScene(innerSceneId, new SceneSupplier<TestUserContext>() {
+                        .addScene(innerSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return innerScene;
                                     }
                                 }
@@ -414,13 +415,13 @@ public class PlotManySceneTest {
     @Test
     public void testInnerSceneAsStartNode() {
         TestUserMapContext<ElementId, Boolean> userContext = new TestUserMapContext<>();
-        final SceneBuilder<TestUserMapContext<ElementId, Boolean>> mainSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
 
         // внутренняя сцена
-        final SceneBuilder<TestUserMapContext<ElementId, Boolean>> innerSceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -431,7 +432,7 @@ public class PlotManySceneTest {
 
         // внутренний сценарий
         ElementId innerSceneId = ElementId.of("inner_scene");
-        SceneNodeBuilder<TestUserMapContext<ElementId, Boolean>> innerBuilder = innerSceneBuilder.graph()
+        SceneNodeBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> innerBuilder = innerSceneBuilder.graph()
                 .node(one)
                 .to(new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(two, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
@@ -448,7 +449,7 @@ public class PlotManySceneTest {
                 )
                 .endBranch();
 
-        final Scene<TestUserMapContext<ElementId, Boolean>> innerScene = innerBuilder.build();
+        final Scene<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> innerScene = innerBuilder.build();
         System.out.println("inner scene: " + innerScene.toString());
         // внутренний сценарий
 
@@ -457,7 +458,7 @@ public class PlotManySceneTest {
         ElementId a = mainSceneBuilder.registerSceneLink(ElementId.of("a"), innerSceneId);
         final ElementId b = mainSceneBuilder.registerNode(ElementId.of("b"), new TestNode<TestUserMapContext<ElementId, Boolean>>());
         final ElementId c = mainSceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserMapContext<ElementId, Boolean>>());
-        SceneNodeBuilder<TestUserMapContext<ElementId, Boolean>> mainGraphSceneBuilder = mainSceneBuilder.graph();
+        SceneNodeBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
                 .node(a)
                 .to(
@@ -476,21 +477,21 @@ public class PlotManySceneTest {
                 )
                 .endBranch();
 
-        final Scene<TestUserMapContext<ElementId, Boolean>> scene = mainGraphSceneBuilder.build();
+        final Scene<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserMapContext<ElementId, Boolean>> plot = Plot.<TestUserMapContext<ElementId, Boolean>>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserMapContext<ElementId, Boolean>>()
-                        .addScene(mainSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>>() {
+        Plot<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> plot = Plot.<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>()
+                        .addScene(mainSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserMapContext<ElementId, Boolean>> get() {
+                                    public Scene<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
                         )
-                        .addScene(innerSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>>() {
+                        .addScene(innerSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserMapContext<ElementId, Boolean>> get() {
+                                    public Scene<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> get() {
                                         return innerScene;
                                     }
                                 }

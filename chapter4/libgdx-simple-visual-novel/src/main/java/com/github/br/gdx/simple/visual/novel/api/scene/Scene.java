@@ -9,22 +9,25 @@ import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
+import com.github.br.gdx.simple.visual.novel.api.plot.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.graph.EdgeWrapper;
 import com.github.br.gdx.simple.visual.novel.graph.Graph;
 import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
 import com.github.br.gdx.simple.visual.novel.graph.NodeWrapper;
+import com.github.br.gdx.simple.visual.novel.inner.GraphVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scene<UC extends UserContext> {
+public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
 
     private final SceneConfig config;
-    private final Graph<Node<UC>, Edge> graph;
+    private final Graph<Node<UC, V>, Edge> graph;
 
     private final GraphElementId beginNodeId;
 
-    public Scene(SceneConfig config, Graph<Node<UC>, Edge> graph, GraphElementId beginNodeId) {
+    public Scene(SceneConfig config, Graph<Node<UC, V>, Edge> graph, GraphElementId beginNodeId) {
         this.config = Utils.checkNotNull(config, "config");
         this.graph = Utils.checkNotNull(graph, "graph");
         this.beginNodeId = Utils.checkNotNull(beginNodeId, "beginNodeId");
@@ -44,7 +47,7 @@ public class Scene<UC extends UserContext> {
     }
 
 
-    public static <UC extends UserContext> SceneBuilder<UC> builder(SceneConfig config) {
+    public static <UC extends UserContext, V extends NodeVisitor<?>> SceneBuilder<UC, V> builder(SceneConfig config) {
         Utils.checkNotNull(config, "config");
 
         return new SceneBuilder<>(config);
@@ -58,7 +61,7 @@ public class Scene<UC extends UserContext> {
         }
 
         GraphElementId graphElementId = SceneUtils.toId(currentState.nodeId);
-        Node<UC> node = graph.getNode(graphElementId);
+        Node<UC, V> node = graph.getNode(graphElementId);
         NodeResult nodeResult = node.execute(plotContext, auxiliaryContext.isVisited(currentState.sceneId, currentState.nodeId));
         auxiliaryContext.addToVisited(currentState.sceneId, currentState.nodeId);
         if (NodeResultType.NEXT != nodeResult.getType()) {
@@ -107,13 +110,13 @@ public class Scene<UC extends UserContext> {
 
     @SuppressWarnings("unchecked")
     public GraphElementId getGraphNextNodeId(GraphElementId currentNodeId, PlotContext<UC> plotContext) {
-        NodeWrapper<Node<UC>, Edge> nodeWrapper = Utils.checkNotNull(graph.getNodeWrapper(currentNodeId), "nodeId='" + currentNodeId + "'");
-        List<EdgeWrapper<Node<UC>, Edge>> edges = nodeWrapper.getEdges();
+        NodeWrapper<Node<UC, V>, Edge> nodeWrapper = Utils.checkNotNull(graph.getNodeWrapper(currentNodeId), "nodeId='" + currentNodeId + "'");
+        List<EdgeWrapper<Node<UC, V>, Edge>> edges = nodeWrapper.getEdges();
 
-        NodeWrapper<Node<UC>, Edge> defaultTransition = null;
-        ArrayList<NodeWrapper<Node<UC>, Edge>> children = new ArrayList<>(edges.size());
-        for (EdgeWrapper<Node<UC>, Edge> edge : edges) {
-            NodeWrapper<Node<UC>, Edge> source = edge.getSource();
+        NodeWrapper<Node<UC, V>, Edge> defaultTransition = null;
+        ArrayList<NodeWrapper<Node<UC, V>, Edge>> children = new ArrayList<>(edges.size());
+        for (EdgeWrapper<Node<UC, V>, Edge> edge : edges) {
+            NodeWrapper<Node<UC, V>, Edge> source = edge.getSource();
             if (nodeWrapper.equals(source)) {
                 Edge e = edge.getEdge();
                 if (e.isTransitionAvailable(plotContext)) {
@@ -141,6 +144,22 @@ public class Scene<UC extends UserContext> {
 
         // нельзя просто перейти на следующую ноду, ибо их несколько
         throw new IllegalStateException("current nodeId=[" + currentNodeId + "] You must choose the next node by nodeId. " + children.size() + " nodes are available.");
+    }
+
+    public void accept(final ElementId sceneId, final PlotVisitor plotVisitor) {
+        graph.accept(new GraphVisitor<Node<UC, V>, Edge>() {
+            @Override
+            public void visitNode(GraphElementId nodeId, Node<UC, V> node) {
+                plotVisitor.visitNode(sceneId, SceneUtils.toId(nodeId), node);
+            }
+
+            @Override
+            public void visitEdge(GraphElementId edgeId, Edge edge) {
+                plotVisitor.visitEdge(sceneId, SceneUtils.toId(edgeId), edge);
+            }
+        });
+        plotVisitor.visitBeginNodeId(sceneId, beginNodeId);
+        //todo добавить конечные ноды процесса
     }
 
 }

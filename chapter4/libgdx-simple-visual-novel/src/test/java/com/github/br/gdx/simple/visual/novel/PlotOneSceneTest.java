@@ -12,6 +12,7 @@ import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneNodeBuilder;
+import com.github.br.gdx.simple.visual.novel.impl.CustomNodeVisitor;
 import com.github.br.gdx.simple.visual.novel.impl.TestNode;
 import com.github.br.gdx.simple.visual.novel.impl.TestUserContext;
 import org.junit.Assert;
@@ -23,25 +24,25 @@ public class PlotOneSceneTest {
     @Test
     public void testPlotWithOneSceneOneNode() {
         TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> sceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
 
         ElementId node1 = sceneBuilder.registerNode(new TestNode<TestUserContext>());
-        final Scene<TestUserContext> scene = sceneBuilder.graph()
+        final Scene<TestUserContext, CustomNodeVisitor> scene = sceneBuilder.graph()
                 .node(node1).end()
                 .build();
 
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(one, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
@@ -57,26 +58,26 @@ public class PlotOneSceneTest {
     @Test
     public void testPlotWithOneSceneOneNodeTwoExecute() {
         TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> sceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
 
         ElementId node1 = sceneBuilder.registerNode(new TestNode<TestUserContext>());
 
-        final Scene<TestUserContext> scene = sceneBuilder.graph()
+        final Scene<TestUserContext, CustomNodeVisitor> scene = sceneBuilder.graph()
                 .node(node1).end()
                 .build();
 
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(one, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
@@ -92,7 +93,7 @@ public class PlotOneSceneTest {
     @Test
     public void testPlotWithOneScene_N_Nodes() {
         TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> sceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -102,7 +103,7 @@ public class PlotOneSceneTest {
         ElementId node3 = sceneBuilder.registerNode(new TestNode<TestUserContext>());
         ElementId node4 = sceneBuilder.registerNode(new TestNode<TestUserContext>());
 
-        final Scene<TestUserContext> scene = sceneBuilder.graph()
+        final Scene<TestUserContext, CustomNodeVisitor> scene = sceneBuilder.graph()
                 .node(node1).to()
                 .node(node2).to()
                 .node(node3).to()
@@ -112,12 +113,12 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(one, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
@@ -135,7 +136,7 @@ public class PlotOneSceneTest {
     @Test
     public void testPlotWithOneScene_N_Nodes_FSM_is_not_Finished() {
         TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> sceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -145,7 +146,7 @@ public class PlotOneSceneTest {
         ElementId node3 = sceneBuilder.registerNode(new TestNode<TestUserContext>());
         ElementId node4 = sceneBuilder.registerNode(new TestNode<TestUserContext>());
 
-        final Scene<TestUserContext> scene = sceneBuilder.graph()
+        final Scene<TestUserContext, CustomNodeVisitor> scene = sceneBuilder.graph()
                 .node(node1).to()
                 .node(node2).to()
                 .node(node3).to()
@@ -155,12 +156,12 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(one, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
@@ -189,7 +190,7 @@ public class PlotOneSceneTest {
     @Test
     public void testPlotWithCycleJumpToPast() {
         final TestUserContext userContext = new TestUserContext();
-        final SceneBuilder<TestUserContext> sceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -199,7 +200,7 @@ public class PlotOneSceneTest {
         final ElementId c = sceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserContext>());
         final ElementId d = sceneBuilder.registerNode(ElementId.of("d"), new TestNode<TestUserContext>());
 
-        final Scene<TestUserContext> scene = sceneBuilder.graph()
+        final Scene<TestUserContext, CustomNodeVisitor> scene = sceneBuilder.graph()
                 .node(a).to()
                 .node(b)
                 .to(
@@ -222,11 +223,11 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(one, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }
@@ -261,7 +262,7 @@ public class PlotOneSceneTest {
     public void testPlotWithCycleJumpToFuture() {
         final TestUserContext userContext = new TestUserContext();
 
-        final SceneBuilder<TestUserContext> sceneBuilder = Scene.builder(
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
                         .build()
         );
@@ -271,7 +272,7 @@ public class PlotOneSceneTest {
         ElementId c = sceneBuilder.registerNode(ElementId.of("c"), new TestNode<TestUserContext>());
         final ElementId d = sceneBuilder.registerNode(ElementId.of("d"), new TestNode<TestUserContext>());
 
-        SceneNodeBuilder<TestUserContext> graphBuilder = sceneBuilder.graph();
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> graphBuilder = sceneBuilder.graph();
 //                .node(a)
 //                    .to(b, d)
 //                .node(b)
@@ -292,15 +293,15 @@ public class PlotOneSceneTest {
         }).endBranch(); // заворот вперед
         graphBuilder.node(b).to().node(c).to(a).endBranch(); // заворот назад
 
-        final Scene<TestUserContext> scene = graphBuilder.build();
+        final Scene<TestUserContext, CustomNodeVisitor> scene = graphBuilder.build();
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext> plot = Plot.<TestUserContext>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext>()
-                        .addScene(one, new SceneSupplier<TestUserContext>() {
+        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
-                                    public Scene<TestUserContext> get() {
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
                                         return scene;
                                     }
                                 }

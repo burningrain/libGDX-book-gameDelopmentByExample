@@ -3,15 +3,17 @@ package com.github.br.gdx.simple.visual.novel.api.plot;
 import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 
+import java.util.Collection;
 import java.util.HashMap;
 
-public class DefaultSceneManager<UC extends UserContext> implements SceneManager<UC> {
+public class DefaultSceneManager<UC extends UserContext, V extends NodeVisitor<?>> implements SceneManager<UC, V> {
 
-    private final HashMap<ElementId, SceneSupplier<UC>> scenes = new HashMap<>();
+    private final HashMap<ElementId, SceneSupplier<UC, V>> scenes = new HashMap<>();
 
-    public DefaultSceneManager<UC> addScene(ElementId elementId, SceneSupplier<UC> supplier) {
+    public DefaultSceneManager<UC, V> addScene(ElementId elementId, SceneSupplier<UC, V> supplier) {
         Utils.checkNotNull(elementId, "elementId");
         Utils.checkNotNull(supplier, "supplier");
         scenes.put(elementId, supplier);
@@ -20,10 +22,14 @@ public class DefaultSceneManager<UC extends UserContext> implements SceneManager
     }
 
     @Override
-    public Scene<UC> getScene(ElementId nextSceneId) {
-        SceneSupplier<UC> sceneSupplier = Utils.checkNotNull(scenes.get(nextSceneId), "nextSceneId=" + nextSceneId);
+    public Scene<UC, V> getScene(ElementId nextSceneId) {
+        SceneSupplier<UC, V> sceneSupplier = Utils.checkNotNull(scenes.get(nextSceneId), "nextSceneId=" + nextSceneId);
         return Utils.checkNotNull(sceneSupplier.get(), "nextSceneId=" + nextSceneId);
     }
 
+    @Override
+    public Collection<ElementId> getSceneIds() {
+        return scenes.keySet();
+    }
 
 }
