@@ -4,7 +4,7 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
-import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
+import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
 
 public interface PlotVisitor<V extends NodeVisitor> {
 

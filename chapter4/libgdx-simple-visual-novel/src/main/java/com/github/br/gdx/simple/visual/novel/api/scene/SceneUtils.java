@@ -1,7 +1,7 @@
 package com.github.br.gdx.simple.visual.novel.api.scene;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
-import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
+import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
 
 public final class SceneUtils {
 

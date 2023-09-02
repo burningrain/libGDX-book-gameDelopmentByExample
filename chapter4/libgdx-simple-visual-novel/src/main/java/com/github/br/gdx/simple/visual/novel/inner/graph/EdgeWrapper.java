@@ -1,4 +1,4 @@
-package com.github.br.gdx.simple.visual.novel.graph;
+package com.github.br.gdx.simple.visual.novel.inner.graph;
 
 import com.github.br.gdx.simple.visual.novel.Utils;
 

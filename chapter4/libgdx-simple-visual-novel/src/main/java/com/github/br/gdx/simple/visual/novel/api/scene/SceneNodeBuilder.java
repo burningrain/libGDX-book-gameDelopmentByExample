@@ -4,8 +4,9 @@ import com.github.br.gdx.simple.visual.novel.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
-import com.github.br.gdx.simple.visual.novel.graph.Graph;
+import com.github.br.gdx.simple.visual.novel.inner.graph.Graph;
 import com.github.br.gdx.simple.visual.novel.inner.SceneLinkNode;
 
 import java.util.HashSet;
@@ -76,29 +77,30 @@ public class SceneNodeBuilder<UC extends UserContext, V extends NodeVisitor<?>> 
         return new Scene<>(config, graph, SceneUtils.toId(beginNodeId));
     }
 
-    ElementId addNode(Node<UC, V> node) {
-        return this.addNode(config.getGeneratorNodeId().nextId(), node);
+    ElementId addNode(Node<UC, V> node, NodeType nodeType) {
+        return this.addNode(config.getGeneratorNodeId().nextId(), node, nodeType);
     }
 
-    ElementId addNode(ElementId nodeId, Node<UC, V> node) {
+    ElementId addNode(ElementId nodeId, Node<UC, V> node, NodeType nodeType) {
         Utils.checkNotNull(nodeId, "nodeId");
         Utils.checkNotNull(node, "node");
+        Utils.checkNotNull(nodeType, "nodeType");
 
-        graph.addNode(SceneUtils.toId(nodeId), node);
+        graph.addNode(SceneUtils.toId(nodeId), node, nodeType);
 
         return nodeId;
     }
 
-    ElementId addScene(ElementId sceneId) {
+    ElementId addScene(ElementId sceneId, NodeType nodeType) {
         String generateId = this.config.getGeneratorNodeId().nextId().getId();
         ElementId nodeId = ElementId.of(generateId);
-        this.addScene(nodeId, sceneId);
+        this.addScene(nodeId, sceneId, nodeType);
 
         return nodeId;
     }
 
-    ElementId addScene(ElementId nodeId, ElementId sceneId) {
-        this.addNode(nodeId, new SceneLinkNode<UC, V>(sceneId));
+    ElementId addScene(ElementId nodeId, ElementId sceneId, NodeType nodeType) {
+        this.addNode(nodeId, new SceneLinkNode<UC, V>(sceneId), nodeType);
 
         return nodeId;
     }

@@ -6,15 +6,12 @@ import com.github.br.gdx.simple.visual.novel.api.context.AuxiliaryContext;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
-import com.github.br.gdx.simple.visual.novel.api.node.Node;
-import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
-import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
-import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
+import com.github.br.gdx.simple.visual.novel.api.node.*;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotVisitor;
-import com.github.br.gdx.simple.visual.novel.graph.EdgeWrapper;
-import com.github.br.gdx.simple.visual.novel.graph.Graph;
-import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
-import com.github.br.gdx.simple.visual.novel.graph.NodeWrapper;
+import com.github.br.gdx.simple.visual.novel.inner.graph.EdgeWrapper;
+import com.github.br.gdx.simple.visual.novel.inner.graph.Graph;
+import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
+import com.github.br.gdx.simple.visual.novel.inner.graph.NodeWrapper;
 import com.github.br.gdx.simple.visual.novel.inner.GraphVisitor;
 
 import java.util.ArrayList;
@@ -53,7 +50,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         return new SceneBuilder<>(config);
     }
 
-    public NodeResult execute(PlotContext<UC> plotContext) {
+    public SceneResult execute(PlotContext<UC> plotContext) {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         CurrentState currentState = auxiliaryContext.currentState;
         if (currentState.nodeId == null) {
@@ -61,26 +58,15 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         }
 
         GraphElementId graphElementId = SceneUtils.toId(currentState.nodeId);
-        Node<UC, V> node = graph.getNode(graphElementId);
+        NodeWrapper<Node<UC, V>, Edge> nodeWrapper = graph.getNodeWrapper(graphElementId);
+        Node<UC, V> node = nodeWrapper.getNode();
         NodeResult nodeResult = node.execute(plotContext, auxiliaryContext.isVisited(currentState.sceneId, currentState.nodeId));
         auxiliaryContext.addToVisited(currentState.sceneId, currentState.nodeId);
         if (NodeResultType.NEXT != nodeResult.getType()) {
-            return nodeResult;
+            // STAY/IN - берется тип текущей ноды. OUT здесь не будет
+            return new SceneResult(nodeResult, nodeWrapper.getNodeType());
         }
 
-        // variant 'NEXT' only
-//        ElementId nextId = nodeResult.getNextId();
-//        if (nextId != null) {
-//            if(graph.containsNode(SceneUtils.toId(nextId))) {
-//                // 1) в пределах данной сцены/графа делаем прыжок либо по выбору из нескольких, либо телепортация вперед-назад
-//                currentState.nodeId = nextId;
-//            } else {
-//                // выходим из текущего процесса в родительский и сразу имеем несколько вариантов на выбор
-//
-//            }
-//            // TODO а если мы телепортировались на ноду ,которая сцена?!
-//        } else {
-        // 2) просто идем дальше, шаг за шагом, без хитростей
         ElementId nextStepNodeId = getNextNodeId(graphElementId, plotContext);
         GraphElementId nextNodeId = (nextStepNodeId != null) ? SceneUtils.toId(nextStepNodeId) : null;
         if (nextNodeId == null) {
@@ -89,14 +75,18 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
                 currentState.nodeId = null;
             } else {
                 // дошли до конца текущего сценария, делаем прыжок вверх. Переключает Plot.class
-                return new NodeResult(NodeResultType.CHANGE_SCENE_OUT);
+                return new SceneResult(new NodeResult(NodeResultType.CHANGE_SCENE_OUT), null);
             }
         } else {
+             // просто идем дальше по процессу
             currentState.nodeId = SceneUtils.toId(nextNodeId);
         }
-        //}
 
-        return nodeResult;
+        NodeType nodeType = null;
+        if(nextNodeId != null) {
+            nodeType = graph.getNodeWrapper(nextNodeId).getNodeType();
+        }
+        return new SceneResult(nodeResult, nodeType);
     }
 
     public ElementId getNextNodeId(GraphElementId graphElementId, PlotContext<UC> plotContext) {

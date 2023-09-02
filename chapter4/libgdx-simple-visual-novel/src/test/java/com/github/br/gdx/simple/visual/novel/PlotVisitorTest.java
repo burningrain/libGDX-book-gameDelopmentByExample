@@ -5,9 +5,10 @@ import com.github.br.gdx.simple.visual.novel.api.Pair;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.plot.*;
 import com.github.br.gdx.simple.visual.novel.api.scene.*;
-import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
+import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
 import com.github.br.gdx.simple.visual.novel.impl.*;
 import org.junit.Test;
 
@@ -19,12 +20,14 @@ public class PlotVisitorTest {
         // ОПРЕДЕЛЕНИЕ ПРОЦЕССА
         final SceneBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
         // внутренняя сцена
         final SceneBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 

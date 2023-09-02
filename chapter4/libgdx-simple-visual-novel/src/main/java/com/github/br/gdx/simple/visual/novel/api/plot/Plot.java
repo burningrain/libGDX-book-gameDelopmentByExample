@@ -5,8 +5,10 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.*;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
+import com.github.br.gdx.simple.visual.novel.api.scene.SceneResult;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
 
 public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
@@ -72,17 +74,21 @@ public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
     public boolean execute(UC userContext) {
         plotContext.setUserContext(userContext);
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
-        if(auxiliaryContext.isProcessFinished()) {
+        if (auxiliaryContext.isProcessFinished()) {
             return true;
         }
-        CurrentState currentState = auxiliaryContext.currentState;
-        ElementId sceneId = currentState.sceneId;
 
-        executeSceneStep(sceneId);
+        SceneResult sceneResult;
+        do {
+            CurrentState currentState = auxiliaryContext.currentState;
+            ElementId sceneId = currentState.sceneId;
 
-        if(currentState.nodeId == null && currentState.parentState == null) {
-            auxiliaryContext.setProcessFinished(true);
-        }
+            sceneResult = executeSceneStep(sceneId);
+            if (currentState.nodeId == null && currentState.parentState == null) {
+                auxiliaryContext.setProcessFinished(true);
+            }
+        } while (NodeType.NOT_WAITING == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());
+
         return auxiliaryContext.isProcessFinished();
     }
 
@@ -94,17 +100,20 @@ public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
         plotVisitor.visitBeginSceneId(this.beginSceneId);
     }
 
-    private void executeSceneStep(ElementId sceneId) {
+    private SceneResult executeSceneStep(ElementId sceneId) {
         Scene<UC, ?> currentScene = sceneManager.getScene(sceneId);
-        NodeResult nodeResult = currentScene.execute(plotContext);
+        SceneResult sceneResult = currentScene.execute(plotContext);
+        NodeResult nodeResult = sceneResult.getNodeResult();
         NodeResultType type = nodeResult.getType();
         if (NodeResultType.CHANGE_SCENE_IN == type) {
             ElementId nextSceneId = nodeResult.getSceneTitle();
             changeCurrentSceneToChild(nextSceneId);
-            executeSceneStep(nextSceneId);
-        } else if(NodeResultType.CHANGE_SCENE_OUT == type) {
+            return executeSceneStep(nextSceneId);
+        } else if (NodeResultType.CHANGE_SCENE_OUT == type) {
             changeCurrentSceneToParent();
         }
+
+        return sceneResult;
     }
 
     public static class Builder<UC extends UserContext, V extends NodeVisitor<?>> {

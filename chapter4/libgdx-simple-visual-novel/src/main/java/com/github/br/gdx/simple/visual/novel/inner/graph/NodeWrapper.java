@@ -1,6 +1,7 @@
-package com.github.br.gdx.simple.visual.novel.graph;
+package com.github.br.gdx.simple.visual.novel.inner.graph;
 
 import com.github.br.gdx.simple.visual.novel.Utils;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +11,13 @@ public class NodeWrapper<N, E> {
 
     private final GraphElementId id;
     private final N node;
+    private final NodeType nodeType;
     private final ArrayList<EdgeWrapper<N, E>> edges = new ArrayList<>();
 
-    public NodeWrapper(GraphElementId id, N node) {
+    public NodeWrapper(GraphElementId id, N node, NodeType nodeType) {
         this.id = Utils.checkNotNull(id, "id");
         this.node = Utils.checkNotNull(node, "node");
+        this.nodeType = Utils.checkNotNull(nodeType, "nodeType");
     }
 
     public GraphElementId getId() {
@@ -23,6 +26,10 @@ public class NodeWrapper<N, E> {
 
     public N getNode() {
         return node;
+    }
+
+    public NodeType getNodeType() {
+        return nodeType;
     }
 
     public List<EdgeWrapper<N, E>> getEdges() {

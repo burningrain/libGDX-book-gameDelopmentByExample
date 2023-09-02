@@ -4,6 +4,7 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.Pair;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
 import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
@@ -26,6 +27,7 @@ public class PlotOneSceneTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -60,6 +62,7 @@ public class PlotOneSceneTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -95,6 +98,7 @@ public class PlotOneSceneTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -138,6 +142,7 @@ public class PlotOneSceneTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -192,6 +197,7 @@ public class PlotOneSceneTest {
         final TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -264,6 +270,7 @@ public class PlotOneSceneTest {
 
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 

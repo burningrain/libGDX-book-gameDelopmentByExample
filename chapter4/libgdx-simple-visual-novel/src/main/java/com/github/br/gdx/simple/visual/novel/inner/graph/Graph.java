@@ -1,6 +1,7 @@
-package com.github.br.gdx.simple.visual.novel.graph;
+package com.github.br.gdx.simple.visual.novel.inner.graph;
 
 import com.github.br.gdx.simple.visual.novel.Utils;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.inner.GraphVisitor;
 
 import java.util.LinkedHashMap;
@@ -11,11 +12,12 @@ public class Graph<N, E> {
     private final LinkedHashMap<GraphElementId, NodeWrapper<N, E>> nodes = new LinkedHashMap<>();
     private final LinkedHashMap<GraphElementId, EdgeWrapper<N, E>> edges = new LinkedHashMap<>();
 
-    public void addNode(GraphElementId elementId, N node) {
+    public void addNode(GraphElementId elementId, N node, NodeType nodeType) {
         Utils.checkNotNull(elementId, "elementId");
         Utils.checkNotNull(node, "node");
+        Utils.checkNotNull(nodeType, "nodeType");
 
-        nodes.put(elementId, new NodeWrapper<N, E>(elementId, node));
+        nodes.put(elementId, new NodeWrapper<N, E>(elementId, node, nodeType));
     }
 
     public void addEdge(GraphElementId edgeId, GraphElementId sourceId, GraphElementId destId, E edge) {

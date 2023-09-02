@@ -4,6 +4,7 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.Pair;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
 import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
@@ -27,12 +28,14 @@ public class PlotManySceneTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
         // внутренняя сцена
         final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -112,12 +115,14 @@ public class PlotManySceneTest {
         final TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
         // внутренняя сцена
         final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -243,12 +248,14 @@ public class PlotManySceneTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
         // внутренняя сцена
         final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -346,12 +353,14 @@ public class PlotManySceneTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
         // внутренняя сцена
         final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
@@ -417,12 +426,14 @@ public class PlotManySceneTest {
         TestUserMapContext<ElementId, Boolean> userContext = new TestUserMapContext<>();
         final SceneBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 
         // внутренняя сцена
         final SceneBuilder<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
                 SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
 

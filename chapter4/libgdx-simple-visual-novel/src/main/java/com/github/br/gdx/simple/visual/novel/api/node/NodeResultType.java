@@ -4,6 +4,8 @@ public enum NodeResultType {
 
     NEXT,
     STAY,
+
+    // внутренние статусы. не использовать клиенту
     CHANGE_SCENE_IN,
     CHANGE_SCENE_OUT
     ;

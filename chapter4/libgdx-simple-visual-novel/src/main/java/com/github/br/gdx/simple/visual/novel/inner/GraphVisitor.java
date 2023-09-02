@@ -1,6 +1,6 @@
 package com.github.br.gdx.simple.visual.novel.inner;
 
-import com.github.br.gdx.simple.visual.novel.graph.GraphElementId;
+import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
 
 public interface GraphVisitor<N, E> {
 
