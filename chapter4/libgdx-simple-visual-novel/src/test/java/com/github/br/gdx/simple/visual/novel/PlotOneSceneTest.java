@@ -89,9 +89,7 @@ public class PlotOneSceneTest {
                 .build();
 
         int plotId = 1;
-        plot.execute(plotId, userContext);
-        boolean result = plot.execute(plotId);
-        Assert.assertTrue(result);
+        Assert.assertTrue(plot.execute(plotId, userContext));
     }
 
     @Test

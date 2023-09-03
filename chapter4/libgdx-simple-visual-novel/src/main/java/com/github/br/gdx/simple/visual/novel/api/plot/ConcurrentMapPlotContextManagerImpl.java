@@ -5,7 +5,7 @@ import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MemoryPlotContextManagerImpl<ID, T extends UserContext> implements PlotContextManager<ID, T>  {
+public class ConcurrentMapPlotContextManagerImpl<ID, T extends UserContext> implements PlotContextManager<ID, T>  {
 
     private final ConcurrentHashMap<ID, PlotContext<ID, T>> concurrentHashMap = new ConcurrentHashMap<>();
 
@@ -17,6 +17,11 @@ public class MemoryPlotContextManagerImpl<ID, T extends UserContext> implements 
     @Override
     public void savePlotContext(PlotContext<ID, T> plotContext) {
         concurrentHashMap.put(plotContext.getPlotId(), plotContext);
+    }
+
+    @Override
+    public void handleFinishedPlot(PlotContext<ID, T> plotContext) {
+        concurrentHashMap.remove(plotContext.getPlotId());
     }
 
 }

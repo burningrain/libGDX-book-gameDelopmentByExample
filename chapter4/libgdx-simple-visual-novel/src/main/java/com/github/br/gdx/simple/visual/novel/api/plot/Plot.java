@@ -75,6 +75,8 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         Utils.checkNotNull(plotId, "plotId");
         PlotContext<ID, UC> plotContext = plotContextManager.getPlotContext(plotId);
         if(plotContext == null) {
+            // первичная инициализация. Ожидаем, что пользователь все-таки передает какой-либо контекст
+            Utils.checkNotNull(userContext, "Aren't you executing the finished plot? Problem: userContext");
             plotContext = createStartPlotContext(plotId, userContext);
         }
         if(userContext != null) {
@@ -98,7 +100,12 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         } while (NodeType.NOT_WAITING == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());
 
         plotContextManager.savePlotContext(plotContext);
-        return auxiliaryContext.isProcessFinished();
+
+        boolean isProcessFinished = auxiliaryContext.isProcessFinished();
+        if(isProcessFinished) {
+            plotContextManager.handleFinishedPlot(plotContext);
+        }
+        return isProcessFinished;
     }
 
     private PlotContext<ID, UC> createStartPlotContext(ID plotId, UC userContext) {
@@ -140,7 +147,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
         private final PlotConfig config;
         private SceneManager<UC, V> sceneManager;
-        private PlotContextManager<ID, UC> plotContextManager = new MemoryPlotContextManagerImpl<>();
+        private PlotContextManager<ID, UC> plotContextManager = new ThreadLocalPlotContextManagerImpl<>();
         private ElementId beginSceneId;
 
 

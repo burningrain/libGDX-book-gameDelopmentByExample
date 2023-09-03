@@ -9,4 +9,6 @@ public interface PlotContextManager<ID, UC extends UserContext> {
 
     void savePlotContext(PlotContext<ID, UC> plotContext);
 
+    void handleFinishedPlot(PlotContext<ID, UC> plotContext);
+
 }

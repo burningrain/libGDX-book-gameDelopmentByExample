@@ -23,7 +23,7 @@ import org.junit.Test;
 public class PlotManySceneTest {
 
 
-    @Test
+    @Test(expected = Exception.class)
     public void testInnerScene() {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
@@ -102,9 +102,8 @@ public class PlotManySceneTest {
         plot.execute(plotId); // 2
         plot.execute(plotId); // 3
         plot.execute(plotId); // 4
-        plot.execute(plotId); // c
-        Assert.assertTrue(plot.execute(plotId));
-        Assert.assertTrue(plot.execute(plotId)); // проверка, что остается в оконченном состоянии
+        Assert.assertTrue(plot.execute(plotId)); // c
+        plot.execute(plotId); // исключение, так как процесс завершен
     }
 
     /**
@@ -236,9 +235,7 @@ public class PlotManySceneTest {
         plot.execute(plotId); // 4
         userContext.nextId = e;
         plot.execute(plotId); // c
-        plot.execute(plotId); // e
-
-        Assert.assertTrue(plot.execute(plotId));
+        Assert.assertTrue(plot.execute(plotId)); // e
     }
 
     /**
@@ -343,9 +340,7 @@ public class PlotManySceneTest {
         userContext.nextId = three;
         plot.execute(plotId); // 1
         plot.execute(plotId); // 3
-        plot.execute(plotId); // d
-
-        Assert.assertTrue(plot.execute(plotId));
+        Assert.assertTrue(plot.execute(plotId)); // d
     }
 
     /**
@@ -417,9 +412,7 @@ public class PlotManySceneTest {
 
         int plotId = 1;
         plot.execute(plotId, userContext); // a
-        plot.execute(plotId); // 1
-
-        Assert.assertTrue(plot.execute(plotId));
+        Assert.assertTrue(plot.execute(plotId)); // 1
     }
 
     /**
