@@ -50,7 +50,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         return new SceneBuilder<>(config);
     }
 
-    public SceneResult execute(PlotContext<UC> plotContext) {
+    public SceneResult execute(PlotContext<?, UC> plotContext) {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         CurrentState currentState = auxiliaryContext.currentState;
         if (currentState.nodeId == null) {
@@ -89,7 +89,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         return new SceneResult(nodeResult, nodeType);
     }
 
-    public ElementId getNextNodeId(GraphElementId graphElementId, PlotContext<UC> plotContext) {
+    public ElementId getNextNodeId(GraphElementId graphElementId, PlotContext<?, UC> plotContext) {
         GraphElementId nextNodeId = getGraphNextNodeId(graphElementId, plotContext);
         if (nextNodeId == null) {
             return null;
@@ -99,7 +99,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
     }
 
     @SuppressWarnings("unchecked")
-    public GraphElementId getGraphNextNodeId(GraphElementId currentNodeId, PlotContext<UC> plotContext) {
+    public GraphElementId getGraphNextNodeId(GraphElementId currentNodeId, PlotContext<?, UC> plotContext) {
         NodeWrapper<Node<UC, V>, Edge> nodeWrapper = Utils.checkNotNull(graph.getNodeWrapper(currentNodeId), "nodeId='" + currentNodeId + "'");
         List<EdgeWrapper<Node<UC, V>, Edge>> edges = nodeWrapper.getEdges();
 

@@ -21,7 +21,7 @@ public class CompositeNode<UC extends UserContext, V extends NodeVisitor> implem
     }
 
     @Override
-    public NodeResult execute(PlotContext<UC> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<?, UC> plotContext, boolean isVisited) {
         NodeResult stayResult = null;
         NodeResult nextResult = null;
 

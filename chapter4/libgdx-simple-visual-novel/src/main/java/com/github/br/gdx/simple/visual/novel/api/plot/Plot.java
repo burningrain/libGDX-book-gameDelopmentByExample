@@ -11,27 +11,23 @@ import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneResult;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
 
-public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
+public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
     private final SceneManager<UC, V> sceneManager;
+    private final PlotContextManager<ID, UC> plotContextManager;
     private final PlotConfig config;
 
-    private final PlotContext<UC> plotContext; //FIXME не потокобезопасно!!!
     private final ElementId beginSceneId;
 
-    public Plot(Builder<UC, V> builder) {
+    public Plot(Builder<ID, UC, V> builder) {
         this.sceneManager = Utils.checkNotNull(builder.sceneManager, "sceneManager");
+        this.plotContextManager = Utils.checkNotNull(builder.plotContextManager, "plotContextManager");
         this.config = builder.config;
 
         this.beginSceneId = builder.beginSceneId;
-        plotContext = new PlotContext<>(beginSceneId, this.config.isMarkVisitedNodes());
-
-        AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
-        CurrentState currentState = auxiliaryContext.currentState;
-        currentState.sceneId = builder.beginSceneId;
     }
 
-    private void changeCurrentSceneToChild(ElementId nextSceneId) {
+    private void changeCurrentSceneToChild(PlotContext<ID, UC> plotContext, ElementId nextSceneId) {
         Utils.checkNotNull(nextSceneId, "nextSceneId");
 
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
@@ -47,17 +43,17 @@ public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
         currentState.nodeId = null;
     }
 
-    private void changeCurrentSceneToParent() {
+    private void changeCurrentSceneToParent(PlotContext<ID, UC> plotContext) {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         CurrentState currentState = auxiliaryContext.currentState;
 
         CurrentState parentState = currentState.parentState;
         currentState.sceneId = parentState.sceneId;
-        currentState.nodeId = getNextSceneNodeId(parentState.sceneId, parentState.nodeId);
+        currentState.nodeId = getNextSceneNodeId(plotContext, parentState.sceneId, parentState.nodeId);
         currentState.parentState = parentState.parentState;
     }
 
-    private ElementId getNextSceneNodeId(ElementId nextSceneId, ElementId currentNodeId) {
+    private ElementId getNextSceneNodeId(PlotContext<ID, UC> plotContext, ElementId nextSceneId, ElementId currentNodeId) {
         Utils.checkNotNull(nextSceneId, "nextSceneId");
         Utils.checkNotNull(currentNodeId, "nodeId");
 
@@ -65,14 +61,26 @@ public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
         return scene.getNextNodeId(SceneUtils.toId(currentNodeId), plotContext);
     }
 
-    public static <UC extends UserContext, V extends NodeVisitor<?>> Builder<UC, V> builder(PlotConfig config) {
+    public static <ID, UC extends UserContext, V extends NodeVisitor<?>> Builder<ID, UC, V> builder(PlotConfig config) {
         Utils.checkNotNull(config, "config");
         return new Builder<>(config);
     }
 
+    public boolean execute(ID plotId) {
+        return this.execute(plotId, null);
+    }
+
     // return окончился the plot или еще нет. 'true' если окончился
-    public boolean execute(UC userContext) {
-        plotContext.setUserContext(userContext);
+    public boolean execute(ID plotId, UC userContext) {
+        Utils.checkNotNull(plotId, "plotId");
+        PlotContext<ID, UC> plotContext = plotContextManager.getPlotContext(plotId);
+        if(plotContext == null) {
+            plotContext = createStartPlotContext(plotId, userContext);
+        }
+        if(userContext != null) {
+            plotContext.setUserContext(userContext);
+        }
+
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         if (auxiliaryContext.isProcessFinished()) {
             return true;
@@ -83,13 +91,25 @@ public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
             CurrentState currentState = auxiliaryContext.currentState;
             ElementId sceneId = currentState.sceneId;
 
-            sceneResult = executeSceneStep(sceneId);
+            sceneResult = executeSceneStep(plotContext, sceneId);
             if (currentState.nodeId == null && currentState.parentState == null) {
                 auxiliaryContext.setProcessFinished(true);
             }
         } while (NodeType.NOT_WAITING == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());
 
+        plotContextManager.savePlotContext(plotContext);
         return auxiliaryContext.isProcessFinished();
+    }
+
+    private PlotContext<ID, UC> createStartPlotContext(ID plotId, UC userContext) {
+        PlotContext<ID, UC> plotContext = new PlotContext<>(plotId, beginSceneId, this.config.isMarkVisitedNodes());
+        plotContext.setUserContext(userContext);
+
+        AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
+        CurrentState currentState = auxiliaryContext.currentState;
+        currentState.sceneId = beginSceneId;
+
+        return plotContext;
     }
 
     public void accept(PlotVisitor<V> plotVisitor) {
@@ -100,26 +120,27 @@ public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
         plotVisitor.visitBeginSceneId(this.beginSceneId);
     }
 
-    private SceneResult executeSceneStep(ElementId sceneId) {
+    private SceneResult executeSceneStep(PlotContext<ID, UC> plotContext, ElementId sceneId) {
         Scene<UC, ?> currentScene = sceneManager.getScene(sceneId);
         SceneResult sceneResult = currentScene.execute(plotContext);
         NodeResult nodeResult = sceneResult.getNodeResult();
         NodeResultType type = nodeResult.getType();
         if (NodeResultType.CHANGE_SCENE_IN == type) {
             ElementId nextSceneId = nodeResult.getSceneTitle();
-            changeCurrentSceneToChild(nextSceneId);
-            return executeSceneStep(nextSceneId);
+            changeCurrentSceneToChild(plotContext, nextSceneId);
+            return executeSceneStep(plotContext, nextSceneId);
         } else if (NodeResultType.CHANGE_SCENE_OUT == type) {
-            changeCurrentSceneToParent();
+            changeCurrentSceneToParent(plotContext);
         }
 
         return sceneResult;
     }
 
-    public static class Builder<UC extends UserContext, V extends NodeVisitor<?>> {
+    public static class Builder<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
         private final PlotConfig config;
         private SceneManager<UC, V> sceneManager;
+        private PlotContextManager<ID, UC> plotContextManager = new MemoryPlotContextManagerImpl<>();
         private ElementId beginSceneId;
 
 
@@ -127,19 +148,25 @@ public class Plot<UC extends UserContext, V extends NodeVisitor<?>> {
             this.config = Utils.checkNotNull(config, "config");
         }
 
-        public Builder<UC, V> setSceneManager(SceneManager<UC, V> sceneManager) {
+        public Builder<ID, UC, V> setSceneManager(SceneManager<UC, V> sceneManager) {
             this.sceneManager = Utils.checkNotNull(sceneManager, "sceneManager");
             return this;
         }
 
-        public Builder<UC, V> setBeginSceneId(ElementId beginSceneId) {
+        public Builder<ID, UC, V> setPlotContextManager(PlotContextManager<ID, UC> plotContextManager) {
+            this.plotContextManager = Utils.checkNotNull(plotContextManager, "plotContextManager");
+            return this;
+        }
+
+        public Builder<ID, UC, V> setBeginSceneId(ElementId beginSceneId) {
             this.beginSceneId = Utils.checkNotNull(beginSceneId, "beginSceneId");
             return this;
         }
 
-        public Plot<UC, V> build() {
+        public Plot<ID, UC, V> build() {
             Utils.checkNotNull(beginSceneId, "beginSceneId");
             Utils.checkNotNull(sceneManager, "sceneManager");
+            Utils.checkNotNull(plotContextManager, "plotContextManager");
 
             return new Plot<>(this);
         }

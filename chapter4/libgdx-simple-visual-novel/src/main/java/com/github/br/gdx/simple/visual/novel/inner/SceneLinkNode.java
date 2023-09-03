@@ -18,7 +18,7 @@ public class SceneLinkNode<UC extends UserContext, V extends NodeVisitor> implem
     }
 
     @Override
-    public NodeResult execute(PlotContext<UC> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<?, UC> plotContext, boolean isVisited) {
         return new NodeResult(sceneTitle, NodeResultType.CHANGE_SCENE_IN);
     }
 

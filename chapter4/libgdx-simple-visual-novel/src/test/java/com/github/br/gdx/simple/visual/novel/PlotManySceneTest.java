@@ -76,7 +76,7 @@ public class PlotManySceneTest {
         final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
@@ -96,14 +96,15 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(userContext); // a
-        plot.execute(userContext); // 1
-        plot.execute(userContext); // 2
-        plot.execute(userContext); // 3
-        plot.execute(userContext); // 4
-        plot.execute(userContext); // c
-        Assert.assertTrue(plot.execute(userContext));
-        Assert.assertTrue(plot.execute(userContext)); // проверка, что остается в оконченном состоянии
+        int plotId = 1;
+        plot.execute(plotId, userContext); // a
+        plot.execute(plotId); // 1
+        plot.execute(plotId); // 2
+        plot.execute(plotId); // 3
+        plot.execute(plotId); // 4
+        plot.execute(plotId); // c
+        Assert.assertTrue(plot.execute(plotId));
+        Assert.assertTrue(plot.execute(plotId)); // проверка, что остается в оконченном состоянии
     }
 
     /**
@@ -148,7 +149,7 @@ public class PlotManySceneTest {
                 .node(two)
                 .to(three, new Predicate<TestUserContext>() {
                     @Override
-                    public boolean test(PlotContext<TestUserContext> context) {
+                    public boolean test(PlotContext<?, TestUserContext> context) {
                         return userContext.nextId == three;
                     }
                 })
@@ -185,7 +186,7 @@ public class PlotManySceneTest {
                 .node(c)
                 .to(d, new Predicate<TestUserContext>() {
                     @Override
-                    public boolean test(PlotContext<TestUserContext> context) {
+                    public boolean test(PlotContext<?, TestUserContext> context) {
                         return userContext.nextId == d;
                     }
                 })
@@ -196,7 +197,7 @@ public class PlotManySceneTest {
         final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
@@ -216,27 +217,28 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(userContext); // a
-        plot.execute(userContext); // 1
+        int plotId = 1;
+        plot.execute(plotId, userContext); // a
+        plot.execute(plotId); // 1
         userContext.nextId = three;
-        plot.execute(userContext); // 2
-        plot.execute(userContext); // 3
-        plot.execute(userContext); // 1
+        plot.execute(plotId); // 2
+        plot.execute(plotId); // 3
+        plot.execute(plotId); // 1
         userContext.nextId = four;
-        plot.execute(userContext); // 2
-        plot.execute(userContext); // 4
+        plot.execute(plotId); // 2
+        plot.execute(plotId); // 4
         userContext.nextId = d;
-        plot.execute(userContext); // c
-        plot.execute(userContext); // d
-        plot.execute(userContext); // 1
+        plot.execute(plotId); // c
+        plot.execute(plotId); // d
+        plot.execute(plotId); // 1
         userContext.nextId = four;
-        plot.execute(userContext); // 2
-        plot.execute(userContext); // 4
+        plot.execute(plotId); // 2
+        plot.execute(plotId); // 4
         userContext.nextId = e;
-        plot.execute(userContext); // c
-        plot.execute(userContext); // e
+        plot.execute(plotId); // c
+        plot.execute(plotId); // e
 
-        Assert.assertTrue(plot.execute(userContext));
+        Assert.assertTrue(plot.execute(plotId));
     }
 
     /**
@@ -313,7 +315,7 @@ public class PlotManySceneTest {
         final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
@@ -334,14 +336,16 @@ public class PlotManySceneTest {
                 .build();
 
         userContext.nextId = c;
-        plot.execute(userContext); // a
+
+        int plotId = 1;
+        plot.execute(plotId, userContext); // a
 
         userContext.nextId = three;
-        plot.execute(userContext); // 1
-        plot.execute(userContext); // 3
-        plot.execute(userContext); // d
+        plot.execute(plotId); // 1
+        plot.execute(plotId); // 3
+        plot.execute(plotId); // d
 
-        Assert.assertTrue(plot.execute(userContext));
+        Assert.assertTrue(plot.execute(plotId));
     }
 
     /**
@@ -391,7 +395,7 @@ public class PlotManySceneTest {
         final Scene<TestUserContext, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
@@ -411,10 +415,11 @@ public class PlotManySceneTest {
                 .setBeginSceneId(mainSceneId)
                 .build();
 
-        plot.execute(userContext); // a
-        plot.execute(userContext); // 1
+        int plotId = 1;
+        plot.execute(plotId, userContext); // a
+        plot.execute(plotId); // 1
 
-        Assert.assertTrue(plot.execute(userContext));
+        Assert.assertTrue(plot.execute(plotId));
     }
 
     /**
@@ -447,13 +452,13 @@ public class PlotManySceneTest {
                 .node(one)
                 .to(new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(two, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == two;
                             }
                         }),
                         new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(three, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == three;
                             }
                         })
@@ -475,13 +480,13 @@ public class PlotManySceneTest {
                 .to(
                         new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(b, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == b;
                             }
                         }),
                         new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(c, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == c;
                             }
                         })
@@ -491,7 +496,7 @@ public class PlotManySceneTest {
         final Scene<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> plot = Plot.<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> plot = Plot.<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>() {
                                     @Override
@@ -512,10 +517,12 @@ public class PlotManySceneTest {
                 .build();
 
         userContext.setNextId(three);
-        plot.execute(userContext); // 1
+
+        int plotId = 1;
+        plot.execute(plotId, userContext); // 1
         userContext.setNextId(c);
-        plot.execute(userContext); // 3
-        Assert.assertTrue(plot.execute(userContext)); // c
+        plot.execute(plotId); // 3
+        Assert.assertTrue(plot.execute(plotId)); // c
     }
 
 

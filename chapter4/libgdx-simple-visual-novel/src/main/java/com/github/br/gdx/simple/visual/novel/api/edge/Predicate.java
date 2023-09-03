@@ -5,6 +5,6 @@ import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 
 public interface Predicate<UC extends UserContext> {
 
-    boolean test(PlotContext<UC> context);
+    boolean test(PlotContext<?, UC> context);
 
 }

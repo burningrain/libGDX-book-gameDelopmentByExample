@@ -39,7 +39,7 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -52,8 +52,8 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-
-        boolean result = plot.execute(userContext);
+        int plotId = 1;
+        boolean result = plot.execute(plotId, userContext);
         Assert.assertTrue(result);
     }
 
@@ -75,7 +75,7 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -88,8 +88,9 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(userContext);
-        boolean result = plot.execute(userContext);
+        int plotId = 1;
+        plot.execute(plotId, userContext);
+        boolean result = plot.execute(plotId);
         Assert.assertTrue(result);
     }
 
@@ -117,7 +118,7 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -130,10 +131,11 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(userContext);
-        plot.execute(userContext);
-        plot.execute(userContext);
-        boolean result = plot.execute(userContext);
+        int plotId = 1;
+        plot.execute(plotId, userContext);
+        plot.execute(plotId);
+        plot.execute(plotId);
+        boolean result = plot.execute(plotId);
         Assert.assertTrue(result);
     }
 
@@ -161,7 +163,7 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -174,9 +176,10 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(userContext);
-        plot.execute(userContext);
-        boolean result = plot.execute(userContext);
+        int plotId = 1;
+        plot.execute(plotId, userContext);
+        plot.execute(plotId);
+        boolean result = plot.execute(plotId);
         Assert.assertFalse(result);
     }
 
@@ -212,13 +215,13 @@ public class PlotOneSceneTest {
                 .to(
                         new Pair<ElementId, Predicate<TestUserContext>>(c, new Predicate<TestUserContext>() {
                             @Override
-                            public boolean test(PlotContext<TestUserContext> context) {
+                            public boolean test(PlotContext<?, TestUserContext> context) {
                                 return c == context.getUserContext().nextId;
                             }
                         }),
                         new Pair<ElementId, Predicate<TestUserContext>>(d, new Predicate<TestUserContext>() {
                             @Override
-                            public boolean test(PlotContext<TestUserContext> context) {
+                            public boolean test(PlotContext<?, TestUserContext> context) {
                                 return d == context.getUserContext().nextId;
                             }
                         })
@@ -229,7 +232,7 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
@@ -241,14 +244,15 @@ public class PlotOneSceneTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(userContext); // a
+        int plotId = 1;
+        plot.execute(plotId, userContext); // a
         userContext.nextId = c;
-        plot.execute(userContext); // b
-        plot.execute(userContext); // c
-        plot.execute(userContext); // a
+        plot.execute(plotId); // b
+        plot.execute(plotId); // c
+        plot.execute(plotId); // a
         userContext.nextId = d;
-        plot.execute(userContext); // b
-        boolean result = plot.execute(userContext); // d
+        plot.execute(plotId); // b
+        boolean result = plot.execute(plotId); // d
         Assert.assertTrue(result);
     }
 
@@ -294,7 +298,7 @@ public class PlotOneSceneTest {
         // второстепенные сюжетные завороты
         graphBuilder.node(a).to(d, new Predicate<TestUserContext>() {
             @Override
-            public boolean test(PlotContext<TestUserContext> context) {
+            public boolean test(PlotContext<?, TestUserContext> context) {
                 return (userContext.nextId == d);
             }
         }).endBranch(); // заворот вперед
@@ -304,7 +308,7 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                     @Override
@@ -317,8 +321,10 @@ public class PlotOneSceneTest {
                 .build();
 
         userContext.nextId = d;
-        plot.execute(userContext); // a
-        boolean result = plot.execute(userContext); // d
+
+        int plotId = 1;
+        plot.execute(plotId, userContext); // a
+        boolean result = plot.execute(plotId); // d
         Assert.assertTrue(result);
     }
 

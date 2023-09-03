@@ -68,7 +68,7 @@ public class Edge<UC extends UserContext> implements Comparable<Edge<UC>> {
         }
     }
 
-    public boolean isTransitionAvailable(PlotContext<UC> plotContext) {
+    public boolean isTransitionAvailable(PlotContext<?, UC> plotContext) {
         return predicate.test(plotContext);
     }
 

@@ -41,13 +41,13 @@ public class PlotVisitorTest {
                 .node(one)
                 .to(new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(two, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == two;
                             }
                         }),
                         new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(three, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == three;
                             }
                         })
@@ -69,13 +69,13 @@ public class PlotVisitorTest {
                 .to(
                         new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(b, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == b;
                             }
                         }),
                         new Pair<ElementId, Predicate<TestUserMapContext<ElementId, Boolean>>>(c, new Predicate<TestUserMapContext<ElementId, Boolean>>() {
                             @Override
-                            public boolean test(PlotContext<TestUserMapContext<ElementId, Boolean>> context) {
+                            public boolean test(PlotContext<?, TestUserMapContext<ElementId, Boolean>> context) {
                                 return context.getUserContext().getNextId() == c;
                             }
                         })
@@ -85,7 +85,7 @@ public class PlotVisitorTest {
         final Scene<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> plot = Plot.<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> plot = Plot.<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>() {
                                     @Override

@@ -11,7 +11,7 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
 public class TestNode<T extends UserContext> implements Node<T, CustomNodeVisitor> {
 
     @Override
-    public NodeResult execute(PlotContext<T> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<?, T> plotContext, boolean isVisited) {
         CurrentState currentState = plotContext.getAuxiliaryContext().currentState;
         System.out.println("execute: " + currentState);
 

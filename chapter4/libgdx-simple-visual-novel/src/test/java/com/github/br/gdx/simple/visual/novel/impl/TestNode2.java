@@ -10,7 +10,7 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
 public class TestNode2<T extends UserContext> implements Node<T, CustomNodeVisitor> {
 
     @Override
-    public NodeResult execute(PlotContext<T> plotContext, boolean isVisited) {
+    public NodeResult execute(PlotContext<?, T> plotContext, boolean isVisited) {
         return new NodeResult(NodeResultType.NEXT);
     }
 

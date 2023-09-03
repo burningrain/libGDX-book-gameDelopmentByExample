@@ -6,7 +6,7 @@ import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 
 public interface Node<UC extends UserContext, V extends NodeVisitor> {
 
-    NodeResult execute(PlotContext<UC> plotContext, boolean isVisited);
+    NodeResult execute(PlotContext<?, UC> plotContext, boolean isVisited);
 
     void accept(ElementId sceneId, ElementId nodeId, V visitor);
 

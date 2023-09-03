@@ -41,7 +41,7 @@ public class NodeTypeTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -54,10 +54,12 @@ public class NodeTypeTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(userContext);
-        plot.execute(userContext);
-        plot.execute(userContext);
-        boolean result = plot.execute(userContext);
+        int plotId = 1;
+
+        plot.execute(plotId, userContext);
+        plot.execute(plotId);
+        plot.execute(plotId);
+        boolean result = plot.execute(plotId);
         Assert.assertTrue(result);
     }
 
@@ -85,7 +87,7 @@ public class NodeTypeTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -98,7 +100,9 @@ public class NodeTypeTest {
                 .setBeginSceneId(one)
                 .build();
 
-        boolean result = plot.execute(userContext);
+        int plotId = 1;
+
+        boolean result = plot.execute(plotId, userContext);
         Assert.assertTrue(result);
     }
 
@@ -126,7 +130,7 @@ public class NodeTypeTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<TestUserContext, CustomNodeVisitor> plot = Plot.<TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -139,10 +143,13 @@ public class NodeTypeTest {
                 .setBeginSceneId(one)
                 .build();
 
-        plot.execute(userContext);
-        boolean result = plot.execute(userContext);
+        int plotId = 1;
+        plot.execute(plotId, userContext);
+        boolean result = plot.execute(plotId);
         Assert.assertTrue(result);
     }
+
+    //TODO добавить обработчик ошибок. ОБработчик принимает ноду обработки (нода может быть ссылкой на сценарий)
 
 
 }
