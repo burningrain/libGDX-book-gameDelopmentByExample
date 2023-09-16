@@ -14,6 +14,7 @@ import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneNodeBuilder;
 import com.github.br.gdx.simple.visual.novel.impl.CustomNodeVisitor;
+import com.github.br.gdx.simple.visual.novel.impl.GeneratorTestPlotIdImpl;
 import com.github.br.gdx.simple.visual.novel.impl.TestNode;
 import com.github.br.gdx.simple.visual.novel.impl.TestUserContext;
 import org.junit.Assert;
@@ -39,18 +40,21 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
-                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
+                                PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
+                        )
+                        .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                                .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
-                                    @Override
-                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
-                                        return scene;
-                                    }
-                                }
-                        ))
-                .setBeginSceneId(one)
-                .build();
+                                            @Override
+                                            public Scene<TestUserContext, CustomNodeVisitor> get() {
+                                                return scene;
+                                            }
+                                        }
+                                ))
+                        .setBeginSceneId(one)
+                        .build();
 
         int plotId = 1;
         boolean result = plot.execute(plotId, userContext);
@@ -75,18 +79,21 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
-                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
+                                PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
+                        )
+                        .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                                .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
-                                    @Override
-                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
-                                        return scene;
-                                    }
-                                }
-                        ))
-                .setBeginSceneId(one)
-                .build();
+                                            @Override
+                                            public Scene<TestUserContext, CustomNodeVisitor> get() {
+                                                return scene;
+                                            }
+                                        }
+                                ))
+                        .setBeginSceneId(one)
+                        .build();
 
         int plotId = 1;
         Assert.assertTrue(plot.execute(plotId, userContext));
@@ -116,18 +123,21 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
-                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
+                                PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
+                        )
+                        .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                                .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
-                                    @Override
-                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
-                                        return scene;
-                                    }
-                                }
-                        ))
-                .setBeginSceneId(one)
-                .build();
+                                            @Override
+                                            public Scene<TestUserContext, CustomNodeVisitor> get() {
+                                                return scene;
+                                            }
+                                        }
+                                ))
+                        .setBeginSceneId(one)
+                        .build();
 
         int plotId = 1;
         plot.execute(plotId, userContext);
@@ -161,18 +171,21 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
-                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
+                                PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
+                        )
+                        .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                                .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
-                                    @Override
-                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
-                                        return scene;
-                                    }
-                                }
-                        ))
-                .setBeginSceneId(one)
-                .build();
+                                            @Override
+                                            public Scene<TestUserContext, CustomNodeVisitor> get() {
+                                                return scene;
+                                            }
+                                        }
+                                ))
+                        .setBeginSceneId(one)
+                        .build();
 
         int plotId = 1;
         plot.execute(plotId, userContext);
@@ -230,17 +243,20 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
-                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
-                                    @Override
-                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
-                                        return scene;
-                                    }
-                                }
-                        ))
-                .setBeginSceneId(one)
-                .build();
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
+                                PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
+                        )
+                        .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                                .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
+                                            @Override
+                                            public Scene<TestUserContext, CustomNodeVisitor> get() {
+                                                return scene;
+                                            }
+                                        }
+                                ))
+                        .setBeginSceneId(one)
+                        .build();
 
         int plotId = 1;
         plot.execute(plotId, userContext); // a
@@ -306,17 +322,20 @@ public class PlotOneSceneTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
-                .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
-                        .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
-                                    @Override
-                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
-                                        return scene;
-                                    }
-                                }
-                        ))
-                .setBeginSceneId(one)
-                .build();
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
+                                PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
+                        )
+                        .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
+                                .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
+                                            @Override
+                                            public Scene<TestUserContext, CustomNodeVisitor> get() {
+                                                return scene;
+                                            }
+                                        }
+                                ))
+                        .setBeginSceneId(one)
+                        .build();
 
         userContext.nextId = d;
 

@@ -51,4 +51,8 @@ public class FullNodeId implements Comparable<FullNodeId> {
         return Objects.hash(sceneId, nodeId);
     }
 
+    @Override
+    public String toString() {
+        return "sceneId=[" + sceneId + "] nodeId=[" + nodeId + ']';
+    }
 }

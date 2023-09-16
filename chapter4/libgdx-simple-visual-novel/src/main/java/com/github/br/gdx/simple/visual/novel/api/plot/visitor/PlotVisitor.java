@@ -1,4 +1,4 @@
-package com.github.br.gdx.simple.visual.novel.api.plot;
+package com.github.br.gdx.simple.visual.novel.api.plot.visitor;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
@@ -12,7 +12,7 @@ public interface PlotVisitor<V extends NodeVisitor> {
 
     void visitEdge(ElementId sceneId, ElementId nodeId, Edge<?> node);
 
-    void visitBeginNodeId(ElementId sceneId, GraphElementId beginNodeId);
+    void visitBeginNodeId(ElementId sceneId, ElementId beginNodeId);
 
     void visitBeginSceneId(ElementId sceneId);
 

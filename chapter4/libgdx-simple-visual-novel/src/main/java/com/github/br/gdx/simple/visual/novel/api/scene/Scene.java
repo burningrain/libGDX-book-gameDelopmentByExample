@@ -7,7 +7,7 @@ import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.*;
-import com.github.br.gdx.simple.visual.novel.api.plot.PlotVisitor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.inner.graph.EdgeWrapper;
 import com.github.br.gdx.simple.visual.novel.inner.graph.Graph;
 import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
@@ -60,8 +60,13 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         GraphElementId graphElementId = SceneUtils.toId(currentState.nodeId);
         NodeWrapper<Node<UC, V>, Edge> nodeWrapper = graph.getNodeWrapper(graphElementId);
         Node<UC, V> node = nodeWrapper.getNode();
+
         NodeResult nodeResult = node.execute(plotContext, auxiliaryContext.isVisited(currentState.sceneId, currentState.nodeId));
-        auxiliaryContext.addToVisited(currentState.sceneId, currentState.nodeId);
+
+        if (NodeResultType.STAY != nodeResult.getType()) {
+            // сохраняем ноду как посещенную только когда будет переключение. Если переходит сама в себя - не отмечаем как посещенную
+            auxiliaryContext.addToVisited(currentState.sceneId, currentState.nodeId);
+        }
         if (NodeResultType.NEXT != nodeResult.getType()) {
             // STAY/IN - берется тип текущей ноды. OUT здесь не будет
             return new SceneResult(nodeResult, nodeWrapper.getNodeType());
@@ -132,8 +137,8 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
             return children.get(0).getId();
         }
 
-        // нельзя просто перейти на следующую ноду, ибо их несколько
-        throw new IllegalStateException("current nodeId=[" + currentNodeId + "] You must choose the next node by nodeId. " + children.size() + " nodes are available.");
+        // нельзя просто перейти на следующую ноду, ибо их несколько подходящих
+        throw new IllegalStateException("current nodeId=[" + currentNodeId + "] You must choose the next node by nodeId. [" + children.size() + "] nodes are available.");
     }
 
     public void accept(final ElementId sceneId, final PlotVisitor plotVisitor) {
@@ -148,7 +153,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
                 plotVisitor.visitEdge(sceneId, SceneUtils.toId(edgeId), edge);
             }
         });
-        plotVisitor.visitBeginNodeId(sceneId, beginNodeId);
+        plotVisitor.visitBeginNodeId(sceneId, SceneUtils.toId(beginNodeId));
         //todo добавить конечные ноды процесса
     }
 

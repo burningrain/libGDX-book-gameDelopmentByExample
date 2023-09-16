@@ -6,9 +6,12 @@ import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
-import com.github.br.gdx.simple.visual.novel.api.plot.*;
+import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
+import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
+import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
+import com.github.br.gdx.simple.visual.novel.api.plot.SceneSupplier;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.*;
-import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
 import com.github.br.gdx.simple.visual.novel.impl.*;
 import org.junit.Test;
 
@@ -85,7 +88,10 @@ public class PlotVisitorTest {
         final Scene<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> scene = mainGraphSceneBuilder.build();
         System.out.println("main scene: " + scene.toString());
 
-        Plot<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> plot = Plot.<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>builder(
+                                PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
+                        )
                 .setSceneManager(new DefaultSceneManager<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>()
                         .addScene(mainSceneId, new SceneSupplier<TestUserMapContext<ElementId, Boolean>, CustomNodeVisitor>() {
                                     @Override
@@ -112,7 +118,6 @@ public class PlotVisitorTest {
             @Override
             public void visitNode(ElementId sceneId, ElementId nodeId, Node<?, CustomNodeVisitor> node) {
                 node.accept(sceneId, nodeId, customNodeVisitor);
-                //todo прокинуть nodeId в посетителя
             }
 
             @Override
@@ -121,7 +126,7 @@ public class PlotVisitorTest {
             }
 
             @Override
-            public void visitBeginNodeId(ElementId sceneId, GraphElementId beginNodeId) {
+            public void visitBeginNodeId(ElementId sceneId, ElementId beginNodeId) {
                 System.out.println("scene node: " + sceneId + "\nbegin node: " + beginNodeId + "\n");
             }
 
@@ -132,7 +137,6 @@ public class PlotVisitorTest {
         });
 
     }
-
 
 
 }

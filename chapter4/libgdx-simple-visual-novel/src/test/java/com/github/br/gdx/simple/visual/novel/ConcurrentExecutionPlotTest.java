@@ -10,6 +10,7 @@ import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.impl.CustomNodeVisitor;
+import com.github.br.gdx.simple.visual.novel.impl.GeneratorTestPlotIdImpl;
 import com.github.br.gdx.simple.visual.novel.impl.TestNode;
 import com.github.br.gdx.simple.visual.novel.impl.TestUserContext;
 import org.junit.Assert;
@@ -42,7 +43,9 @@ public class ConcurrentExecutionPlotTest {
         System.out.println(scene.toString());
 
         ElementId one = ElementId.of("one");
-        Plot<Integer, TestUserContext, CustomNodeVisitor> plot = Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(PlotConfig.builder().build())
+        Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
+                Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
+                        PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build())
                 .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                         .addScene(one, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
 
@@ -54,7 +57,6 @@ public class ConcurrentExecutionPlotTest {
                         ))
                 .setBeginSceneId(one)
                 .build();
-
         //
 
         ArrayList<Thread> threads = new ArrayList<>();
