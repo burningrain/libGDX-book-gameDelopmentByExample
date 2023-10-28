@@ -1,9 +1,10 @@
-package com.github.br.gdx.simple.visual.novel.api.plot.visitor;
+package com.github.br.gdx.simple.visual.novel.api.plot.visitor.dot;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.FullNodeId;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
 import com.github.br.gdx.simple.visual.novel.inner.SceneLinkNode;
 
@@ -97,30 +98,7 @@ public class PlotPathDotVisitorBuilder<T extends NodeVisitor> implements PlotVis
             builder.append("        label =").append("\"").append(sceneEntry.getKey().getId()).append("\";").append("\n");
 
             for (Map.Entry<ElementId, NodeElementData> nodeEntry : sceneEntry.getValue().entrySet()) {
-                builder.append("        ").append(nodeEntry.getKey());
-                builder.append("[style=filled");
-
-                NodeElementData value = nodeEntry.getValue();
-                if(value.isErrorNode) {
-                    builder.append(", color=red");
-                } else if(value.isVisited) {
-                    builder.append(", color=green");
-                }
-
-                String shape;
-                if(value.isLink) {
-                    shape = ", shape=box";
-                } else if(value.isBegin) {
-                    shape = ", shape=Mdiamond";
-                } else {
-                    shape = ", shape=circle";
-                }
-                builder.append(shape);
-                if(value.errorMessage != null) {
-                    builder.append(", label=\"").append(value.errorMessage).append("\"");
-                }
-
-                builder.append("];\n");
+                printNode(builder, nodeEntry);
             }
             builder.append("    }").append("\n");
             counter++;
@@ -130,28 +108,59 @@ public class PlotPathDotVisitorBuilder<T extends NodeVisitor> implements PlotVis
             ElementId sceneId = edges.getKey();
             LinkedHashMap<ElementId, EdgeElementData> value = edges.getValue();
             for (Map.Entry<ElementId, EdgeElementData> edgeEntry : value.entrySet()) {
-                EdgeElementData edgeData = edgeEntry.getValue();
-                ElementId sourceId = edgeData.edge.getSourceId();
-                ElementId destId = edgeData.edge.getDestId();
-
-                LinkedHashMap<ElementId, NodeElementData> nodesMap = nodes.get(sceneId);
-                NodeElementData sourceData = nodesMap.get(sourceId);
-                NodeElementData destData = nodesMap.get(destId);
-
-                builder.append("    " + sourceId.getId()).append(" -> ").append(destId.getId());
-                if(sourceData.isVisited && destData.isVisited) {
-                    builder.append("[").append("color=green").append("]");
-                }
-                // окрашивается стрелочка к текущему состоянию
-                if(sceneId.equals(currentSceneId) && sourceId.equals(prevNodeId) && destId.equals(currentNodeId)) {
-                    builder.append("[").append("color=green").append("]");
-                }
-                builder.append(";\n");
+                printEdge(builder, sceneId, edgeEntry);
             }
         }
 
         builder.append("}");
         return builder.toString();
+    }
+
+    private void printEdge(StringBuilder builder, ElementId sceneId, Map.Entry<ElementId, EdgeElementData> edgeEntry) {
+        EdgeElementData edgeData = edgeEntry.getValue();
+        ElementId sourceId = edgeData.edge.getSourceId();
+        ElementId destId = edgeData.edge.getDestId();
+
+        LinkedHashMap<ElementId, NodeElementData> nodesMap = nodes.get(sceneId);
+        NodeElementData sourceData = nodesMap.get(sourceId);
+        NodeElementData destData = nodesMap.get(destId);
+
+        builder.append("    " + sourceId.getId()).append(" -> ").append(destId.getId());
+        if(sourceData.isVisited && destData.isVisited) {
+            builder.append("[").append("color=green").append("]");
+        }
+        // окрашивается стрелочка к текущему состоянию
+        if(sceneId.equals(currentSceneId) && sourceId.equals(prevNodeId) && destId.equals(currentNodeId)) {
+            builder.append("[").append("color=green").append("]");
+        }
+        builder.append(";\n");
+    }
+
+    private void printNode(StringBuilder builder, Map.Entry<ElementId, NodeElementData> nodeEntry) {
+        builder.append("        ").append(nodeEntry.getKey());
+        builder.append("[style=filled");
+
+        NodeElementData value = nodeEntry.getValue();
+        if(value.isErrorNode) {
+            builder.append(", color=red");
+        } else if(value.isVisited) {
+            builder.append(", color=green");
+        }
+
+        String shape;
+        if(value.isLink) {
+            shape = ", shape=box";
+        } else if(value.isBegin) {
+            shape = ", shape=Mdiamond";
+        } else {
+            shape = ", shape=circle";
+        }
+        builder.append(shape);
+        if(value.errorMessage != null) {
+            builder.append(", label=\"").append(value.errorMessage).append("\"");
+        }
+
+        builder.append("];\n");
     }
 
     public static class NodeElementData {

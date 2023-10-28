@@ -12,7 +12,7 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotPathDotVisitorBuilder;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.dot.PlotPathDotVisitorBuilder;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneResult;
