@@ -1,6 +1,6 @@
 package com.github.br.gdx.simple.visual.novel.api.plot;
 
-import com.github.br.gdx.simple.visual.novel.Utils;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 public class PlotConfig<ID> {
 

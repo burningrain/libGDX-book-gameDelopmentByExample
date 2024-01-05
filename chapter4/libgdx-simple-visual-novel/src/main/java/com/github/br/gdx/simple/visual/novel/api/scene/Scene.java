@@ -1,6 +1,6 @@
 package com.github.br.gdx.simple.visual.novel.api.scene;
 
-import com.github.br.gdx.simple.visual.novel.Utils;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.AuxiliaryContext;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
@@ -52,7 +52,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
 
     public SceneResult execute(PlotContext<?, UC> plotContext) {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
-        CurrentState currentState = auxiliaryContext.currentState;
+        CurrentState currentState = auxiliaryContext.stateStack.peek();
         if (currentState.nodeId == null) {
             currentState.nodeId = SceneUtils.toId(beginNodeId);
         }
@@ -65,7 +65,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
 
         if (NodeResultType.STAY != nodeResult.getType()) {
             // сохраняем ноду как посещенную только когда будет переключение. Если переходит сама в себя - не отмечаем как посещенную
-            auxiliaryContext.addToVisited(currentState.sceneId, currentState.nodeId);
+            auxiliaryContext.addToVisited(currentState);
         }
         if (NodeResultType.NEXT != nodeResult.getType()) {
             // STAY/IN - берется тип текущей ноды. OUT здесь не будет
@@ -76,7 +76,8 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         GraphElementId nextNodeId = (nextStepNodeId != null) ? SceneUtils.toId(nextStepNodeId) : null;
         if (nextNodeId == null) {
             // дошли до конца текущей сцены и вообще всего процесса
-            if (currentState.parentState == null) {
+            CurrentState parentState = auxiliaryContext.stateStack.peekParent();
+            if (parentState == null) {
                 currentState.nodeId = null;
             } else {
                 // дошли до конца текущего сценария, делаем прыжок вверх. Переключает Plot.class

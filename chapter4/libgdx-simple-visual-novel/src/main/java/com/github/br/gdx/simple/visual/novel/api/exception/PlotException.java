@@ -3,7 +3,6 @@ package com.github.br.gdx.simple.visual.novel.api.exception;
 import com.github.br.gdx.simple.visual.novel.api.context.*;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PlotException extends RuntimeException {
 
@@ -35,14 +34,14 @@ public class PlotException extends RuntimeException {
 
     private static String createMessage(PlotContext<?, ? extends UserContext> plotContext, String message, Exception ex) {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
-        CurrentState currentState = auxiliaryContext.currentState;
+        CurrentState currentState = auxiliaryContext.stateStack.peek();
 
         return "plotId=[" + plotContext.getPlotId() + "] sceneId=[" + currentState.sceneId
                 + "] nodeId=[" + currentState.nodeId + "] message: " + ex.getMessage() + "\n" + message + "\n" +
                 createPath(plotContext.getPlotId(), auxiliaryContext.getPath(), currentState) + "\n";
     }
 
-    private static String createPath(Object plotId, List<FullNodeId> path, CurrentState currentState) {
+    private static String createPath(Object plotId, List<CurrentState> path, CurrentState currentState) {
         if (path == null) {
             return "The parameter 'SavePath' at 'PlotConfig' is not set";
         }
@@ -51,7 +50,7 @@ public class PlotException extends RuntimeException {
         builder.append("\nplotId=[").append(plotId).append("]").append(" PATH:").append("\n");
 
         int counter = 1;
-        for (FullNodeId fullNodeId : path) {
+        for (CurrentState fullNodeId : path) {
             builder.append(counter).append(": ").append(fullNodeId).append("\n");
             counter++;
         }

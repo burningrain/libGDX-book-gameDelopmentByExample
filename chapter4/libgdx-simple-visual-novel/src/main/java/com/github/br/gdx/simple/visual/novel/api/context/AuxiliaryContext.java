@@ -1,6 +1,7 @@
 package com.github.br.gdx.simple.visual.novel.api.context;
 
-import com.github.br.gdx.simple.visual.novel.Utils;
+import com.github.br.gdx.simple.visual.novel.utils.StateStack;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 
 import java.util.ArrayList;
@@ -9,10 +10,10 @@ import java.util.List;
 
 public class AuxiliaryContext {
 
-    public final CurrentState currentState = new CurrentState();
+    public final StateStack stateStack = new StateStack();
 
-    private final ArrayList<FullNodeId> path;
-    private final HashSet<FullNodeId> visitedNodes;
+    private final ArrayList<CurrentState> path;
+    private final HashSet<CurrentState> visitedNodes;
 
     private boolean isProcessFinished = false;
     private boolean hasError = false;
@@ -24,7 +25,7 @@ public class AuxiliaryContext {
             visitedNodes = null;
         }
 
-        if(isSavePath) {
+        if (isSavePath) {
             path = new ArrayList<>();
         } else {
             path = null;
@@ -33,11 +34,11 @@ public class AuxiliaryContext {
 
     public boolean isVisited(ElementId sceneId, ElementId nodeId) {
         Utils.checkNotNull(sceneId, "sceneId");
-        if(!isMarkVisitedNodes()) {
+        if (!isMarkVisitedNodes()) {
             return false;
         }
 
-        return visitedNodes.contains(new FullNodeId(sceneId, nodeId));
+        return visitedNodes.contains(CurrentState.of(sceneId, nodeId));
     }
 
     private boolean isMarkVisitedNodes() {
@@ -48,16 +49,20 @@ public class AuxiliaryContext {
         return path != null;
     }
 
-    public void addToVisited(ElementId sceneId, ElementId nodeId) {
-        FullNodeId fullNodeId = new FullNodeId(sceneId, nodeId);
-        if(isSavePath()) {
-            path.add(fullNodeId);
+    public void addToVisited(CurrentState currentState) {
+        if (!(isSavePath() || isMarkVisitedNodes())) {
+            return;
         }
 
-        if(isMarkVisitedNodes()) {
-            visitedNodes.add(fullNodeId);
+        CurrentState copy = currentState.copy();
+
+        if (isSavePath()) {
+            path.add(copy);
         }
 
+        if (isMarkVisitedNodes()) {
+            visitedNodes.add(copy);
+        }
     }
 
     public boolean isProcessFinished() {
@@ -76,7 +81,7 @@ public class AuxiliaryContext {
         return hasError;
     }
 
-    public List<FullNodeId> getPath() {
+    public List<CurrentState> getPath() {
         return path;
     }
 

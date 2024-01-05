@@ -1,6 +1,7 @@
 package com.github.br.gdx.simple.visual.novel.api.plot;
 
-import com.github.br.gdx.simple.visual.novel.Utils;
+import com.github.br.gdx.simple.visual.novel.utils.StateStack;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.AuxiliaryContext;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
@@ -12,7 +13,8 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.dot.PlotPathDotVisitorBuilder;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.DotVizConverter;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.PlotVizVisitorBuilder;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneResult;
@@ -27,6 +29,8 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
     private final ElementId beginSceneId;
 
+    private final DotVizConverter dotVizConverter = new DotVizConverter();
+
     public Plot(Builder<ID, UC, V> builder) {
         this.sceneManager = Utils.checkNotNull(builder.sceneManager, "sceneManager");
         this.plotContextManager = Utils.checkNotNull(builder.plotContextManager, "plotContextManager");
@@ -40,26 +44,18 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         Utils.checkNotNull(nextSceneId, "nextSceneId");
 
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
-        CurrentState currentState = auxiliaryContext.currentState;
+        StateStack stateStack = auxiliaryContext.stateStack;
 
-        CurrentState parent = new CurrentState();
-        parent.parentState = currentState.parentState;
-        parent.sceneId = currentState.sceneId;
-        parent.nodeId = currentState.nodeId;
-
-        currentState.parentState = parent;
-        currentState.sceneId = nextSceneId;
-        currentState.nodeId = null;
+        stateStack.push(CurrentState.of(nextSceneId, null));
     }
 
     private void changeCurrentSceneToParent(PlotContext<ID, UC> plotContext) {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
-        CurrentState currentState = auxiliaryContext.currentState;
+        StateStack stateStack = auxiliaryContext.stateStack;
 
-        CurrentState parentState = currentState.parentState;
-        currentState.sceneId = parentState.sceneId;
-        currentState.nodeId = getNextSceneNodeId(plotContext, parentState.sceneId, parentState.nodeId);
-        currentState.parentState = parentState.parentState;
+        stateStack.pop();
+        CurrentState currentState = stateStack.peek();
+        currentState.nodeId = getNextSceneNodeId(plotContext, currentState.sceneId, currentState.nodeId);
     }
 
     private ElementId getNextSceneNodeId(PlotContext<ID, UC> plotContext, ElementId nextSceneId, ElementId currentNodeId) {
@@ -114,7 +110,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         Exception ex = null;
         SceneResult sceneResult;
         do {
-            CurrentState currentState = auxiliaryContext.currentState;
+            CurrentState currentState = auxiliaryContext.stateStack.peek();
             ElementId sceneId = currentState.sceneId;
 
             try {
@@ -126,7 +122,8 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
                 break;
             }
 
-            if (currentState.nodeId == null && currentState.parentState == null) {
+            CurrentState parentState = auxiliaryContext.stateStack.peekParent();
+            if (currentState.nodeId == null && parentState == null) {
                 auxiliaryContext.setProcessFinished(true);
             }
         } while (NodeType.NOT_WAITING == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());
@@ -160,10 +157,10 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
     }
 
     private String getPlotAsDot(String messageForCurrentState, AuxiliaryContext auxiliaryContext) {
-        PlotPathDotVisitorBuilder dotVisitorBuilder = new PlotPathDotVisitorBuilder();
+        PlotVizVisitorBuilder dotVisitorBuilder = new PlotVizVisitorBuilder(dotVizConverter);
         this.accept((PlotVisitor<V>) dotVisitorBuilder);
 
-        CurrentState currentState = auxiliaryContext.currentState;
+        CurrentState currentState = auxiliaryContext.stateStack.peek();
         dotVisitorBuilder.visitCurrentNodeId(currentState.sceneId, currentState.nodeId, messageForCurrentState);
         dotVisitorBuilder.visitPlotPath(auxiliaryContext.getPath());
         return dotVisitorBuilder.build();
@@ -172,7 +169,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
     public String getPlotAsDot(ID plotId) {
         Utils.checkNotNull(plotId, "plotId");
         PlotContext<ID, UC> plotContext = plotContextManager.getPlotContext(plotId);
-        if(plotContext == null) {
+        if (plotContext == null) {
             throw new IllegalArgumentException("Plot with id=[" + plotId + "] is not found");
         }
 
@@ -180,7 +177,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
     }
 
     public String getPlotAsDot() {
-        PlotPathDotVisitorBuilder dotVisitorBuilder = new PlotPathDotVisitorBuilder();
+        PlotVizVisitorBuilder dotVisitorBuilder = new PlotVizVisitorBuilder(dotVizConverter);
         this.accept((PlotVisitor<V>) dotVisitorBuilder);
 
         return dotVisitorBuilder.build();
@@ -197,7 +194,11 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         plotContext.setUserContext(userContext);
 
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
-        CurrentState currentState = auxiliaryContext.currentState;
+        CurrentState currentState = auxiliaryContext.stateStack.peek();
+        if (currentState == null) {
+            currentState = CurrentState.of(null, null);
+            auxiliaryContext.stateStack.push(currentState);
+        }
         currentState.sceneId = beginSceneId;
 
         return plotContext;

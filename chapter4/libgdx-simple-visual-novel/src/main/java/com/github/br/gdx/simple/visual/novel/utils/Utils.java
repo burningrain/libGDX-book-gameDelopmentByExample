@@ -1,4 +1,4 @@
-package com.github.br.gdx.simple.visual.novel;
+package com.github.br.gdx.simple.visual.novel.utils;
 
 public class Utils {
 

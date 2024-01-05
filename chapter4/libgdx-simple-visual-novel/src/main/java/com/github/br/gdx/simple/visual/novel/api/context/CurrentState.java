@@ -6,15 +6,28 @@ public class CurrentState {
 
     public ElementId sceneId; // nullable because the first scene
     public ElementId nodeId;  // nullable because the first state
-    public CurrentState parentState; // nullable
+
+    private CurrentState() {
+    }
+
+    public static CurrentState of(ElementId sceneId, ElementId nodeId) {
+        CurrentState currentState = new CurrentState();
+        currentState.sceneId = sceneId;
+        currentState.nodeId = nodeId;
+
+        return currentState;
+    }
+
+    public CurrentState copy() {
+        CurrentState result = new CurrentState();
+        result.sceneId = this.sceneId;
+        result.nodeId = this.nodeId;
+        return result;
+    }
 
     @Override
     public String toString() {
-        return "CurrentState{" +
-                "sceneId=" + sceneId +
-                ", nodeId=" + nodeId +
-                ", parentState=" + parentState +
-                '}';
+        return "sceneId=[" + sceneId + "], nodeId=[" + nodeId + "]";
     }
 
 }

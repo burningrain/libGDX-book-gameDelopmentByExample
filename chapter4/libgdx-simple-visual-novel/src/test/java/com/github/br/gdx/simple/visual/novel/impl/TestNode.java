@@ -12,7 +12,7 @@ public class TestNode<T extends UserContext> implements Node<T, CustomNodeVisito
 
     @Override
     public NodeResult execute(PlotContext<?, T> plotContext, boolean isVisited) {
-        CurrentState currentState = plotContext.getAuxiliaryContext().currentState;
+        CurrentState currentState = plotContext.getAuxiliaryContext().stateStack.peek();
         System.out.println("execute: " + currentState);
 
         return new NodeResult(NodeResultType.NEXT);
