@@ -53,9 +53,15 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         StateStack stateStack = auxiliaryContext.stateStack;
 
-        stateStack.pop();
-        CurrentState currentState = stateStack.peek();
-        currentState.nodeId = getNextSceneNodeId(plotContext, currentState.sceneId, currentState.nodeId);
+        CurrentState currentState = null;
+        do {
+            stateStack.pop();
+            currentState = stateStack.peek();
+            if (currentState == null) {
+                break;
+            }
+            currentState.nodeId = getNextSceneNodeId(plotContext, currentState.sceneId, currentState.nodeId);
+        } while (ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(currentState.nodeId));
     }
 
     private ElementId getNextSceneNodeId(PlotContext<ID, UC> plotContext, ElementId nextSceneId, ElementId currentNodeId) {
@@ -123,7 +129,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             }
 
             CurrentState parentState = auxiliaryContext.stateStack.peekParent();
-            if (currentState.nodeId == null && parentState == null) {
+            if (ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(currentState.nodeId) && parentState == null) {
                 auxiliaryContext.setProcessFinished(true);
             }
         } while (NodeType.NOT_WAITING == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());

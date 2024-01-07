@@ -73,12 +73,12 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         }
 
         ElementId nextStepNodeId = getNextNodeId(graphElementId, plotContext);
-        GraphElementId nextNodeId = (nextStepNodeId != null) ? SceneUtils.toId(nextStepNodeId) : null;
+        GraphElementId nextNodeId = (!ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(nextStepNodeId)) ? SceneUtils.toId(nextStepNodeId) : null;
         if (nextNodeId == null) {
             // дошли до конца текущей сцены и вообще всего процесса
             CurrentState parentState = auxiliaryContext.stateStack.peekParent();
             if (parentState == null) {
-                currentState.nodeId = null;
+                currentState.nodeId = ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE;
             } else {
                 // дошли до конца текущего сценария, делаем прыжок вверх. Переключает Plot.class
                 return new SceneResult(new NodeResult(NodeResultType.CHANGE_SCENE_OUT), null);
@@ -98,7 +98,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
     public ElementId getNextNodeId(GraphElementId graphElementId, PlotContext<?, UC> plotContext) {
         GraphElementId nextNodeId = getGraphNextNodeId(graphElementId, plotContext);
         if (nextNodeId == null) {
-            return null;
+            return ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE;
         }
 
         return SceneUtils.toId(nextNodeId);

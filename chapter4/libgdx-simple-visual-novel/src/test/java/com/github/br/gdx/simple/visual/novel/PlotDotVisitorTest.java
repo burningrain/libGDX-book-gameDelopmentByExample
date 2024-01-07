@@ -21,11 +21,12 @@ public class PlotDotVisitorTest {
 
     @Test
     public void testDotPlotVisitor() {
-        final TestUserContext userContext = new TestUserContext();
-
         // внутренняя сцена
         final Scene<TestUserContext, CustomNodeVisitor> innerScene = createInnerScene();
         ElementId innerSceneId = ElementId.of("innerScene");
+
+        ElementId innerSceneWithInnerSceneId = ElementId.of("innerSceneWithInnerScene");
+        final Scene<TestUserContext, CustomNodeVisitor> innerSceneWithInnerScene = createInnerSceneWithInnerScene(innerSceneId);
 
         // основная сцена
         final SceneBuilder<TestUserContext, CustomNodeVisitor> mainSceneBuilder = Scene.builder(
@@ -35,12 +36,15 @@ public class PlotDotVisitorTest {
         );
 
         ElementId mainSceneId = ElementId.of("main_scene");
+        ElementId zero = mainSceneBuilder.registerSceneLink(ElementId.of("zero"), innerSceneWithInnerSceneId);
         ElementId a = mainSceneBuilder.registerSceneLink(ElementId.of("a"), innerSceneId);
         ElementId b = mainSceneBuilder.registerSceneLink(ElementId.of("b"), innerSceneId);
         ElementId c = mainSceneBuilder.registerSceneLink(ElementId.of("c"), innerSceneId);
         ElementId d = mainSceneBuilder.registerSceneLink(ElementId.of("d"), innerSceneId);
         SceneNodeBuilder<TestUserContext, CustomNodeVisitor> mainGraphSceneBuilder = mainSceneBuilder.graph();
         mainGraphSceneBuilder
+                .node(zero)
+                .to()
                 .node(a)
                 .to()
                 .node(b)
@@ -71,11 +75,35 @@ public class PlotDotVisitorTest {
                                             }
                                         }
                                 )
+                                .addScene(innerSceneWithInnerSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
+                                    @Override
+                                    public Scene<TestUserContext, CustomNodeVisitor> get() {
+                                        return innerSceneWithInnerScene;
+                                    }
+                                })
                         )
                         .setBeginSceneId(mainSceneId)
                         .build();
 
-        System.out.println(plot.getPlotAsDot());
+        final TestUserContext userContext = new TestUserContext();
+        plot.execute(1, userContext); // i1
+        plot.execute(1);              // i2
+        plot.execute(1);              // i3
+        plot.execute(1);              // i4
+        plot.execute(1);              //  node_1
+        plot.execute(1);              //  1
+        plot.execute(1);              //  2
+        plot.execute(1);              //  3
+        plot.execute(1);              //  4
+        plot.execute(1);
+        plot.execute(1);
+        plot.execute(1);
+        plot.execute(1);
+        plot.execute(1);
+        plot.execute(1);
+        plot.execute(1);
+        plot.execute(1);
+        System.out.println(plot.getPlotAsDot(1));
     }
 
 
@@ -103,6 +131,37 @@ public class PlotDotVisitorTest {
                 .node(three)
                 .to()
                 .node(four)
+                .end();
+        return innerBuilder.build();
+    }
+
+    private Scene<TestUserContext, CustomNodeVisitor> createInnerSceneWithInnerScene(ElementId innerSceneId) {
+        final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(
+                SceneConfig.builder()
+                        .setDefaultNodeType(NodeType.WAITING_INPUT)
+                        .build()
+        );
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("i1"), new TestNode<TestUserContext>());
+        ElementId two = innerSceneBuilder.registerNode(ElementId.of("i2"), new TestNode<TestUserContext>());
+        ElementId three = innerSceneBuilder.registerNode(ElementId.of("i3"), new TestNode<TestUserContext>());
+        ElementId four = innerSceneBuilder.registerNode(ElementId.of("i4"), new TestNode<TestUserContext>());
+        ElementId five = innerSceneBuilder.registerSceneLink(innerSceneId);
+
+        innerSceneBuilder.registerNode(one, new TestNode<TestUserContext>());
+        innerSceneBuilder.registerNode(two, new TestNode<TestUserContext>());
+        innerSceneBuilder.registerNode(three, new TestNode<TestUserContext>());
+        innerSceneBuilder.registerNode(four, new TestNode<TestUserContext>());
+
+        SceneNodeBuilder<TestUserContext, CustomNodeVisitor> innerBuilder = innerSceneBuilder.graph()
+                .node(one)
+                .to()
+                .node(two)
+                .to()
+                .node(three)
+                .to()
+                .node(four)
+                .to()
+                .node(five)
                 .end();
         return innerBuilder.build();
     }

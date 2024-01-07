@@ -31,6 +31,9 @@ public class ArrayStack<T> implements Stack<T> {
 
     @Override
     public T peek() {
+        if (arrayList.isEmpty()) {
+            return null;
+        }
         return arrayList.get(arrayList.size() - 1);
     }
 
