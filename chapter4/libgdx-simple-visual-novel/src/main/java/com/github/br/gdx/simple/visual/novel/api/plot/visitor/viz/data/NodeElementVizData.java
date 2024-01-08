@@ -18,7 +18,6 @@ public class NodeElementVizData {
     public ElementId sceneLinkId;
     public List<NodeElementVizData> innerCompositeNodes;
 
-    public boolean isVisited;
     public final List<Edge<?>> edges = new ArrayList<>();
 
     public NodeElementVizData(ElementId nodeId, Node<?, ?> node) {

@@ -7,7 +7,6 @@ public class EdgeElementVizData {
 
     public final ElementId edgeId;
     public final Edge<?> edge;
-    public boolean isVisited;
 
     public EdgeElementVizData(ElementId edgeId, Edge<?> edge) {
         this.edgeId = edgeId;

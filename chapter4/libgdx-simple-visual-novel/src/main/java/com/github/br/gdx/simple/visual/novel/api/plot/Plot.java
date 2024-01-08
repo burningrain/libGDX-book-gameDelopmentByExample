@@ -1,5 +1,6 @@
 package com.github.br.gdx.simple.visual.novel.api.plot;
 
+import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 import com.github.br.gdx.simple.visual.novel.utils.StateStack;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
@@ -47,6 +48,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         StateStack stateStack = auxiliaryContext.stateStack;
 
         stateStack.push(CurrentState.of(nextSceneId, null));
+        auxiliaryContext.getPath().add(NullObjects.DOWN_INTO_SUB_PROCESS);
     }
 
     private void changeCurrentSceneToParent(PlotContext<ID, UC> plotContext) {
@@ -56,12 +58,13 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         CurrentState currentState = null;
         do {
             stateStack.pop();
+            auxiliaryContext.getPath().add(NullObjects.UP_TO_PARENT_PROCESS);
             currentState = stateStack.peek();
             if (currentState == null) {
                 break;
             }
             currentState.nodeId = getNextSceneNodeId(plotContext, currentState.sceneId, currentState.nodeId);
-        } while (ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(currentState.nodeId));
+        } while (NullObjects.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(currentState.nodeId));
     }
 
     private ElementId getNextSceneNodeId(PlotContext<ID, UC> plotContext, ElementId nextSceneId, ElementId currentNodeId) {
@@ -129,7 +132,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             }
 
             CurrentState parentState = auxiliaryContext.stateStack.peekParent();
-            if (ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(currentState.nodeId) && parentState == null) {
+            if (NullObjects.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(currentState.nodeId) && parentState == null) {
                 auxiliaryContext.setProcessFinished(true);
             }
         } while (NodeType.NOT_WAITING == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());

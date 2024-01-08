@@ -1,5 +1,6 @@
 package com.github.br.gdx.simple.visual.novel.api.scene;
 
+import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.AuxiliaryContext;
@@ -73,12 +74,12 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
         }
 
         ElementId nextStepNodeId = getNextNodeId(graphElementId, plotContext);
-        GraphElementId nextNodeId = (!ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(nextStepNodeId)) ? SceneUtils.toId(nextStepNodeId) : null;
+        GraphElementId nextNodeId = (!NullObjects.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(nextStepNodeId)) ? SceneUtils.toId(nextStepNodeId) : null;
         if (nextNodeId == null) {
             // дошли до конца текущей сцены и вообще всего процесса
             CurrentState parentState = auxiliaryContext.stateStack.peekParent();
             if (parentState == null) {
-                currentState.nodeId = ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE;
+                currentState.nodeId = NullObjects.THIS_IS_END_ELEMENT_IN_THE_SCENE;
             } else {
                 // дошли до конца текущего сценария, делаем прыжок вверх. Переключает Plot.class
                 return new SceneResult(new NodeResult(NodeResultType.CHANGE_SCENE_OUT), null);
@@ -98,7 +99,7 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
     public ElementId getNextNodeId(GraphElementId graphElementId, PlotContext<?, UC> plotContext) {
         GraphElementId nextNodeId = getGraphNextNodeId(graphElementId, plotContext);
         if (nextNodeId == null) {
-            return ElementId.THIS_IS_END_ELEMENT_IN_THE_SCENE;
+            return NullObjects.THIS_IS_END_ELEMENT_IN_THE_SCENE;
         }
 
         return SceneUtils.toId(nextNodeId);

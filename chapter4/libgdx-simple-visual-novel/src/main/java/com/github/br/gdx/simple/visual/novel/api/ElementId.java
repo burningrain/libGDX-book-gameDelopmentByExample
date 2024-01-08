@@ -6,8 +6,6 @@ import java.util.Objects;
 
 public class ElementId implements Comparable<ElementId> {
 
-    public static final ElementId THIS_IS_END_ELEMENT_IN_THE_SCENE = ElementId.of("-9999");
-
     private final String id;
 
     private ElementId(String id) {

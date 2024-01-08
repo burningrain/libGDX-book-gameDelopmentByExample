@@ -5,6 +5,7 @@ import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
+import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 
 import java.util.*;
 
@@ -32,44 +33,28 @@ public class DotVizConverter implements VizConverter {
             return Collections.emptySet();
         }
 
-        CurrentState lastRootState = path.get(0);
         LinkedHashSet<String> result = new LinkedHashSet<>();
-
-        LinkedHashSet<ElementId> scenesIds = new LinkedHashSet<>();
-        HashSet<CurrentState> begins = new HashSet<>();
         ArrayList<CurrentState> rootsStack = new ArrayList<>();
-        result.add(stateToString(rootsStack, lastRootState));
-        begins.add(lastRootState);
-        scenesIds.add(lastRootState.sceneId);
 
-        //FIXME это полный треш и попытка угадать, что именно происходит в процессе.
-        // Надо просто добавлять фейковые состояния в путь, а здесь их ловить. И все.
-        CurrentState prev = lastRootState;
+        CurrentState prev = path.get(0);
+        result.add(stateToString(rootsStack, prev));
         for (int i = 1; i < path.size(); i++) {
             CurrentState currentState = path.get(i);
-            if (currentState.sceneId.equals(prev.sceneId)) {
-                // идем по тому жу уровню вложенности
+
+            // надо разобраться, спуск или подъем происходит
+            if (NullObjects.DOWN_INTO_SUB_PROCESS.equals(currentState)) {
+                // провал в подпроцесс внутри подпроцесса
+                rootsStack.add(prev);
+            } else if (NullObjects.UP_TO_PARENT_PROCESS.equals(currentState)) {
+                // подъем наверх, выход из подпроцесса
+                rootsStack.remove(rootsStack.size() - 1);
             } else {
-                // надо разобраться, спуск или подъем происходит
-                lastRootState = rootsStack.isEmpty() ? null : rootsStack.get(rootsStack.size() - 1);
-                if (lastRootState != null && currentState.sceneId.equals(lastRootState.sceneId) && begins.contains(currentState)) {
-                    // спуск в такой же подпроцесс, который уже был, но с самого начала, то бишь новый подпроцесс
-                    rootsStack.add(prev);
-                    // begins.add(currentState);  уже есть там такая нода
-                } else if (lastRootState != null && scenesIds.contains(currentState.sceneId)) {
-                    // подъем наверх, выход из подпроцесса
-                    CurrentState remove;
-                    do {
-                        remove = rootsStack.remove(rootsStack.size() - 1);
-                    } while (!currentState.sceneId.equals(remove.sceneId));
-                } else {
-                    // провал в подпроцесс внутри подпроцесса
-                    rootsStack.add(prev);
-                    begins.add(currentState);
-                    scenesIds.add(currentState.sceneId);
-                }
+                // 1) только поднялись или опустились вглубь. Спокойно идем дальше.
+                // или
+                // 2) остались на том же уровне
+                result.add(stateToString(rootsStack, currentState));
             }
-            result.add(stateToString(rootsStack, currentState));
+
             prev = currentState;
         }
         return result;
@@ -101,9 +86,10 @@ public class DotVizConverter implements VizConverter {
         result.append("subgraph cluster_").append(sceneId).append("_").append(label).append(" {\n");
         result.append("label=").append("\"").append(label).append(" (").append(sceneId).append(")\"\n");
 
-        String parentPath = "".equals(currentPath)? currentPath : currentPath + "/";
+        String parentPath = "".equals(currentPath) ? currentPath : currentPath + "/";
 
         // отрисовка нод
+        HashSet<ElementId> visitedNodes = new HashSet<>();
         for (Map.Entry<ElementId, NodeElementVizData> nodeEntry : nodes.entrySet()) {
             NodeElementVizData value = nodeEntry.getValue();
             if (NodeElementType.SCENE_LINK == value.type) {
@@ -112,6 +98,9 @@ public class DotVizConverter implements VizConverter {
 
             String cn = sceneId.getId() + "." + value.nodeId.getId();
             boolean isNodeVisited = nodePaths.contains(parentPath + cn);
+            if (isNodeVisited) {
+                visitedNodes.add(value.nodeId);
+            }
             result.append(createNode(label, value, isNodeVisited));
         }
         // отрисовка ребер
@@ -120,8 +109,12 @@ public class DotVizConverter implements VizConverter {
             Edge<?> edge = edgeEntry.getValue();
             result.append(label).append("_").append(edge.getSourceId().getId())
                     .append(" -> ")
-                    .append(label).append("_").append(edge.getDestId().getId())
-                    .append(";\n");
+                    .append(label).append("_").append(edge.getDestId().getId());
+
+            if (visitedNodes.contains(edge.getSourceId()) && visitedNodes.contains(edge.getDestId())) {
+                result.append("[").append("color=green").append("]");
+            }
+            result.append(";\n");
         }
 
         result.append("\n}\n");
@@ -151,7 +144,7 @@ public class DotVizConverter implements VizConverter {
                 .append("label=\"").append(value.nodeId.getId()).append("\"").append("\n")
                 .append("shape=").append(getNodeShape(value.type)).append("\n");
 
-        if(isVisited) {
+        if (isVisited) {
             builder.append("color=green").append("\n");
         }
 
@@ -172,85 +165,5 @@ public class DotVizConverter implements VizConverter {
                 throw new IllegalArgumentException("type=[" + type + "] is not defined");
         }
     }
-
-
-//    private String createSubgraph(PLotViz<?> pLotViz,
-//                                  ElementId sceneId,
-//                                  String sceneLabel,
-//                                  SceneViz<?> sceneViz) {
-//        StringBuilder builder = new StringBuilder();
-//
-//        LinkedHashMap<ElementId, NodeElementVizData> subScenes = new LinkedHashMap<>();
-//        builder.append("    subgraph ").append("cluster_").append(sceneId.getId()).append(" {\n");
-//        builder.append("        label =").append("\"").append(sceneLabel).append("\";").append("\n");
-//        for (Map.Entry<ElementId, NodeElementVizData> nodeEntry : sceneViz.nodes.entrySet()) {
-//            ElementId key = nodeEntry.getKey();
-//            NodeElementVizData value = nodeEntry.getValue();
-//            builder.append(createNode(key, value));
-//
-//            if(value.isLink) {
-//                subScenes.put(key, value);
-//            }
-//        }
-//
-//        builder.append("    }").append("\n");
-//
-//        // отрисовка остальных нод
-//        for (Map.Entry<ElementId, NodeElementVizData> subScenesNodeEntry : subScenes.entrySet()) {
-//            NodeElementVizData value = subScenesNodeEntry.getValue();
-//            ElementId sceneLinkId = Utils.checkNotNull(value.sceneLinkId, "value.sceneLinkId");
-//            String title = subScenesNodeEntry.getKey() + "(" + sceneLinkId.getId() + ")";
-//            createSubgraph(pLotViz, false, subScenesNodeEntry.getKey(), title, pLotViz.getScenes().get(sceneLinkId));
-//        }
-//
-//        return builder.toString();
-//    }
-//
-//    private String createNode(ElementId elementId, NodeElementVizData data) {
-//        StringBuilder builder = new StringBuilder();
-//        builder.append("        ").append(elementId);
-//        builder.append("[style=filled");
-//
-//        if (value.isErrorNode) {
-//            builder.append(", color=red");
-//        } else if (value.isVisited) {
-//            builder.append(", color=green");
-//        }
-//
-//        String shape;
-//        if (data.isLink) {
-//            shape = ", shape=box";
-//        } else {
-//            shape = ", shape=circle";
-//        }
-//        builder.append(shape);
-//        if (value.errorMessage != null) {
-//            builder.append(", label=\"").append(value.errorMessage).append("\"");
-//        }
-//
-//        builder.append("];\n");
-//
-//        return builder.toString();
-//    }
-//
-//    private void printEdge(StringBuilder builder, ElementId sceneId, Map.Entry<ElementId, EdgeElementVizData> edgeEntry) {
-//        EdgeElementVizData edgeData = edgeEntry.getValue();
-//        ElementId sourceId = edgeData.edge.getSourceId();
-//        ElementId destId = edgeData.edge.getDestId();
-//
-//        LinkedHashMap<ElementId, NodeElementVizData> nodesMap = nodes.get(sceneId);
-//        NodeElementVizData sourceData = nodesMap.get(sourceId);
-//        NodeElementVizData destData = nodesMap.get(destId);
-//
-//        builder.append("    " + sourceId.getId()).append(" -> ").append(destId.getId());
-//        if (sourceData.isVisited && destData.isVisited) {
-//            builder.append("[").append("color=green").append("]");
-//        }
-//        // окрашивается стрелочка к текущему состоянию
-//        if (sceneId.equals(currentSceneId) && sourceId.equals(prevNodeId) && destId.equals(currentNodeId)) {
-//            builder.append("[").append("color=green").append("]");
-//        }
-//        builder.append(";\n");
-//    }
 
 }
