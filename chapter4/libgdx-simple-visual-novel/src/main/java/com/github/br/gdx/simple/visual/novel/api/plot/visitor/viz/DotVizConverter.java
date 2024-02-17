@@ -12,20 +12,64 @@ import java.util.*;
 public class DotVizConverter implements VizConverter {
 
     @Override
-    public String convert(PLotViz<?> pLotViz) {
+    public String convert(PLotViz<?> pLotViz, DotVizSettings settings) {
         StringBuilder builder = new StringBuilder();
         builder.append("digraph G {\n")
                 .append("charset=\"UTF-8\"").append("\n");
+        builder.append("rankdir=").append(settings.getRankDirType()).append("\n");
+
+        if (settings.isShowLegend()) {
+            builder.append(createLegend()).append("\n");
+        }
 
         Map<ElementId, ? extends SceneViz<?>> scenes = pLotViz.getScenes();
         ElementId beginSceneId = pLotViz.getBeginSceneId();
         Set<String> nodePaths = convertToNodePaths(pLotViz.getPath());
 
-        printScene(builder, "MAIN", beginSceneId, scenes, nodePaths, "");
-
+        builder.append("subgraph cluster_plot {").append("\n");
+        printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "");
+        builder.append("}").append("\n");
 
         builder.append("}");
         return builder.toString();
+    }
+
+    private String createLegend() {
+        StringBuilder result = new StringBuilder();
+        result
+                .append("subgraph cluster_legend {").append("\n")
+                .append("label = \"Legend\";").append("\n")
+                .append("e1 [label=\"\", shape=").append(NodeElementType.SIMPLE_NODE.getDotShape()).append("]").append("\n")
+                .append("d1 [label=").append(NodeElementType.SIMPLE_NODE.name()).append(", shape=plaintext]").append("\n")
+                .append("e2 [label=\"\", shape=").append(NodeElementType.SCENE_LINK.getDotShape()).append("]").append("\n")
+                .append("d2 [label=").append(NodeElementType.SCENE_LINK.name()).append(", shape=plaintext] ").append("\n")
+                .append("e3 [label=\"\", shape=").append(NodeElementType.COMPOSITE_NODE.getDotShape()).append("]").append("\n")
+                .append("d3 [label=").append(NodeElementType.COMPOSITE_NODE.name()).append(", shape=plaintext] ").append("\n")
+
+                .append("subgraph cluster_description {").append("\n")
+                .append("label = \"description\";").append("\n")
+                .append("style=invisible;").append("\n")
+                .append("edge [style=invisible,dir=none];").append("\n")
+                .append("node [style=filled,color=white];").append("\n")
+                .append("d1 -> d2 -> d3;").append("\n")
+                .append("}").append("\n")
+
+                .append("subgraph cluster_element {").append("\n")
+                .append("label = \"element\";").append("\n")
+                .append("style=invisible;").append("\n")
+                .append("edge [style=invisible,dir=none];").append("\n")
+                .append("node [style=filled,color=white];").append("\n")
+                .append("e1 -> e2 -> e3;").append("\n")
+                .append("}").append("\n")
+
+                .append("edge[style=invisible, dir=none, constraint=false];").append("\n")
+                .append("e1 -> d1;").append("\n")
+                .append("e2 -> d2;").append("\n")
+                .append("e3 -> d3;").append("\n")
+
+                .append("}");
+
+        return result.toString();
     }
 
     private Set<String> convertToNodePaths(List<CurrentState> path) {
@@ -72,6 +116,7 @@ public class DotVizConverter implements VizConverter {
     }
 
     private void printScene(
+            DotVizSettings settings,
             StringBuilder result,
             String label,
             ElementId sceneId,
@@ -84,7 +129,7 @@ public class DotVizConverter implements VizConverter {
 
         ArrayList<NodeElementVizData> sceneLinks = new ArrayList<>();
         result.append("subgraph cluster_").append(sceneId).append("_").append(label).append(" {\n");
-        result.append("label=").append("\"").append(label).append(" (").append(sceneId).append(")\"\n");
+        result.append("label=").append("\"").append(label).append("\n(").append(sceneId).append(")\"\n");
 
         String parentPath = "".equals(currentPath) ? currentPath : currentPath + "/";
 
@@ -101,7 +146,7 @@ public class DotVizConverter implements VizConverter {
             if (isNodeVisited) {
                 visitedNodes.add(value.nodeId);
             }
-            result.append(createNode(label, value, isNodeVisited));
+            result.append(createNode(settings, label, value, isNodeVisited));
         }
         // отрисовка ребер
         LinkedHashMap<ElementId, Edge<?>> edges = sceneViz.getEdges();
@@ -122,7 +167,7 @@ public class DotVizConverter implements VizConverter {
         // отрисовка вложенных подсценариев
         for (NodeElementVizData sceneLink : sceneLinks) {
             String cp = parentPath + sceneId.getId() + "." + sceneLink.nodeId.getId();
-            printScene(result, sceneLink.nodeId.getId(), sceneLink.sceneLinkId, scenes, nodePaths, cp);
+            printScene(settings, result, sceneLink.nodeId.getId(), sceneLink.sceneLinkId, scenes, nodePaths, cp);
             // создаем связь к подсценарию
             String parentNodeLabel = sceneLink.nodeId.getId();
             SceneViz<?> subScene = scenes.get(sceneLink.sceneLinkId);
@@ -130,18 +175,40 @@ public class DotVizConverter implements VizConverter {
             result.append(label).append("_").append(parentNodeLabel)
                     .append(" -> ")
                     .append(subSceneBeginNodeId)
+                    .append("[")
+                    .append("style=dashed, color=gray")
+                    .append("]")
                     .append(";\n");
         }
     }
 
-    private String createNode(String label, NodeElementVizData value, boolean isVisited) {
+    private String createNode(DotVizSettings settings, String label, NodeElementVizData value, boolean isVisited) {
+        switch (settings.getNodeInfoType()) {
+            case SHORT:
+                return createShortNodeInfo(label, value, isVisited);
+            case FULL:
+                return createFullNodeInfo(label, value, isVisited);
+            default:
+                throw new IllegalArgumentException("NodeInfoType=[" + settings.getNodeInfoType() + "] is not defined");
+        }
+    }
+
+    private String createFullNodeInfo(String label, NodeElementVizData value, boolean isVisited) {
         StringBuilder builder = new StringBuilder();
 
+
+        return builder.toString();
+    }
+
+    private String createShortNodeInfo(String label, NodeElementVizData value, boolean isVisited) {
+        StringBuilder builder = new StringBuilder();
         String nodeId = label + "_" + value.nodeId.getId();
         builder
                 .append(nodeId)
                 .append(" [\n")
-                .append("label=\"").append(value.nodeId.getId()).append("\"").append("\n")
+                .append("label=\"")
+                .append(value.nodeId.getId())
+                .append("\"").append("\n")
                 .append("shape=").append(getNodeShape(value.type)).append("\n");
 
         if (isVisited) {
@@ -149,21 +216,11 @@ public class DotVizConverter implements VizConverter {
         }
 
         builder.append("];\n");
-
         return builder.toString();
     }
 
     private String getNodeShape(NodeElementType type) {
-        switch (type) {
-            case SIMPLE_NODE:
-                return "circle";
-            case SCENE_LINK:
-                return "doubleoctagon";
-            case COMPOSITE_NODE:
-                return "Mcircle";
-            default:
-                throw new IllegalArgumentException("type=[" + type + "] is not defined");
-        }
+        return type.getDotShape();
     }
 
 }

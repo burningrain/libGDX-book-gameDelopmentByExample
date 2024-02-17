@@ -46,8 +46,8 @@ public class PlotVizVisitorBuilder<T extends NodeVisitor> implements PlotVisitor
         pLotViz.setPlotPath(path);
     }
 
-    public String build() {
-        return converter.convert(pLotViz);
+    public String build(DotVizSettings settings) {
+        return converter.convert(pLotViz, settings);
     }
 
 }
