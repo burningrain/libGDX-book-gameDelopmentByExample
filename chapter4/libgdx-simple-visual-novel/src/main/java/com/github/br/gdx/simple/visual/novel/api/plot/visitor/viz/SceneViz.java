@@ -24,8 +24,8 @@ public class SceneViz<T extends NodeVisitor> {
         NodeElementVizData sourceNode = nodes.get(edge.getSourceId());
         NodeElementVizData destNode = nodes.get(edge.getDestId());
 
-        sourceNode.edges.add(edge);
-        destNode.edges.add(edge);
+        sourceNode.getEdges().add(edge);
+        destNode.getEdges().add(edge);
     }
 
     public void setBeginNodeId(ElementId beginNodeId) {

@@ -2,14 +2,23 @@ package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
+import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizData;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizDataFactory;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
+import com.github.br.gdx.simple.visual.novel.inner.SceneLinkNode;
 import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 
 import java.util.*;
 
 public class DotVizConverter implements VizConverter {
+
+    private final NodeElementVizDataFactory nodeElementVizFactory;
+
+    public DotVizConverter(NodeElementVizDataFactory nodeElementVizFactory) {
+        this.nodeElementVizFactory = nodeElementVizFactory;
+    }
 
     @Override
     public String convert(PLotViz<?> pLotViz, DotVizSettings settings) {
@@ -137,14 +146,14 @@ public class DotVizConverter implements VizConverter {
         HashSet<ElementId> visitedNodes = new HashSet<>();
         for (Map.Entry<ElementId, NodeElementVizData> nodeEntry : nodes.entrySet()) {
             NodeElementVizData value = nodeEntry.getValue();
-            if (NodeElementType.SCENE_LINK == value.type) {
+            if (isSceneLink(value.getNode())) {
                 sceneLinks.add(value);
             }
 
-            String cn = sceneId.getId() + "." + value.nodeId.getId();
+            String cn = sceneId.getId() + "." + value.getNodeId().getId();
             boolean isNodeVisited = nodePaths.contains(parentPath + cn);
             if (isNodeVisited) {
-                visitedNodes.add(value.nodeId);
+                visitedNodes.add(value.getNodeId());
             }
             result.append(createNode(settings, label, value, isNodeVisited));
         }
@@ -166,11 +175,12 @@ public class DotVizConverter implements VizConverter {
 
         // отрисовка вложенных подсценариев
         for (NodeElementVizData sceneLink : sceneLinks) {
-            String cp = parentPath + sceneId.getId() + "." + sceneLink.nodeId.getId();
-            printScene(settings, result, sceneLink.nodeId.getId(), sceneLink.sceneLinkId, scenes, nodePaths, cp);
+            String cp = parentPath + sceneId.getId() + "." + sceneLink.getNodeId().getId();
+            ElementId sceneLinkId = extractSceneLinkId(sceneLink.getNode());
+            printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp);
             // создаем связь к подсценарию
-            String parentNodeLabel = sceneLink.nodeId.getId();
-            SceneViz<?> subScene = scenes.get(sceneLink.sceneLinkId);
+            String parentNodeLabel = sceneLink.getNodeId().getId();
+            SceneViz<?> subScene = scenes.get(sceneLinkId);
             String subSceneBeginNodeId = parentNodeLabel + "_" + subScene.getBeginNodeId().getId();
             result.append(label).append("_").append(parentNodeLabel)
                     .append(" -> ")
@@ -195,21 +205,14 @@ public class DotVizConverter implements VizConverter {
 
     private String createFullNodeInfo(String label, NodeElementVizData value, boolean isVisited) {
         StringBuilder builder = new StringBuilder();
-
-
-        return builder.toString();
-    }
-
-    private String createShortNodeInfo(String label, NodeElementVizData value, boolean isVisited) {
-        StringBuilder builder = new StringBuilder();
-        String nodeId = label + "_" + value.nodeId.getId();
+        String nodeId = createNodeId(label, value);
         builder
                 .append(nodeId)
                 .append(" [\n")
-                .append("label=\"")
-                .append(value.nodeId.getId())
-                .append("\"").append("\n")
-                .append("shape=").append(getNodeShape(value.type)).append("\n");
+                .append("label=")
+                .append(createLabelFullNodeInfo(nodeId, value))
+                .append("\n")
+                .append("shape=").append("plaintext").append("\n");
 
         if (isVisited) {
             builder.append("color=green").append("\n");
@@ -219,8 +222,43 @@ public class DotVizConverter implements VizConverter {
         return builder.toString();
     }
 
-    private String getNodeShape(NodeElementType type) {
-        return type.getDotShape();
+    private String createLabelFullNodeInfo(String nodeId, NodeElementVizData value) {
+        return nodeElementVizFactory.createLabelFullNodeInfo(nodeId, value);
+    }
+
+    private String createShortNodeInfo(String label, NodeElementVizData value, boolean isVisited) {
+        StringBuilder builder = new StringBuilder();
+        String nodeId = createNodeId(label, value);
+        builder
+                .append(nodeId)
+                .append(" [\n")
+                .append("label=\"")
+                .append(value.getNodeId().getId())
+                .append("\"").append("\n")
+                .append("shape=").append(getNodeShape(value.getNode())).append("\n");
+
+        if (isVisited) {
+            builder.append("color=green").append("\n");
+        }
+
+        builder.append("];\n");
+        return builder.toString();
+    }
+
+    private String createNodeId(String label, NodeElementVizData value) {
+        return label + "_" + value.getNodeId().getId();
+    }
+
+    private String getNodeShape(Node<?, ?> node) {
+        return nodeElementVizFactory.getNodeShapeForShortInfo(node);
+    }
+
+    private boolean isSceneLink(Node<?, ?> node) {
+        return node instanceof SceneLinkNode;
+    }
+
+    private ElementId extractSceneLinkId(Node<?, ?> node) {
+        return ((SceneLinkNode<?,?>)node).getSceneTitle();
     }
 
 }

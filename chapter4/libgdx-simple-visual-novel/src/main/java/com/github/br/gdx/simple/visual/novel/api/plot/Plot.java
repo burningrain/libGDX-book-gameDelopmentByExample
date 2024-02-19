@@ -1,6 +1,8 @@
 package com.github.br.gdx.simple.visual.novel.api.plot;
 
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.DotVizSettings;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.DefaultNodeElementVizDataFactory;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizDataFactory;
 import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 import com.github.br.gdx.simple.visual.novel.utils.StateStack;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
@@ -31,7 +33,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
     private final ElementId beginSceneId;
 
-    private final DotVizConverter dotVizConverter = new DotVizConverter();
+    private final DotVizConverter dotVizConverter;
     private final DotVizSettings defaultDotVizSettings;
 
     public Plot(Builder<ID, UC, V> builder) {
@@ -42,6 +44,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
         this.beginSceneId = builder.beginSceneId;
         this.defaultDotVizSettings = builder.dotVizSettings;
+        this.dotVizConverter = new DotVizConverter(builder.dotVizSettings.nodeElementVizDataFactory);
     }
 
     private void changeCurrentSceneToChild(PlotContext<ID, UC> plotContext, ElementId nextSceneId) {

@@ -12,39 +12,25 @@ import java.util.List;
 
 public class NodeElementVizData {
 
-    public final ElementId nodeId;
-
-    public NodeElementType type;
-    public ElementId sceneLinkId;
-    public List<NodeElementVizData> innerCompositeNodes;
-
-    public final List<Edge<?>> edges = new ArrayList<>();
+    private final ElementId nodeId;
+    private final Node<?, ?> node;
+    private final List<Edge<?>> edges = new ArrayList<>(3);
 
     public NodeElementVizData(ElementId nodeId, Node<?, ?> node) {
         this.nodeId = Utils.checkNotNull(nodeId, "nodeId");
+        this.node = Utils.checkNotNull(node, "node");
+    }
 
-        // scene link
-        if (node instanceof SceneLinkNode) {
-            this.type = NodeElementType.SCENE_LINK;
-            SceneLinkNode sceneLinkNode = (SceneLinkNode) node;
-            this.sceneLinkId = sceneLinkNode.getSceneTitle();
-        } else if (node instanceof CompositeNode) {
-            // composite
-            this.type = NodeElementType.COMPOSITE_NODE;
-            innerCompositeNodes = new ArrayList<>();
+    public ElementId getNodeId() {
+        return nodeId;
+    }
 
-            CompositeNode compositeNode = (CompositeNode) node;
-            for (Node compositeInnerNode : compositeNode.getNodes()) {
-                innerCompositeNodes.add(new NodeElementVizData(
-                        // todo необходимо разделить явно понятие "название" и "идентификатор"
-                        // todo здесь использовать "название"
-                        ElementId.of(compositeInnerNode.getClass().getName()),
-                        compositeInnerNode
-                ));
-            }
-        } else {
-            this.type = NodeElementType.SIMPLE_NODE;
-        }
+    public List<Edge<?>> getEdges() {
+        return edges;
+    }
+
+    public Node<?, ?> getNode() {
+        return node;
     }
 
 }

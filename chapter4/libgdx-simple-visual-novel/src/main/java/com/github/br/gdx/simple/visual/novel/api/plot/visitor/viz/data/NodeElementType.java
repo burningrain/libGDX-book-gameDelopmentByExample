@@ -4,9 +4,10 @@ public enum NodeElementType {
 
     COMPOSITE_NODE("Mcircle"),
     SCENE_LINK("doubleoctagon"),
-    SIMPLE_NODE("circle");
+    SIMPLE_NODE("circle"),
+    CUSTOM_NODE("plaintext");
 
-    private String dotShape;
+    private final String dotShape;
 
     NodeElementType(String dotShape) {
         this.dotShape = dotShape;

@@ -1,15 +1,20 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz;
 
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.DefaultNodeElementVizDataFactory;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizDataFactory;
+
 public class DotVizSettings {
 
     private final RankDirType rankDirType;
     private final NodeInfoType nodeInfoType;
     private final boolean isShowLegend;
+    public final NodeElementVizDataFactory nodeElementVizDataFactory;
 
     public DotVizSettings(Builder builder) {
         this.rankDirType = builder.rankDirType;
         this.nodeInfoType = builder.nodeInfoType;
         this.isShowLegend = builder.isShowLegend;
+        this.nodeElementVizDataFactory = builder.nodeElementVizDataFactory;
     }
 
     public RankDirType getRankDirType() {
@@ -33,6 +38,7 @@ public class DotVizSettings {
         private RankDirType rankDirType = RankDirType.LR;
         private NodeInfoType nodeInfoType = NodeInfoType.SHORT;
         private boolean isShowLegend = true;
+        private NodeElementVizDataFactory nodeElementVizDataFactory = new DefaultNodeElementVizDataFactory();
 
         public Builder setRankDirType(RankDirType rankDirType) {
             this.rankDirType = rankDirType;
@@ -46,6 +52,11 @@ public class DotVizSettings {
 
         public Builder setShowLegend(boolean showLegend) {
             isShowLegend = showLegend;
+            return this;
+        }
+
+        public Builder setNodeElementVizDataFactory(NodeElementVizDataFactory nodeElementVizDataFactory) {
+            this.nodeElementVizDataFactory = nodeElementVizDataFactory;
             return this;
         }
 
