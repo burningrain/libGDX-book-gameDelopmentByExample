@@ -1,11 +1,9 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data;
 
-import com.github.br.gdx.simple.visual.novel.utils.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
-import com.github.br.gdx.simple.visual.novel.api.node.CompositeNode;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
-import com.github.br.gdx.simple.visual.novel.inner.SceneLinkNode;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

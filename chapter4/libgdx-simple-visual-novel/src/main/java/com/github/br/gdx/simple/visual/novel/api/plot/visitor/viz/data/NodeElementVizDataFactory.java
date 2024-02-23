@@ -6,6 +6,6 @@ public interface NodeElementVizDataFactory {
 
     String getNodeShapeForShortInfo(Node<?, ?> node);
 
-    String createLabelFullNodeInfo(String nodeId, NodeElementVizData value);
+    String createLabelFullNodeInfo(String nodeId, Node<?, ?> value);
 
 }

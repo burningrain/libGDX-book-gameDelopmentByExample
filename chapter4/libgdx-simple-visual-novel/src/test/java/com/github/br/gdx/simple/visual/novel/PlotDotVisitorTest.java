@@ -1,19 +1,19 @@
 package com.github.br.gdx.simple.visual.novel;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
+import com.github.br.gdx.simple.visual.novel.api.node.CompositeNode;
+import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
 import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
 import com.github.br.gdx.simple.visual.novel.api.plot.SceneSupplier;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.DotVizSettings;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneNodeBuilder;
-import com.github.br.gdx.simple.visual.novel.impl.CustomNodeVisitor;
-import com.github.br.gdx.simple.visual.novel.impl.GeneratorTestPlotIdImpl;
-import com.github.br.gdx.simple.visual.novel.impl.TestNode;
-import com.github.br.gdx.simple.visual.novel.impl.TestUserContext;
+import com.github.br.gdx.simple.visual.novel.impl.*;
 import org.junit.Test;
 
 public class PlotDotVisitorTest {
@@ -37,7 +37,7 @@ public class PlotDotVisitorTest {
 
         ElementId mainSceneId = ElementId.of("main_scene");
         ElementId zero = mainSceneBuilder.registerSceneLink(ElementId.of("zero"), innerSceneWithInnerSceneId);
-        ElementId a = mainSceneBuilder.registerSceneLink(ElementId.of("a"), innerSceneId);
+        ElementId a = mainSceneBuilder.registerNode(ElementId.of("a"), createCompositeNode());
         ElementId b = mainSceneBuilder.registerSceneLink(ElementId.of("b"), innerSceneId);
         ElementId c = mainSceneBuilder.registerSceneLink(ElementId.of("c"), innerSceneId);
         ElementId d = mainSceneBuilder.registerSceneLink(ElementId.of("d"), innerSceneId);
@@ -103,9 +103,20 @@ public class PlotDotVisitorTest {
         plot.execute(1);
         plot.execute(1);
         plot.execute(1);
-        System.out.println(plot.getPlotAsDot(1));
+        System.out.println(plot.getPlotAsDot(
+                DotVizSettings.builder().setInfoType(DotVizSettings.NodeInfoType.FULL).build(),
+                1)
+        );
     }
 
+    private Node<TestUserContext, CustomNodeVisitor> createCompositeNode() {
+        return new CompositeNode<>(new Node[]{
+                new TestInnerNodeA<>(),
+                new TestInnerNodeB<>(),
+                new TestInnerNodeC<>(),
+                new TestInnerNodeD<>()
+        });
+    }
 
     private Scene<TestUserContext, CustomNodeVisitor> createInnerScene() {
         final SceneBuilder<TestUserContext, CustomNodeVisitor> innerSceneBuilder = Scene.builder(

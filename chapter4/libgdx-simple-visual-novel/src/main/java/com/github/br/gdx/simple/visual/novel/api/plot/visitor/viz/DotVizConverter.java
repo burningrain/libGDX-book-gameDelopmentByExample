@@ -138,7 +138,7 @@ public class DotVizConverter implements VizConverter {
 
         ArrayList<NodeElementVizData> sceneLinks = new ArrayList<>();
         result.append("subgraph cluster_").append(sceneId).append("_").append(label).append(" {\n");
-        result.append("label=").append("\"").append(label).append("\n(").append(sceneId).append(")\"\n");
+        result.append("label=").append("\"").append(label).append("(").append(sceneId).append(")\"\n");
 
         String parentPath = "".equals(currentPath) ? currentPath : currentPath + "/";
 
@@ -223,7 +223,7 @@ public class DotVizConverter implements VizConverter {
     }
 
     private String createLabelFullNodeInfo(String nodeId, NodeElementVizData value) {
-        return nodeElementVizFactory.createLabelFullNodeInfo(nodeId, value);
+        return nodeElementVizFactory.createLabelFullNodeInfo(nodeId, value.getNode());
     }
 
     private String createShortNodeInfo(String label, NodeElementVizData value, boolean isVisited) {
