@@ -1,8 +1,6 @@
 package com.github.br.gdx.simple.visual.novel.api.plot;
 
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.DotVizSettings;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.DefaultNodeElementVizDataFactory;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizDataFactory;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
 import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 import com.github.br.gdx.simple.visual.novel.utils.StateStack;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
@@ -44,7 +42,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
         this.beginSceneId = builder.beginSceneId;
         this.defaultDotVizSettings = builder.dotVizSettings;
-        this.dotVizConverter = new DotVizConverter(builder.dotVizSettings.nodeElementVizDataFactory);
+        this.dotVizConverter = new DotVizConverter();
     }
 
     private void changeCurrentSceneToChild(PlotContext<ID, UC> plotContext, ElementId nextSceneId) {
@@ -167,16 +165,19 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             exceptionHandler.handle(ex, plotContext);
         } else {
             throw new PlotException(plotContext, "Use https://dreampuf.github.io/GraphvizOnline/ for visualising of the graph:\n" +
-                    getPlotAsDot("ex message: " + ex.getMessage(), auxiliaryContext, defaultDotVizSettings), ex);
+                    getPlotAsDot("ex message: " + ex.getMessage(), auxiliaryContext, defaultDotVizSettings, ex), ex);
         }
     }
 
-    private String getPlotAsDot(String messageForCurrentState, AuxiliaryContext auxiliaryContext, DotVizSettings settings) {
+    private String getPlotAsDot(String messageForCurrentState, AuxiliaryContext auxiliaryContext, DotVizSettings settings, Exception ex) {
         PlotVizVisitorBuilder dotVisitorBuilder = new PlotVizVisitorBuilder(dotVizConverter);
         this.accept((PlotVisitor<V>) dotVisitorBuilder);
 
         CurrentState currentState = auxiliaryContext.stateStack.peek();
         dotVisitorBuilder.visitCurrentNodeId(currentState.sceneId, currentState.nodeId, messageForCurrentState);
+        if (ex != null) {
+            dotVisitorBuilder.visitException(ex);
+        }
         dotVisitorBuilder.visitPlotPath(auxiliaryContext.getPath());
         return dotVisitorBuilder.build(settings);
     }
@@ -192,7 +193,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             throw new IllegalArgumentException("Plot with id=[" + plotId + "] is not found");
         }
 
-        return getPlotAsDot("-- you are here --", plotContext.getAuxiliaryContext(), settings);
+        return getPlotAsDot("-- you are here --", plotContext.getAuxiliaryContext(), settings, null);
     }
 
     public String getPlotAsDot(DotVizSettings dotVizSettings) {

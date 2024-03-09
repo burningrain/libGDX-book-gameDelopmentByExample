@@ -1,0 +1,765 @@
+digraph G {
+
+    charset="UTF-8"
+    rankdir=TB
+
+    // https://stackoverflow.com/questions/7599279/how-to-get-horizontal-edges-between-nodes-of-two-or-more-clusters
+    subgraph cluster_legend {
+        label = "Legend";
+
+        aliceblue [label="", shape=rounded, style=filled, fillcolor=aliceblue]
+        ALICE_BLUE [label=aliceblue, shape=plaintext]
+        antiquewhite [label="", shape=rounded, style=filled, fillcolor=antiquewhite]
+        ANTIQUE_WHITE [label=antiquewhite, shape=plaintext]
+        aqua [label="", shape=rounded, style=filled, fillcolor=aqua]
+        AQUA [label=aqua, shape=plaintext]
+        aquamarine [label="", shape=rounded, style=filled, fillcolor=aquamarine]
+        AQUAMARINE [label=aquamarine, shape=plaintext]
+        azure [label="", shape=rounded, style=filled, fillcolor=azure]
+        AZURE [label=azure, shape=plaintext]
+        beige [label="", shape=rounded, style=filled, fillcolor=beige]
+        BEIGE [label=beige, shape=plaintext]
+        bisque [label="", shape=rounded, style=filled, fillcolor=bisque]
+        BISQUE [label=bisque, shape=plaintext]
+        black [label="", shape=rounded, style=filled, fillcolor=black]
+        BLACK [label=black, shape=plaintext]
+        blanchedalmond [label="", shape=rounded, style=filled, fillcolor=blanchedalmond]
+        BLANCHED_ALMOND [label=blanchedalmond, shape=plaintext]
+        blue [label="", shape=rounded, style=filled, fillcolor=blue]
+        BLUE [label=blue, shape=plaintext]
+        blueviolet [label="", shape=rounded, style=filled, fillcolor=blueviolet]
+        BLUE_VIOLET [label=blueviolet, shape=plaintext]
+        brown [label="", shape=rounded, style=filled, fillcolor=brown]
+        BROWN [label=brown, shape=plaintext]
+        burlywood [label="", shape=rounded, style=filled, fillcolor=burlywood]
+        BURLY_WOOD [label=burlywood, shape=plaintext]
+        cadetblue [label="", shape=rounded, style=filled, fillcolor=cadetblue]
+        CADET_BLUE [label=cadetblue, shape=plaintext]
+        chartreuse [label="", shape=rounded, style=filled, fillcolor=chartreuse]
+        CHARTREUSE [label=chartreuse, shape=plaintext]
+        chocolate [label="", shape=rounded, style=filled, fillcolor=chocolate]
+        CHOCOLATE [label=chocolate, shape=plaintext]
+        coral [label="", shape=rounded, style=filled, fillcolor=coral]
+        CORAL [label=coral, shape=plaintext]
+        cornflowerblue [label="", shape=rounded, style=filled, fillcolor=cornflowerblue]
+        CORN_FLOWER_BLUE [label=cornflowerblue, shape=plaintext]
+        cornsilk [label="", shape=rounded, style=filled, fillcolor=cornsilk]
+        CORN_SILK [label=cornsilk, shape=plaintext]
+        crimson [label="", shape=rounded, style=filled, fillcolor=crimson]
+        CRIMSON [label=crimson, shape=plaintext]
+        cyan [label="", shape=rounded, style=filled, fillcolor=cyan]
+        CYAN [label=cyan, shape=plaintext]
+        darkblue [label="", shape=rounded, style=filled, fillcolor=darkblue]
+        DARK_BLUE [label=darkblue, shape=plaintext]
+        darkcyan [label="", shape=rounded, style=filled, fillcolor=darkcyan]
+        DARK_CYAN [label=darkcyan, shape=plaintext]
+        darkgoldenrod [label="", shape=rounded, style=filled, fillcolor=darkgoldenrod]
+        DARK_GOLDEN_ROD [label=darkgoldenrod, shape=plaintext]
+        darkgray [label="", shape=rounded, style=filled, fillcolor=darkgray]
+        DARK_GRAY [label=darkgray, shape=plaintext]
+        darkgreen [label="", shape=rounded, style=filled, fillcolor=darkgreen]
+        DARK_GREEN [label=darkgreen, shape=plaintext]
+        darkgrey [label="", shape=rounded, style=filled, fillcolor=darkgrey]
+        DARK_GREY [label=darkgrey, shape=plaintext]
+        darkkhaki [label="", shape=rounded, style=filled, fillcolor=darkkhaki]
+        DARK_KHAKI [label=darkkhaki, shape=plaintext]
+        darkmagenta [label="", shape=rounded, style=filled, fillcolor=darkmagenta]
+        DARK_MAGENTA [label=darkmagenta, shape=plaintext]
+        darkolivegreen [label="", shape=rounded, style=filled, fillcolor=darkolivegreen]
+        DARK_OLIVE_GREEN [label=darkolivegreen, shape=plaintext]
+        darkorange [label="", shape=rounded, style=filled, fillcolor=darkorange]
+        DARK_ORANGE [label=darkorange, shape=plaintext]
+        darkorchid [label="", shape=rounded, style=filled, fillcolor=darkorchid]
+        DARK_ORCHID [label=darkorchid, shape=plaintext]
+        darkred [label="", shape=rounded, style=filled, fillcolor=darkred]
+        DARK_RED [label=darkred, shape=plaintext]
+        darksalmon [label="", shape=rounded, style=filled, fillcolor=darksalmon]
+        DARK_SALMON [label=darksalmon, shape=plaintext]
+        darkseagreen [label="", shape=rounded, style=filled, fillcolor=darkseagreen]
+        DARK_SEA_GREEN [label=darkseagreen, shape=plaintext]
+        darkslateblue [label="", shape=rounded, style=filled, fillcolor=darkslateblue]
+        DARK_SLATE_BLUE [label=darkslateblue, shape=plaintext]
+        darkslategray [label="", shape=rounded, style=filled, fillcolor=darkslategray]
+        DARK_SLATE_GRAY [label=darkslategray, shape=plaintext]
+        darkslategrey [label="", shape=rounded, style=filled, fillcolor=darkslategrey]
+        DARK_SLATE_GREY [label=darkslategrey, shape=plaintext]
+        darkturquoise [label="", shape=rounded, style=filled, fillcolor=darkturquoise]
+        DARK_TURQUOISE [label=darkturquoise, shape=plaintext]
+        darkviolet [label="", shape=rounded, style=filled, fillcolor=darkviolet]
+        DARK_VIOLET [label=darkviolet, shape=plaintext]
+        deeppink [label="", shape=rounded, style=filled, fillcolor=deeppink]
+        DEEP_PINK [label=deeppink, shape=plaintext]
+        deepskyblue [label="", shape=rounded, style=filled, fillcolor=deepskyblue]
+        DEEP_SKY_BLUE [label=deepskyblue, shape=plaintext]
+        dimgray [label="", shape=rounded, style=filled, fillcolor=dimgray]
+        DIM_GRAY [label=dimgray, shape=plaintext]
+        dimgrey [label="", shape=rounded, style=filled, fillcolor=dimgrey]
+        DIM_GREY [label=dimgrey, shape=plaintext]
+        dodgerblue [label="", shape=rounded, style=filled, fillcolor=dodgerblue]
+        DODGER_BLUE [label=dodgerblue, shape=plaintext]
+        firebrick [label="", shape=rounded, style=filled, fillcolor=firebrick]
+        FIRE_BRICK [label=firebrick, shape=plaintext]
+        floralwhite [label="", shape=rounded, style=filled, fillcolor=floralwhite]
+        FLORAL_WHITE [label=floralwhite, shape=plaintext]
+        forestgreen [label="", shape=rounded, style=filled, fillcolor=forestgreen]
+        FOREST_GREEN [label=forestgreen, shape=plaintext]
+        fuchsia [label="", shape=rounded, style=filled, fillcolor=fuchsia]
+        FUCHSIA [label=fuchsia, shape=plaintext]
+        gainsboro [label="", shape=rounded, style=filled, fillcolor=gainsboro]
+        GAINS_BORO [label=gainsboro, shape=plaintext]
+        ghostwhite [label="", shape=rounded, style=filled, fillcolor=ghostwhite]
+        GHOST_WHITE [label=ghostwhite, shape=plaintext]
+        gold [label="", shape=rounded, style=filled, fillcolor=gold]
+        GOLD [label=gold, shape=plaintext]
+        goldenrod [label="", shape=rounded, style=filled, fillcolor=goldenrod]
+        GOLDEN_ROD [label=goldenrod, shape=plaintext]
+        gray [label="", shape=rounded, style=filled, fillcolor=gray]
+        GRAY [label=gray, shape=plaintext]
+        grey [label="", shape=rounded, style=filled, fillcolor=grey]
+        GREY [label=grey, shape=plaintext]
+        green [label="", shape=rounded, style=filled, fillcolor=green]
+        GREEN [label=green, shape=plaintext]
+        greenyellow [label="", shape=rounded, style=filled, fillcolor=greenyellow]
+        GREEN_YELLOW [label=greenyellow, shape=plaintext]
+        honeydew [label="", shape=rounded, style=filled, fillcolor=honeydew]
+        HONEY_DEW [label=honeydew, shape=plaintext]
+        hotpink [label="", shape=rounded, style=filled, fillcolor=hotpink]
+        HOT_PINK [label=hotpink, shape=plaintext]
+        indianred [label="", shape=rounded, style=filled, fillcolor=indianred]
+        INDIAN_RED [label=indianred, shape=plaintext]
+        indigo [label="", shape=rounded, style=filled, fillcolor=indigo]
+        INDIGO [label=indigo, shape=plaintext]
+        ivory [label="", shape=rounded, style=filled, fillcolor=ivory]
+        IVORY [label=ivory, shape=plaintext]
+        khaki [label="", shape=rounded, style=filled, fillcolor=khaki]
+        KHAKI [label=khaki, shape=plaintext]
+        lavender [label="", shape=rounded, style=filled, fillcolor=lavender]
+        LAVENDER [label=lavender, shape=plaintext]
+        lavenderblush [label="", shape=rounded, style=filled, fillcolor=lavenderblush]
+        LAVENDER_BLUSH [label=lavenderblush, shape=plaintext]
+        lawngreen [label="", shape=rounded, style=filled, fillcolor=lawngreen]
+        LAWNGREEN [label=lawngreen, shape=plaintext]
+        lemonchiffon [label="", shape=rounded, style=filled, fillcolor=lemonchiffon]
+        LEMON_CHIFFON [label=lemonchiffon, shape=plaintext]
+        lightblue [label="", shape=rounded, style=filled, fillcolor=lightblue]
+        LIGHT_BLUE [label=lightblue, shape=plaintext]
+        lightcoral [label="", shape=rounded, style=filled, fillcolor=lightcoral]
+        LIGHT_CORAL [label=lightcoral, shape=plaintext]
+        lightcyan [label="", shape=rounded, style=filled, fillcolor=lightcyan]
+        LIGHT_CYAN [label=lightcyan, shape=plaintext]
+        lightgoldenrodyellow [label="", shape=rounded, style=filled, fillcolor=lightgoldenrodyellow]
+        LIGHT_GOLDEN_ROD_YELLOW [label=lightgoldenrodyellow, shape=plaintext]
+        lightgray [label="", shape=rounded, style=filled, fillcolor=lightgray]
+        LIGHT_GRAY [label=lightgray, shape=plaintext]
+        lightgreen [label="", shape=rounded, style=filled, fillcolor=lightgreen]
+        LIGHT_GREEN [label=lightgreen, shape=plaintext]
+        lightgrey [label="", shape=rounded, style=filled, fillcolor=lightgrey]
+        LIGHT_GREY [label=lightgrey, shape=plaintext]
+        lightpink [label="", shape=rounded, style=filled, fillcolor=lightpink]
+        LIGHT_PINK [label=lightpink, shape=plaintext]
+        lightsalmon [label="", shape=rounded, style=filled, fillcolor=lightsalmon]
+        LIGHT_SALMON [label=lightsalmon, shape=plaintext]
+        lightseagreen [label="", shape=rounded, style=filled, fillcolor=lightseagreen]
+        LIGHT_SEA_GREEN [label=lightseagreen, shape=plaintext]
+        lightskyblue [label="", shape=rounded, style=filled, fillcolor=lightskyblue]
+        LIGHT_SKY_BLUE [label=lightskyblue, shape=plaintext]
+        lightslategray [label="", shape=rounded, style=filled, fillcolor=lightslategray]
+        LIGHT_SLATE_GRAY [label=lightslategray, shape=plaintext]
+        lightslategrey [label="", shape=rounded, style=filled, fillcolor=lightslategrey]
+        LIGHT_SLATE_GREY [label=lightslategrey, shape=plaintext]
+        lightsteelblue [label="", shape=rounded, style=filled, fillcolor=lightsteelblue]
+        LIGHT_STEEL_BLUE [label=lightsteelblue, shape=plaintext]
+        lightyellow [label="", shape=rounded, style=filled, fillcolor=lightyellow]
+        LIGHT_YELLOW [label=lightyellow, shape=plaintext]
+        lime [label="", shape=rounded, style=filled, fillcolor=lime]
+        LIME [label=lime, shape=plaintext]
+        limegreen [label="", shape=rounded, style=filled, fillcolor=limegreen]
+        LIME_GREEN [label=limegreen, shape=plaintext]
+        linen [label="", shape=rounded, style=filled, fillcolor=linen]
+        LINEN [label=linen, shape=plaintext]
+        magenta [label="", shape=rounded, style=filled, fillcolor=magenta]
+        MAGENTA [label=magenta, shape=plaintext]
+        maroon [label="", shape=rounded, style=filled, fillcolor=maroon]
+        MAROON [label=maroon, shape=plaintext]
+        mediumaquamarine [label="", shape=rounded, style=filled, fillcolor=mediumaquamarine]
+        MEDIUM_AQUAMARINE [label=mediumaquamarine, shape=plaintext]
+        mediumblue [label="", shape=rounded, style=filled, fillcolor=mediumblue]
+        MEDIUM_BLUE [label=mediumblue, shape=plaintext]
+        mediumorchid [label="", shape=rounded, style=filled, fillcolor=mediumorchid]
+        MEDIUM_ORCHID [label=mediumorchid, shape=plaintext]
+        mediumpurple [label="", shape=rounded, style=filled, fillcolor=mediumpurple]
+        MEDIUM_PURPLE [label=mediumpurple, shape=plaintext]
+        mediumseagreen [label="", shape=rounded, style=filled, fillcolor=mediumseagreen]
+        MEDIUM_SEA_GREEN [label=mediumseagreen, shape=plaintext]
+        mediumslateblue [label="", shape=rounded, style=filled, fillcolor=mediumslateblue]
+        MEDIUM_SLATE_BLUE [label=mediumslateblue, shape=plaintext]
+        mediumspringgreen [label="", shape=rounded, style=filled, fillcolor=mediumspringgreen]
+        MEDIUM_SPRING_GREEN [label=mediumspringgreen, shape=plaintext]
+        mediumturquoise [label="", shape=rounded, style=filled, fillcolor=mediumturquoise]
+        MEDIUM_TURQUOISE [label=mediumturquoise, shape=plaintext]
+        mediumvioletred [label="", shape=rounded, style=filled, fillcolor=mediumvioletred]
+        MEDIUM_VIOLET_RED [label=mediumvioletred, shape=plaintext]
+        midnightblue [label="", shape=rounded, style=filled, fillcolor=midnightblue]
+        MIDNIGHT_BLUE [label=midnightblue, shape=plaintext]
+        mintcream [label="", shape=rounded, style=filled, fillcolor=mintcream]
+        MINT_CREAM [label=mintcream, shape=plaintext]
+        mistyrose [label="", shape=rounded, style=filled, fillcolor=mistyrose]
+        MISTY_ROSE [label=mistyrose, shape=plaintext]
+        moccasin [label="", shape=rounded, style=filled, fillcolor=moccasin]
+        MOCCASIN [label=moccasin, shape=plaintext]
+        navajowhite [label="", shape=rounded, style=filled, fillcolor=navajowhite]
+        NAVAJO_WHITE [label=navajowhite, shape=plaintext]
+        navy [label="", shape=rounded, style=filled, fillcolor=navy]
+        NAVY [label=navy, shape=plaintext]
+        oldlace [label="", shape=rounded, style=filled, fillcolor=oldlace]
+        OLD_LACE [label=oldlace, shape=plaintext]
+        olive [label="", shape=rounded, style=filled, fillcolor=olive]
+        OLIVE [label=olive, shape=plaintext]
+        olivedrab [label="", shape=rounded, style=filled, fillcolor=olivedrab]
+        OLIVE_DRAB [label=olivedrab, shape=plaintext]
+        orange [label="", shape=rounded, style=filled, fillcolor=orange]
+        ORANGE [label=orange, shape=plaintext]
+        orangered [label="", shape=rounded, style=filled, fillcolor=orangered]
+        ORANGE_RED [label=orangered, shape=plaintext]
+        orchid [label="", shape=rounded, style=filled, fillcolor=orchid]
+        ORCHID [label=orchid, shape=plaintext]
+        palegoldenrod [label="", shape=rounded, style=filled, fillcolor=palegoldenrod]
+        PALE_GOLDEN_ROD [label=palegoldenrod, shape=plaintext]
+        palegreen [label="", shape=rounded, style=filled, fillcolor=palegreen]
+        PALE_GREEN [label=palegreen, shape=plaintext]
+        paleturquoise [label="", shape=rounded, style=filled, fillcolor=paleturquoise]
+        PALE_TURQUOISE [label=paleturquoise, shape=plaintext]
+        palevioletred [label="", shape=rounded, style=filled, fillcolor=palevioletred]
+        PALE_VIOLET_RED [label=palevioletred, shape=plaintext]
+        papayawhip [label="", shape=rounded, style=filled, fillcolor=papayawhip]
+        PAPAYA_WHIP [label=papayawhip, shape=plaintext]
+        peachpuff [label="", shape=rounded, style=filled, fillcolor=peachpuff]
+        PEACH_PUFF [label=peachpuff, shape=plaintext]
+        peru [label="", shape=rounded, style=filled, fillcolor=peru]
+        PERU [label=peru, shape=plaintext]
+        pink [label="", shape=rounded, style=filled, fillcolor=pink]
+        PINK [label=pink, shape=plaintext]
+        plum [label="", shape=rounded, style=filled, fillcolor=plum]
+        PLUM [label=plum, shape=plaintext]
+        powderblue [label="", shape=rounded, style=filled, fillcolor=powderblue]
+        POWDER_BLUE [label=powderblue, shape=plaintext]
+        purple [label="", shape=rounded, style=filled, fillcolor=purple]
+        PURPLE [label=purple, shape=plaintext]
+        red [label="", shape=rounded, style=filled, fillcolor=red]
+        RED [label=red, shape=plaintext]
+        rosybrown [label="", shape=rounded, style=filled, fillcolor=rosybrown]
+        ROSY_BROWN [label=rosybrown, shape=plaintext]
+        royalblue [label="", shape=rounded, style=filled, fillcolor=royalblue]
+        ROYAL_BLUE [label=royalblue, shape=plaintext]
+        saddlebrown [label="", shape=rounded, style=filled, fillcolor=saddlebrown]
+        SADDLE_BROWN [label=saddlebrown, shape=plaintext]
+        salmon [label="", shape=rounded, style=filled, fillcolor=salmon]
+        SALMON [label=salmon, shape=plaintext]
+        sandybrown [label="", shape=rounded, style=filled, fillcolor=sandybrown]
+        SANDY_BROWN [label=sandybrown, shape=plaintext]
+        seagreen [label="", shape=rounded, style=filled, fillcolor=seagreen]
+        SEA_GREEN [label=seagreen, shape=plaintext]
+        seashell [label="", shape=rounded, style=filled, fillcolor=seashell]
+        SEA_SHELL [label=seashell, shape=plaintext]
+        sienna [label="", shape=rounded, style=filled, fillcolor=sienna]
+        SIENNA [label=sienna, shape=plaintext]
+        silver [label="", shape=rounded, style=filled, fillcolor=silver]
+        SILVER [label=silver, shape=plaintext]
+        skyblue [label="", shape=rounded, style=filled, fillcolor=skyblue]
+        SKY_BLUE [label=skyblue, shape=plaintext]
+        slateblue [label="", shape=rounded, style=filled, fillcolor=slateblue]
+        SLATE_BLUE [label=slateblue, shape=plaintext]
+        slategray [label="", shape=rounded, style=filled, fillcolor=slategray]
+        SLATE_GRAY [label=slategray, shape=plaintext]
+        slategrey [label="", shape=rounded, style=filled, fillcolor=slategrey]
+        SLATE_GREY [label=slategrey, shape=plaintext]
+        snow [label="", shape=rounded, style=filled, fillcolor=snow]
+        SNOW [label=snow, shape=plaintext]
+        springgreen [label="", shape=rounded, style=filled, fillcolor=springgreen]
+        SPRING_GREEN [label=springgreen, shape=plaintext]
+        steelblue [label="", shape=rounded, style=filled, fillcolor=steelblue]
+        STEEL_BLUE [label=steelblue, shape=plaintext]
+        tan [label="", shape=rounded, style=filled, fillcolor=tan]
+        TAN [label=tan, shape=plaintext]
+        teal [label="", shape=rounded, style=filled, fillcolor=teal]
+        TEAL [label=teal, shape=plaintext]
+        thistle [label="", shape=rounded, style=filled, fillcolor=thistle]
+        THISTLE [label=thistle, shape=plaintext]
+        tomato [label="", shape=rounded, style=filled, fillcolor=tomato]
+        TOMATO [label=tomato, shape=plaintext]
+        turquoise [label="", shape=rounded, style=filled, fillcolor=turquoise]
+        TURQUOISE [label=turquoise, shape=plaintext]
+        violet [label="", shape=rounded, style=filled, fillcolor=violet]
+        VIOLET [label=violet, shape=plaintext]
+        wheat [label="", shape=rounded, style=filled, fillcolor=wheat]
+        WHEAT [label=wheat, shape=plaintext]
+        white [label="", shape=rounded, style=filled, fillcolor=white]
+        WHITE [label=white, shape=plaintext]
+        whitesmoke [label="", shape=rounded, style=filled, fillcolor=whitesmoke]
+        WHITE_SMOKE [label=whitesmoke, shape=plaintext]
+        yellow [label="", shape=rounded, style=filled, fillcolor=yellow]
+        YELLOW [label=yellow, shape=plaintext]
+        yellowgreen [label="", shape=rounded, style=filled, fillcolor=yellowgreen]
+        YELLOW_GREEN [label=yellowgreen, shape=plaintext]
+
+        subgraph cluster_B {
+
+              label = "description";
+              style = invisible;
+              edge [style=invisible,dir=none];
+              node [style=filled,color=white];
+
+              ALICE_BLUE -> ANTIQUE_WHITE;
+              ANTIQUE_WHITE -> AQUA;
+              AQUA -> AQUAMARINE;
+              AQUAMARINE -> AZURE;
+              AZURE -> BEIGE;
+              BEIGE -> BISQUE;
+              BISQUE -> BLACK;
+              BLACK -> BLANCHED_ALMOND;
+              BLANCHED_ALMOND -> BLUE;
+              BLUE -> BLUE_VIOLET;
+              BLUE_VIOLET -> BROWN;
+              BROWN -> BURLY_WOOD;
+              BURLY_WOOD -> CADET_BLUE;
+              CADET_BLUE -> CHARTREUSE;
+              CHARTREUSE -> CHOCOLATE;
+              CHOCOLATE -> CORAL;
+              CORAL -> CORN_FLOWER_BLUE;
+              CORN_FLOWER_BLUE -> CORN_SILK;
+              CORN_SILK -> CRIMSON;
+              CRIMSON -> CYAN;
+              CYAN -> DARK_BLUE;
+              DARK_BLUE -> DARK_CYAN;
+              DARK_CYAN -> DARK_GOLDEN_ROD;
+              DARK_GOLDEN_ROD -> DARK_GRAY;
+              DARK_GRAY -> DARK_GREEN;
+              DARK_GREEN -> DARK_GREY;
+              DARK_GREY -> DARK_KHAKI;
+              DARK_KHAKI -> DARK_MAGENTA;
+              DARK_MAGENTA -> DARK_OLIVE_GREEN;
+              DARK_OLIVE_GREEN -> DARK_ORANGE;
+              DARK_ORANGE -> DARK_ORCHID;
+              DARK_ORCHID -> DARK_RED;
+              DARK_RED -> DARK_SALMON;
+              DARK_SALMON -> DARK_SEA_GREEN;
+              DARK_SEA_GREEN -> DARK_SLATE_BLUE;
+              DARK_SLATE_BLUE -> DARK_SLATE_GRAY;
+              DARK_SLATE_GRAY -> DARK_SLATE_GREY;
+              DARK_SLATE_GREY -> DARK_TURQUOISE;
+              DARK_TURQUOISE -> DARK_VIOLET;
+              DARK_VIOLET -> DEEP_PINK;
+              DEEP_PINK -> DEEP_SKY_BLUE;
+              DEEP_SKY_BLUE -> DIM_GRAY;
+              DIM_GRAY -> DIM_GREY;
+              DIM_GREY -> DODGER_BLUE;
+              DODGER_BLUE -> FIRE_BRICK;
+              FIRE_BRICK -> FLORAL_WHITE;
+              FLORAL_WHITE -> FOREST_GREEN;
+              FOREST_GREEN -> FUCHSIA;
+              FUCHSIA -> GAINS_BORO;
+              GAINS_BORO -> GHOST_WHITE;
+              GHOST_WHITE -> GOLD;
+              GOLD -> GOLDEN_ROD;
+              GOLDEN_ROD -> GRAY;
+              GRAY -> GREY;
+              GREY -> GREEN;
+              GREEN -> GREEN_YELLOW;
+              GREEN_YELLOW -> HONEY_DEW;
+              HONEY_DEW -> HOT_PINK;
+              HOT_PINK -> INDIAN_RED;
+              INDIAN_RED -> INDIGO;
+              INDIGO -> IVORY;
+              IVORY -> KHAKI;
+              KHAKI -> LAVENDER;
+              LAVENDER -> LAVENDER_BLUSH;
+              LAVENDER_BLUSH -> LAWNGREEN;
+              LAWNGREEN -> LEMON_CHIFFON;
+              LEMON_CHIFFON -> LIGHT_BLUE;
+              LIGHT_BLUE -> LIGHT_CORAL;
+              LIGHT_CORAL -> LIGHT_CYAN;
+              LIGHT_CYAN -> LIGHT_GOLDEN_ROD_YELLOW;
+              LIGHT_GOLDEN_ROD_YELLOW -> LIGHT_GRAY;
+              LIGHT_GRAY -> LIGHT_GREEN;
+              LIGHT_GREEN -> LIGHT_GREY;
+              LIGHT_GREY -> LIGHT_PINK;
+              LIGHT_PINK -> LIGHT_SALMON;
+              LIGHT_SALMON -> LIGHT_SEA_GREEN;
+              LIGHT_SEA_GREEN -> LIGHT_SKY_BLUE;
+              LIGHT_SKY_BLUE -> LIGHT_SLATE_GRAY;
+              LIGHT_SLATE_GRAY -> LIGHT_SLATE_GREY;
+              LIGHT_SLATE_GREY -> LIGHT_STEEL_BLUE;
+              LIGHT_STEEL_BLUE -> LIGHT_YELLOW;
+              LIGHT_YELLOW -> LIME;
+              LIME -> LIME_GREEN;
+              LIME_GREEN -> LINEN;
+              LINEN -> MAGENTA;
+              MAGENTA -> MAROON;
+              MAROON -> MEDIUM_AQUAMARINE;
+              MEDIUM_AQUAMARINE -> MEDIUM_BLUE;
+              MEDIUM_BLUE -> MEDIUM_ORCHID;
+              MEDIUM_ORCHID -> MEDIUM_PURPLE;
+              MEDIUM_PURPLE -> MEDIUM_SEA_GREEN;
+              MEDIUM_SEA_GREEN -> MEDIUM_SLATE_BLUE;
+              MEDIUM_SLATE_BLUE -> MEDIUM_SPRING_GREEN;
+              MEDIUM_SPRING_GREEN -> MEDIUM_TURQUOISE;
+              MEDIUM_TURQUOISE -> MEDIUM_VIOLET_RED;
+              MEDIUM_VIOLET_RED -> MIDNIGHT_BLUE;
+              MIDNIGHT_BLUE -> MINT_CREAM;
+              MINT_CREAM -> MISTY_ROSE;
+              MISTY_ROSE -> MOCCASIN;
+              MOCCASIN -> NAVAJO_WHITE;
+              NAVAJO_WHITE -> NAVY;
+              NAVY -> OLD_LACE;
+              OLD_LACE -> OLIVE;
+              OLIVE -> OLIVE_DRAB;
+              OLIVE_DRAB -> ORANGE;
+              ORANGE -> ORANGE_RED;
+              ORANGE_RED -> ORCHID;
+              ORCHID -> PALE_GOLDEN_ROD;
+              PALE_GOLDEN_ROD -> PALE_GREEN;
+              PALE_GREEN -> PALE_TURQUOISE;
+              PALE_TURQUOISE -> PALE_VIOLET_RED;
+              PALE_VIOLET_RED -> PAPAYA_WHIP;
+              PAPAYA_WHIP -> PEACH_PUFF;
+              PEACH_PUFF -> PERU;
+              PERU -> PINK;
+              PINK -> PLUM;
+              PLUM -> POWDER_BLUE;
+              POWDER_BLUE -> PURPLE;
+              PURPLE -> RED;
+              RED -> ROSY_BROWN;
+              ROSY_BROWN -> ROYAL_BLUE;
+              ROYAL_BLUE -> SADDLE_BROWN;
+              SADDLE_BROWN -> SALMON;
+              SALMON -> SANDY_BROWN;
+              SANDY_BROWN -> SEA_GREEN;
+              SEA_GREEN -> SEA_SHELL;
+              SEA_SHELL -> SIENNA;
+              SIENNA -> SILVER;
+              SILVER -> SKY_BLUE;
+              SKY_BLUE -> SLATE_BLUE;
+              SLATE_BLUE -> SLATE_GRAY;
+              SLATE_GRAY -> SLATE_GREY;
+              SLATE_GREY -> SNOW;
+              SNOW -> SPRING_GREEN;
+              SPRING_GREEN -> STEEL_BLUE;
+              STEEL_BLUE -> TAN;
+              TAN -> TEAL;
+              TEAL -> THISTLE;
+              THISTLE -> TOMATO;
+              TOMATO -> TURQUOISE;
+              TURQUOISE -> VIOLET;
+              VIOLET -> WHEAT;
+              WHEAT -> WHITE;
+              WHITE -> WHITE_SMOKE;
+              WHITE_SMOKE -> YELLOW;
+              YELLOW -> YELLOW_GREEN;
+        }
+
+        subgraph cluster_A {
+
+              label = "element";
+              style = invisible;
+              edge [style=invisible,dir=none];
+              node [style=filled,color=white];
+
+              aliceblue -> antiquewhite;
+              antiquewhite -> aqua;
+              aqua -> aquamarine;
+              aquamarine -> azure;
+              azure -> beige;
+              beige -> bisque;
+              bisque -> black;
+              black -> blanchedalmond;
+              blanchedalmond -> blue;
+              blue -> blueviolet;
+              blueviolet -> brown;
+              brown -> burlywood;
+              burlywood -> cadetblue;
+              cadetblue -> chartreuse;
+              chartreuse -> chocolate;
+              chocolate -> coral;
+              coral -> cornflowerblue;
+              cornflowerblue -> cornsilk;
+              cornsilk -> crimson;
+              crimson -> cyan;
+              cyan -> darkblue;
+              darkblue -> darkcyan;
+              darkcyan -> darkgoldenrod;
+              darkgoldenrod -> darkgray;
+              darkgray -> darkgreen;
+              darkgreen -> darkgrey;
+              darkgrey -> darkkhaki;
+              darkkhaki -> darkmagenta;
+              darkmagenta -> darkolivegreen;
+              darkolivegreen -> darkorange;
+              darkorange -> darkorchid;
+              darkorchid -> darkred;
+              darkred -> darksalmon;
+              darksalmon -> darkseagreen;
+              darkseagreen -> darkslateblue;
+              darkslateblue -> darkslategray;
+              darkslategray -> darkslategrey;
+              darkslategrey -> darkturquoise;
+              darkturquoise -> darkviolet;
+              darkviolet -> deeppink;
+              deeppink -> deepskyblue;
+              deepskyblue -> dimgray;
+              dimgray -> dimgrey;
+              dimgrey -> dodgerblue;
+              dodgerblue -> firebrick;
+              firebrick -> floralwhite;
+              floralwhite -> forestgreen;
+              forestgreen -> fuchsia;
+              fuchsia -> gainsboro;
+              gainsboro -> ghostwhite;
+              ghostwhite -> gold;
+              gold -> goldenrod;
+              goldenrod -> gray;
+              gray -> grey;
+              grey -> green;
+              green -> greenyellow;
+              greenyellow -> honeydew;
+              honeydew -> hotpink;
+              hotpink -> indianred;
+              indianred -> indigo;
+              indigo -> ivory;
+              ivory -> khaki;
+              khaki -> lavender;
+              lavender -> lavenderblush;
+              lavenderblush -> lawngreen;
+              lawngreen -> lemonchiffon;
+              lemonchiffon -> lightblue;
+              lightblue -> lightcoral;
+              lightcoral -> lightcyan;
+              lightcyan -> lightgoldenrodyellow;
+              lightgoldenrodyellow -> lightgray;
+              lightgray -> lightgreen;
+              lightgreen -> lightgrey;
+              lightgrey -> lightpink;
+              lightpink -> lightsalmon;
+              lightsalmon -> lightseagreen;
+              lightseagreen -> lightskyblue;
+              lightskyblue -> lightslategray;
+              lightslategray -> lightslategrey;
+              lightslategrey -> lightsteelblue;
+              lightsteelblue -> lightyellow;
+              lightyellow -> lime;
+              lime -> limegreen;
+              limegreen -> linen;
+              linen -> magenta;
+              magenta -> maroon;
+              maroon -> mediumaquamarine;
+              mediumaquamarine -> mediumblue;
+              mediumblue -> mediumorchid;
+              mediumorchid -> mediumpurple;
+              mediumpurple -> mediumseagreen;
+              mediumseagreen -> mediumslateblue;
+              mediumslateblue -> mediumspringgreen;
+              mediumspringgreen -> mediumturquoise;
+              mediumturquoise -> mediumvioletred;
+              mediumvioletred -> midnightblue;
+              midnightblue -> mintcream;
+              mintcream -> mistyrose;
+              mistyrose -> moccasin;
+              moccasin -> navajowhite;
+              navajowhite -> navy;
+              navy -> oldlace;
+              oldlace -> olive;
+              olive -> olivedrab;
+              olivedrab -> orange;
+              orange -> orangered;
+              orangered -> orchid;
+              orchid -> palegoldenrod;
+              palegoldenrod -> palegreen;
+              palegreen -> paleturquoise;
+              paleturquoise -> palevioletred;
+              palevioletred -> papayawhip;
+              papayawhip -> peachpuff;
+              peachpuff -> peru;
+              peru -> pink;
+              pink -> plum;
+              plum -> powderblue;
+              powderblue -> purple;
+              purple -> red;
+              red -> rosybrown;
+              rosybrown -> royalblue;
+              royalblue -> saddlebrown;
+              saddlebrown -> salmon;
+              salmon -> sandybrown;
+              sandybrown -> seagreen;
+              seagreen -> seashell;
+              seashell -> sienna;
+              sienna -> silver;
+              silver -> skyblue;
+              skyblue -> slateblue;
+              slateblue -> slategray;
+              slategray -> slategrey;
+              slategrey -> snow;
+              snow -> springgreen;
+              springgreen -> steelblue;
+              steelblue -> tan;
+              tan -> teal;
+              teal -> thistle;
+              thistle -> tomato;
+              tomato -> turquoise;
+              turquoise -> violet;
+              violet -> wheat;
+              wheat -> white;
+              white -> whitesmoke;
+              whitesmoke -> yellow;
+              yellow -> yellowgreen;
+        }
+
+        edge[style=invisible, dir=none, constraint=false];
+
+        aliceblue -> ALICE_BLUE;
+        antiquewhite -> ANTIQUE_WHITE;
+        aqua -> AQUA;
+        aquamarine -> AQUAMARINE;
+        azure -> AZURE;
+        beige -> BEIGE;
+        bisque -> BISQUE;
+        black -> BLACK;
+        blanchedalmond -> BLANCHED_ALMOND;
+        blue -> BLUE;
+        blueviolet -> BLUE_VIOLET;
+        brown -> BROWN;
+        burlywood -> BURLY_WOOD;
+        cadetblue -> CADET_BLUE;
+        chartreuse -> CHARTREUSE;
+        chocolate -> CHOCOLATE;
+        coral -> CORAL;
+        cornflowerblue -> CORN_FLOWER_BLUE;
+        cornsilk -> CORN_SILK;
+        crimson -> CRIMSON;
+        cyan -> CYAN;
+        darkblue -> DARK_BLUE;
+        darkcyan -> DARK_CYAN;
+        darkgoldenrod -> DARK_GOLDEN_ROD;
+        darkgray -> DARK_GRAY;
+        darkgreen -> DARK_GREEN;
+        darkgrey -> DARK_GREY;
+        darkkhaki -> DARK_KHAKI;
+        darkmagenta -> DARK_MAGENTA;
+        darkolivegreen -> DARK_OLIVE_GREEN;
+        darkorange -> DARK_ORANGE;
+        darkorchid -> DARK_ORCHID;
+        darkred -> DARK_RED;
+        darksalmon -> DARK_SALMON;
+        darkseagreen -> DARK_SEA_GREEN;
+        darkslateblue -> DARK_SLATE_BLUE;
+        darkslategray -> DARK_SLATE_GRAY;
+        darkslategrey -> DARK_SLATE_GREY;
+        darkturquoise -> DARK_TURQUOISE;
+        darkviolet -> DARK_VIOLET;
+        deeppink -> DEEP_PINK;
+        deepskyblue -> DEEP_SKY_BLUE;
+        dimgray -> DIM_GRAY;
+        dimgrey -> DIM_GREY;
+        dodgerblue -> DODGER_BLUE;
+        firebrick -> FIRE_BRICK;
+        floralwhite -> FLORAL_WHITE;
+        forestgreen -> FOREST_GREEN;
+        fuchsia -> FUCHSIA;
+        gainsboro -> GAINS_BORO;
+        ghostwhite -> GHOST_WHITE;
+        gold -> GOLD;
+        goldenrod -> GOLDEN_ROD;
+        gray -> GRAY;
+        grey -> GREY;
+        green -> GREEN;
+        greenyellow -> GREEN_YELLOW;
+        honeydew -> HONEY_DEW;
+        hotpink -> HOT_PINK;
+        indianred -> INDIAN_RED;
+        indigo -> INDIGO;
+        ivory -> IVORY;
+        khaki -> KHAKI;
+        lavender -> LAVENDER;
+        lavenderblush -> LAVENDER_BLUSH;
+        lawngreen -> LAWNGREEN;
+        lemonchiffon -> LEMON_CHIFFON;
+        lightblue -> LIGHT_BLUE;
+        lightcoral -> LIGHT_CORAL;
+        lightcyan -> LIGHT_CYAN;
+        lightgoldenrodyellow -> LIGHT_GOLDEN_ROD_YELLOW;
+        lightgray -> LIGHT_GRAY;
+        lightgreen -> LIGHT_GREEN;
+        lightgrey -> LIGHT_GREY;
+        lightpink -> LIGHT_PINK;
+        lightsalmon -> LIGHT_SALMON;
+        lightseagreen -> LIGHT_SEA_GREEN;
+        lightskyblue -> LIGHT_SKY_BLUE;
+        lightslategray -> LIGHT_SLATE_GRAY;
+        lightslategrey -> LIGHT_SLATE_GREY;
+        lightsteelblue -> LIGHT_STEEL_BLUE;
+        lightyellow -> LIGHT_YELLOW;
+        lime -> LIME;
+        limegreen -> LIME_GREEN;
+        linen -> LINEN;
+        magenta -> MAGENTA;
+        maroon -> MAROON;
+        mediumaquamarine -> MEDIUM_AQUAMARINE;
+        mediumblue -> MEDIUM_BLUE;
+        mediumorchid -> MEDIUM_ORCHID;
+        mediumpurple -> MEDIUM_PURPLE;
+        mediumseagreen -> MEDIUM_SEA_GREEN;
+        mediumslateblue -> MEDIUM_SLATE_BLUE;
+        mediumspringgreen -> MEDIUM_SPRING_GREEN;
+        mediumturquoise -> MEDIUM_TURQUOISE;
+        mediumvioletred -> MEDIUM_VIOLET_RED;
+        midnightblue -> MIDNIGHT_BLUE;
+        mintcream -> MINT_CREAM;
+        mistyrose -> MISTY_ROSE;
+        moccasin -> MOCCASIN;
+        navajowhite -> NAVAJO_WHITE;
+        navy -> NAVY;
+        oldlace -> OLD_LACE;
+        olive -> OLIVE;
+        olivedrab -> OLIVE_DRAB;
+        orange -> ORANGE;
+        orangered -> ORANGE_RED;
+        orchid -> ORCHID;
+        palegoldenrod -> PALE_GOLDEN_ROD;
+        palegreen -> PALE_GREEN;
+        paleturquoise -> PALE_TURQUOISE;
+        palevioletred -> PALE_VIOLET_RED;
+        papayawhip -> PAPAYA_WHIP;
+        peachpuff -> PEACH_PUFF;
+        peru -> PERU;
+        pink -> PINK;
+        plum -> PLUM;
+        powderblue -> POWDER_BLUE;
+        purple -> PURPLE;
+        red -> RED;
+        rosybrown -> ROSY_BROWN;
+        royalblue -> ROYAL_BLUE;
+        saddlebrown -> SADDLE_BROWN;
+        salmon -> SALMON;
+        sandybrown -> SANDY_BROWN;
+        seagreen -> SEA_GREEN;
+        seashell -> SEA_SHELL;
+        sienna -> SIENNA;
+        silver -> SILVER;
+        skyblue -> SKY_BLUE;
+        slateblue -> SLATE_BLUE;
+        slategray -> SLATE_GRAY;
+        slategrey -> SLATE_GREY;
+        snow -> SNOW;
+        springgreen -> SPRING_GREEN;
+        steelblue -> STEEL_BLUE;
+        tan -> TAN;
+        teal -> TEAL;
+        thistle -> THISTLE;
+        tomato -> TOMATO;
+        turquoise -> TURQUOISE;
+        violet -> VIOLET;
+        wheat -> WHEAT;
+        white -> WHITE;
+        whitesmoke -> WHITE_SMOKE;
+        yellow -> YELLOW;
+        yellowgreen -> YELLOW_GREEN;
+    }
+}

@@ -1,6 +1,7 @@
 package com.github.br.gdx.simple.visual.novel.impl;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
+import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.CompositeNode;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.inner.SceneLinkNode;
@@ -27,6 +28,10 @@ public class CustomNodeVisitor implements NodeVisitor<CustomNodeVisitor> {
     @Override
     public void visit(ElementId sceneId, ElementId nodeId, CompositeNode<?, CustomNodeVisitor> compositeNode) {
         System.out.println("scene: " + sceneId + "\nnodeId: " + nodeId +  "\ncomposite node: " + compositeNode + "\n");
+    }
+
+    public <T extends UserContext> void visit(ElementId sceneId, ElementId nodeId, TestErrorNode node) {
+        System.out.println("scene: " + sceneId + "\nnodeId: " + nodeId +  "\nerror node: " + node + "\n");
     }
 
 }

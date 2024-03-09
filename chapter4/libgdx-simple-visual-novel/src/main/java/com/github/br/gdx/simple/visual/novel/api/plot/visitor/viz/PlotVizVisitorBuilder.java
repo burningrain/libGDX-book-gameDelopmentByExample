@@ -5,6 +5,7 @@ import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
 
 import java.util.List;
@@ -44,6 +45,10 @@ public class PlotVizVisitorBuilder<T extends NodeVisitor> implements PlotVisitor
 
     public void visitPlotPath(List<CurrentState> path) {
         pLotViz.setPlotPath(path);
+    }
+
+    public void visitException(Exception ex) {
+        pLotViz.setException(ex);
     }
 
     public String build(DotVizSettings settings) {

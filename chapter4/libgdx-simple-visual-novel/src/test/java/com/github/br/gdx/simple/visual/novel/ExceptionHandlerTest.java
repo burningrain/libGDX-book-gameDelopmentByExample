@@ -75,15 +75,15 @@ public class ExceptionHandlerTest {
 
         int plotId = 1;
 
-        AtomicBoolean isHasEx = new AtomicBoolean(false);
+        AtomicBoolean isHasException = new AtomicBoolean(false);
         try {
             plot.execute(plotId, userContext);
         } catch (Exception e) {
-            isHasEx.set(true);
+            isHasException.set(true);
             e.printStackTrace();
         }
 
-        Assert.assertTrue(isHasEx.get());
+        Assert.assertTrue(isHasException.get());
     }
 
     @Test

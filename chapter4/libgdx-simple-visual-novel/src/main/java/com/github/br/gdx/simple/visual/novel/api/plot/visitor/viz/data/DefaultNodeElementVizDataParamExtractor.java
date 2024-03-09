@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.Map;
 
 public class DefaultNodeElementVizDataParamExtractor implements NodeElementVizDataParamExtractor {
+
     @Override
     public Map<String, String> extractNodeParams(Node<?, ?> params) {
         return Collections.emptyMap();
     }
+
 }

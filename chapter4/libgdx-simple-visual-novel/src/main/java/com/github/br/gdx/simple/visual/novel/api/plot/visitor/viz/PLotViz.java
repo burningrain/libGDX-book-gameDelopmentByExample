@@ -15,6 +15,7 @@ public class PLotViz<T extends NodeVisitor> {
     private CurrentState currentNodeId;
     private String currentNodeMessage;
     private List<CurrentState> path; // nullable
+    private Exception exception;
 
     public void addNode(ElementId sceneId, ElementId nodeId, Node<?, T> node) {
         SceneViz<T> sceneViz = scenes.get(sceneId);
@@ -51,6 +52,10 @@ public class PLotViz<T extends NodeVisitor> {
         this.path = path;
     }
 
+    public void setException(Exception ex) {
+        this.exception = ex;
+    }
+
     public Map<ElementId, SceneViz<T>> getScenes() {
         return scenes;
     }
@@ -70,4 +75,9 @@ public class PLotViz<T extends NodeVisitor> {
     public List<CurrentState> getPath() {
         return path;
     }
+
+    public Exception getException() {
+        return exception;
+    }
+
 }
