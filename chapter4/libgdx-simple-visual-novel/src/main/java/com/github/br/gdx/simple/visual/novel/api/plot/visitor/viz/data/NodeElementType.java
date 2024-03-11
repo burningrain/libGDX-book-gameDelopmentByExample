@@ -1,83 +1,134 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data;
 
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.SvgColor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.*;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 public class NodeElementType {
 
-    public static final NodeElementType SIMPLE_NODE = create(
-            "simple_node",
-            "simple node",
-            new FullViz(SvgColor.PAPAYA_WHIP),
-            new ShortViz("circle", null)
-    );
+    public static final NodeElementType SIMPLE_NODE =
+            builder()
+                    .setElementId("simple_node")
+                    .setLabel("simple node")
+                    .setShortData(ShortViz.builder().setShape("circle").build())
+                    .setFullData(FullViz.builder().setHeaderColor(GraphvizColor.PAPAYA_WHIP).build())
+                    .build();
 
-    public static final NodeElementType COMPOSITE_NODE = create(
-            "composite_node",
-            "composite node",
-            new FullViz(SvgColor.PEACH_PUFF),
-            new ShortViz("Mcircle", null)
-    );
+    public static final NodeElementType COMPOSITE_NODE =
+            builder()
+                    .setElementId("composite_node")
+                    .setLabel("composite node")
+                    .setShortData(ShortViz.builder().setShape("Mcircle").build())
+                    .setFullData(FullViz.builder().setHeaderColor(GraphvizColor.PEACH_PUFF).build())
+                    .build();
 
-    public static final NodeElementType SCENE_LINK = create(
-            "scene_link_node",
-            "scene link node",
-            new FullViz(SvgColor.LIGHT_CYAN),
-            new ShortViz("doubleoctagon", null)
-    );
+    public static final NodeElementType SCENE_LINK =
+            builder()
+                    .setElementId("scene_link_node")
+                    .setLabel("scene link node")
+                    .setShortData(ShortViz.builder().setShape("doubleoctagon").build())
+                    .setFullData(FullViz.builder().setHeaderColor(GraphvizColor.LIGHT_CYAN).build())
+                    .build();
 
-    public static final NodeElementType CUSTOM_NODE = create(
-            "custom_node",
-            "custom node",
-            new FullViz(SvgColor.LAVENDER),
-            new ShortViz("plaintext", null)
-    );
-
-    private final String elementId;
+    private final NodeElementTypeId elementId;
     private final String label;
 
     private final FullViz fullData;
     private final ShortViz shortData;
 
     public static class FullViz {
-        public final String headerColor;
 
-        public FullViz(String headerColor) {
-            this.headerColor = headerColor;
+        public final String headerColor;
+        public final FullModeColorSchema colorSchema;
+
+        private FullViz(Builder builder) {
+            this.headerColor = builder.headerColor;
+            this.colorSchema = builder.colorSchema;
         }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static class Builder {
+
+            private static final FullModeColorSchema DEFAULT_FULL_MODE_COLOR_SCHEMA = new DefaultFullModeColorSchema();
+
+            private String headerColor;
+            private FullModeColorSchema colorSchema = DEFAULT_FULL_MODE_COLOR_SCHEMA;
+
+            public Builder setHeaderColor(String headerColor) {
+                this.headerColor = Utils.checkNotNull(headerColor, "headerColor");
+                return this;
+            }
+
+            public Builder setColorSchema(FullModeColorSchema colorSchema) {
+                this.colorSchema = Utils.checkNotNull(colorSchema, "colorSchema");
+                return this;
+            }
+
+            public FullViz build() {
+                return new FullViz(this);
+            }
+
+        }
+
     }
 
     public static class ShortViz {
+
         public final String shape;
-        public final String legendColor;
+        public final String color;
+        public final ShortModeColorSchema colorSchema;
 
-        public ShortViz(String shape, String legendColor) {
-            this.shape = shape;
-            this.legendColor = legendColor;
+        private ShortViz(Builder builder) {
+            this.shape = builder.shape;
+            this.color = builder.color;
+            this.colorSchema = builder.colorSchema;
         }
+
+        public static Builder builder() {
+            return new Builder();
+        }
+
+        public static class Builder {
+
+            private static final ShortModeColorSchema DEFAULT_SHORT_COLOR_SCHEMA = new DefaultShortModeColorSchema();
+
+            private String shape;
+            private String color;
+            private ShortModeColorSchema colorSchema = DEFAULT_SHORT_COLOR_SCHEMA;
+
+            public Builder setShape(String shape) {
+                this.shape = Utils.checkNotNull(shape, "shape");
+                return this;
+            }
+
+            public Builder setColor(String color) {
+                this.color = Utils.checkNotNull(color, "color");
+                return this;
+            }
+
+            public Builder setColorSchema(ShortModeColorSchema colorSchema) {
+                this.colorSchema = Utils.checkNotNull(colorSchema, "colorSchema");
+                return this;
+            }
+
+            public ShortViz build() {
+                return new ShortViz(this);
+            }
+
+        }
+
     }
 
-    private static NodeElementType create(
-            String elementId,
-            String label,
-            FullViz fullData,
-            ShortViz shortData
-    ) {
-        return new NodeElementType(elementId, label, fullData, shortData);
+    private NodeElementType(Builder builder) {
+        this.elementId = builder.elementId;
+        this.label = builder.label;
+        this.fullData = builder.fullData;
+        this.shortData = builder.shortData;
     }
 
-    public NodeElementType(
-            String elementId,
-            String label,
-            FullViz fullData,
-            ShortViz shortData
-    ) {
-        this.elementId = elementId;
-        this.label = label;
-        this.fullData = fullData;
-        this.shortData = shortData;
-    }
-
-    public String getElementId() {
+    public NodeElementTypeId getElementId() {
         return elementId;
     }
 
@@ -91,6 +142,43 @@ public class NodeElementType {
 
     public ShortViz getShortData() {
         return shortData;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private NodeElementTypeId elementId;
+        private String label;
+        private FullViz fullData;
+        private ShortViz shortData;
+
+        public Builder setElementId(String elementId) {
+            this.elementId = NodeElementTypeId.of(elementId);
+            return this;
+        }
+
+        public Builder setLabel(String label) {
+            this.label = Utils.checkNotNull(label, "label");
+            return this;
+        }
+
+        public Builder setFullData(FullViz fullData) {
+            this.fullData = Utils.checkNotNull(fullData, "fullData");
+            return this;
+        }
+
+        public Builder setShortData(ShortViz shortData) {
+            this.shortData = Utils.checkNotNull(shortData, "shortData");
+            return this;
+        }
+
+        public NodeElementType build() {
+            return new NodeElementType(this);
+        }
+
     }
 
 }

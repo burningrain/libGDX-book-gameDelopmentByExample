@@ -34,4 +34,8 @@ public class CustomNodeVisitor implements NodeVisitor<CustomNodeVisitor> {
         System.out.println("scene: " + sceneId + "\nnodeId: " + nodeId +  "\nerror node: " + node + "\n");
     }
 
+    public <T extends UserContext> void visit(ElementId sceneId, ElementId nodeId, TestVizNode node) {
+        System.out.println("scene: " + sceneId + "\nnodeId: " + nodeId +  "\ntestNode: " + node + "\n");
+    }
+
 }

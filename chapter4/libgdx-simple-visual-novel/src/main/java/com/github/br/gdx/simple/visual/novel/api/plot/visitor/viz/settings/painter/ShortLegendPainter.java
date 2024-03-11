@@ -11,7 +11,7 @@ public class ShortLegendPainter extends LegendPainter {
         StringBuilder builder = new StringBuilder();
 
         for (NodeElementType field : fields) {
-            String name = field.getElementId();
+            String name = field.getElementId().getId();
             String value = field.getFullData().headerColor;
             String label = field.getLabel();
 
@@ -23,8 +23,8 @@ public class ShortLegendPainter extends LegendPainter {
                     .append("[")
                         .append("label=\"\", shape=").append(shortData.shape);
 
-            if (shortData.legendColor != null) {
-                builder.append("\nfillcolor=").append(shortData.legendColor).append(", style=filled");
+            if (shortData.color != null) {
+                builder.append("\nfillcolor=").append(shortData.color).append(", style=filled");
             }
 
             builder

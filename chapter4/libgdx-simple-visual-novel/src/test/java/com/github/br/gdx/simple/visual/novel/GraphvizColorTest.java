@@ -1,13 +1,13 @@
 package com.github.br.gdx.simple.visual.novel;
 
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.SvgColor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.GraphvizColor;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-public class SvgColorTest {
+public class GraphvizColorTest {
 
     @Test
     public void testSvgColors() throws IllegalAccessException {
@@ -22,7 +22,7 @@ public class SvgColorTest {
                 "    label = \"Legend\";\n");
 
 
-        List<Field> fields = Arrays.asList(SvgColor.class.getFields());
+        List<Field> fields = Arrays.asList(GraphvizColor.class.getFields());
 
         builder.append(createNodes(fields)).append("\n");
         builder.append(createSubgraphDescription(fields)).append("\n");
@@ -52,8 +52,8 @@ public class SvgColorTest {
                 continue;
             }
 
-            String value = (String) field.get(SvgColor.class);
-            String prevValue = (String) prev.get(SvgColor.class);
+            String value = (String) field.get(GraphvizColor.class);
+            String prevValue = (String) prev.get(GraphvizColor.class);
 
             builder.append(prevValue).append(" -> ").append(value).append(";\n");
             prev = field;
@@ -95,7 +95,7 @@ public class SvgColorTest {
         StringBuilder builder = new StringBuilder();
         for (Field field : fields) {
             String name = field.getName();
-            String value = (String) field.get(SvgColor.class);
+            String value = (String) field.get(GraphvizColor.class);
 
             builder.append(value).append(" -> ").append(name).append(";\n");
         }
@@ -108,7 +108,7 @@ public class SvgColorTest {
 
         for (Field field : fields) {
             String name = field.getName();
-            String value = (String) field.get(SvgColor.class);
+            String value = (String) field.get(GraphvizColor.class);
 
             builder
                     .append(value)

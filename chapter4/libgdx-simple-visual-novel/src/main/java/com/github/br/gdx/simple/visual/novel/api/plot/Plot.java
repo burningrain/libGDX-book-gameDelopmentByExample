@@ -258,7 +258,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         private SceneManager<UC, V> sceneManager;
         private PlotContextManager<ID, UC> plotContextManager = new ThreadLocalPlotContextManagerImpl<>();
         private PlotExceptionHandler<ID, UC> exceptionHandler;
-        private DotVizSettings dotVizSettings = DotVizSettings.builder().build();
+        private DotVizSettings dotVizSettings;
 
         private ElementId beginSceneId;
 
@@ -296,6 +296,9 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             Utils.checkNotNull(beginSceneId, "beginSceneId");
             Utils.checkNotNull(sceneManager, "sceneManager");
             Utils.checkNotNull(plotContextManager, "plotContextManager");
+            if (dotVizSettings == null) {
+                dotVizSettings = DotVizSettings.builder().build();
+            }
 
             return new Plot<>(this);
         }

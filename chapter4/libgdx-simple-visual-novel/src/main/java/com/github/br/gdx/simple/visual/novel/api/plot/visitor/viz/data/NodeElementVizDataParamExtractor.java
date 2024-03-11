@@ -6,6 +6,6 @@ import java.util.Map;
 
 public interface NodeElementVizDataParamExtractor {
 
-    Map<String, String> extractNodeParams(Node<?,?> params);
+    Map<String, String> extractNodeParams(Node<?,?> node);
 
 }

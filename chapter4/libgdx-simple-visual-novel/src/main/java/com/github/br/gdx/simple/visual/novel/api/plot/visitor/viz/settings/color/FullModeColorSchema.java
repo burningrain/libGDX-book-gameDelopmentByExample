@@ -6,10 +6,6 @@ import java.util.Map;
 
 public interface FullModeColorSchema {
 
-    String getNodeIdColor(String fullNodeId, Node<?, ?> node);
-
-    String getClassNameColor(String fullNodeId, Node<?, ?> node);
-
     String getCustomParamNameColor(String nodeId, Node<?, ?> node, Map<String, String> customParams, String key);
 
     String getCustomParamValueColor(String nodeId, Node<?, ?> node, Map<String, String> customParams, String key, String value);

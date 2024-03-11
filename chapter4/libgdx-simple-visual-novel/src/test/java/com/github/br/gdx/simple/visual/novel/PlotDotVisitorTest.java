@@ -8,16 +8,44 @@ import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
 import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
 import com.github.br.gdx.simple.visual.novel.api.plot.SceneSupplier;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.DefaultElementTypeDeterminant;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementType;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.GraphvizColor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.painter.GraphvizShape;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneBuilder;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneConfig;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneNodeBuilder;
 import com.github.br.gdx.simple.visual.novel.impl.*;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.utils.Supplier;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class PlotDotVisitorTest {
 
+    private static DotVizSettings createDotVizSettings(DotVizSettings.NodeInfoType nodeInfoType) {
+        return DotVizSettings.builder()
+                .setRankDirType(DotVizSettings.RankDirType.LR) //TODO убрать это как режим и сделать простым параметром настройки вывода
+                .setNodeInfoType(nodeInfoType) //TODO убрать это как режим и сделать простым параметром настройки вывода
+                .setShowLegend(true) //TODO убрать это как режим и сделать простым параметром настройки вывода
+                .setColorsSchema(new Supplier<NodeColorsSchema.Builder>() {
+                    @Override
+                    public void accept(NodeColorsSchema.Builder builder) {
+                        builder.addElementsTypes(Arrays.asList(
+                                CustomTypeDeterminant.TYPE_A,
+                                CustomTypeDeterminant.TYPE_B,
+                                CustomTypeDeterminant.TYPE_C,
+                                CustomTypeDeterminant.TYPE_D
+                        ));
+                        builder.setElementTypeDeterminant(new CustomTypeDeterminant());
+                    }
+                })
+                .build();
+    }
 
     @Test
     public void testDotPlotVisitor() {
@@ -63,13 +91,7 @@ public class PlotDotVisitorTest {
                 Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
                                 PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
                         )
-                        .setDotVizSettings(
-                                DotVizSettings.builder()
-                                        .setRankDirType(DotVizSettings.RankDirType.LR)
-                                        .setNodeInfoType(DotVizSettings.NodeInfoType.FULL)
-                                        .setShowLegend(true)
-                                        .build()
-                        )
+                        .setDotVizSettings(createDotVizSettings(DotVizSettings.NodeInfoType.SHORT))
                         .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                                 .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                             @Override
@@ -124,12 +146,12 @@ public class PlotDotVisitorTest {
 
         System.out.println("--------------------- FULL INFO ---------------------");
         System.out.println(plot.getPlotAsDot(
-                DotVizSettings.builder().setNodeInfoType(DotVizSettings.NodeInfoType.FULL).build(),
+                createDotVizSettings(DotVizSettings.NodeInfoType.FULL),
                 1)
         );
         System.out.println("--------------------- SHORT INFO ---------------------");
         System.out.println(plot.getPlotAsDot(
-                DotVizSettings.builder().setNodeInfoType(DotVizSettings.NodeInfoType.SHORT).build(),
+                createDotVizSettings(DotVizSettings.NodeInfoType.SHORT),
                 1)
         );
     }
@@ -137,9 +159,22 @@ public class PlotDotVisitorTest {
     private Node<TestUserContext, CustomNodeVisitor> createCompositeNode() {
         return new CompositeNode<>(new Node[]{
                 new TestInnerNodeA<>(),
-                new TestInnerNodeB<>(),
+                new TestVizNode<>(TestVizNode.TYPE.B),
                 new TestInnerNodeC<>(),
-                new TestInnerNodeD<>()
+                new CompositeNode<>(
+                        new Node[]{
+                                new TestVizNode<>(TestVizNode.TYPE.D),
+                                new TestVizNode<>(TestVizNode.TYPE.A),
+                                new TestVizNode<>(TestVizNode.TYPE.C),
+                                new CompositeNode<>(
+                                        new Node[]{
+                                                new TestInnerNodeA<>(),
+                                                new TestVizNode<>(TestVizNode.TYPE.B),
+                                        }),
+                                new TestVizNode<>(TestVizNode.TYPE.D)
+                        }
+                ),
+                new TestInnerNodeB<>()
         });
     }
 
@@ -149,15 +184,10 @@ public class PlotDotVisitorTest {
                         .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
-        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestNode<TestUserContext>());
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("1"), new TestVizNode<TestUserContext>(TestVizNode.TYPE.A));
         ElementId two = innerSceneBuilder.registerNode(ElementId.of("2"), new TestNode<TestUserContext>());
-        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestNode<TestUserContext>());
+        ElementId three = innerSceneBuilder.registerNode(ElementId.of("3"), new TestVizNode<TestUserContext>(TestVizNode.TYPE.C));
         ElementId four = innerSceneBuilder.registerNode(ElementId.of("4"), new TestNode<TestUserContext>());
-
-        innerSceneBuilder.registerNode(one, new TestNode<TestUserContext>());
-        innerSceneBuilder.registerNode(two, new TestNode<TestUserContext>());
-        innerSceneBuilder.registerNode(three, new TestNode<TestUserContext>());
-        innerSceneBuilder.registerNode(four, new TestNode<TestUserContext>());
 
         SceneNodeBuilder<TestUserContext, CustomNodeVisitor> innerBuilder = innerSceneBuilder.graph()
                 .node(one)
@@ -177,16 +207,11 @@ public class PlotDotVisitorTest {
                         .setDefaultNodeType(NodeType.WAITING_INPUT)
                         .build()
         );
-        ElementId one = innerSceneBuilder.registerNode(ElementId.of("i1"), new TestNode<TestUserContext>());
-        ElementId two = innerSceneBuilder.registerNode(ElementId.of("i2"), new TestNode<TestUserContext>());
-        ElementId three = innerSceneBuilder.registerNode(ElementId.of("i3"), new TestNode<TestUserContext>());
-        ElementId four = innerSceneBuilder.registerNode(ElementId.of("i4"), new TestNode<TestUserContext>());
+        ElementId one = innerSceneBuilder.registerNode(ElementId.of("i1"), new TestVizNode<TestUserContext>(TestVizNode.TYPE.A));
+        ElementId two = innerSceneBuilder.registerNode(ElementId.of("i2"), new TestVizNode<TestUserContext>(TestVizNode.TYPE.B));
+        ElementId three = innerSceneBuilder.registerNode(ElementId.of("i3"), new TestVizNode<TestUserContext>(TestVizNode.TYPE.C));
+        ElementId four = innerSceneBuilder.registerNode(ElementId.of("i4"), new TestVizNode<TestUserContext>(TestVizNode.TYPE.D));
         ElementId five = innerSceneBuilder.registerSceneLink(innerSceneId);
-
-        innerSceneBuilder.registerNode(one, new TestNode<TestUserContext>());
-        innerSceneBuilder.registerNode(two, new TestNode<TestUserContext>());
-        innerSceneBuilder.registerNode(three, new TestNode<TestUserContext>());
-        innerSceneBuilder.registerNode(four, new TestNode<TestUserContext>());
 
         SceneNodeBuilder<TestUserContext, CustomNodeVisitor> innerBuilder = innerSceneBuilder.graph()
                 .node(one)
@@ -218,6 +243,89 @@ public class PlotDotVisitorTest {
                 .node(two)
                 .end();
         return errorBuilder.build();
+    }
+
+    public static class CustomTypeDeterminant extends DefaultElementTypeDeterminant {
+
+        public static final NodeElementType TYPE_A = NodeElementType.builder()
+                .setElementId("TYPE_A")
+                .setLabel("Type A")
+                .setShortData(NodeElementType.ShortViz.builder()
+                        .setShape(GraphvizShape.DIAMOND)
+                        .setColor(GraphvizColor.VIOLET)
+                        .build()
+                )
+                .setFullData(NodeElementType.FullViz.builder()
+                        .setHeaderColor(GraphvizColor.VIOLET)
+                        //.setColorSchema()
+                        .build()
+                )
+                .build();
+
+        public static final NodeElementType TYPE_B = NodeElementType.builder()
+                .setElementId("TYPE_B")
+                .setLabel("Type B")
+                .setShortData(NodeElementType.ShortViz.builder()
+                        .setShape(GraphvizShape.DIAMOND)
+                        .setColor(GraphvizColor.AQUAMARINE)
+                        .build()
+                )
+                .setFullData(NodeElementType.FullViz.builder()
+                        .setHeaderColor(GraphvizColor.AQUAMARINE)
+                        //.setColorSchema()
+                        .build()
+                )
+                .build();
+
+        public static final NodeElementType TYPE_C = NodeElementType.builder()
+                .setElementId("TYPE_C")
+                .setLabel("Type C")
+                .setShortData(NodeElementType.ShortViz.builder()
+                        .setShape(GraphvizShape.DIAMOND)
+                        .setColor(GraphvizColor.LIGHT_GOLDEN_ROD_YELLOW)
+                        .build()
+                )
+                .setFullData(NodeElementType.FullViz.builder()
+                        .setHeaderColor(GraphvizColor.LIGHT_GOLDEN_ROD_YELLOW)
+                        //.setColorSchema()
+                        .build()
+                )
+                .build();
+
+        public static final NodeElementType TYPE_D = NodeElementType.builder()
+                .setElementId("TYPE_D")
+                .setLabel("Type D")
+                .setShortData(NodeElementType.ShortViz.builder()
+                        .setShape(GraphvizShape.DIAMOND)
+                        .setColor(GraphvizColor.MAROON)
+                        .build()
+                )
+                .setFullData(NodeElementType.FullViz.builder()
+                        .setHeaderColor(GraphvizColor.MAROON)
+                        //.setColorSchema()
+                        .build()
+                )
+                .build();
+
+        @Override
+        public NodeElementTypeId determineType(Node<?, ?> node) {
+            if (node instanceof TestVizNode) {
+                TestVizNode.TYPE type = ((TestVizNode<?>) node).getType();
+                switch (type) {
+                    case A:
+                        return TYPE_A.getElementId();
+                    case B:
+                        return TYPE_B.getElementId();
+                    case C:
+                        return TYPE_C.getElementId();
+                    case D:
+                        return TYPE_D.getElementId();
+                }
+            }
+
+            return super.determineType(node);
+        }
+
     }
 
 }

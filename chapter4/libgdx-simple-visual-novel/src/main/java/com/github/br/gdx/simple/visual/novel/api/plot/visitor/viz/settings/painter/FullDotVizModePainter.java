@@ -4,10 +4,11 @@ import com.github.br.gdx.simple.visual.novel.api.node.CompositeNode;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.DotUtils;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementType;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.FullModeColorSchema;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorSchema;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorsSchema;
 
 import java.util.Map;
 
@@ -25,22 +26,29 @@ public class FullDotVizModePainter implements DotVizModePainter {
     }
 
     @Override
-    public String createNodeInfo(DotVizSettings settings, String nodeId, String label, NodeElementVizData value,
-                                 boolean isVisited, boolean isExceptionNode) {
-        NodeColorSchema colorSchema = settings.getColorSchema();
+    public String createNodeInfo(
+            DotVizSettings settings,
+            NodeElementType nodeType,
+            String nodeId,
+            String label,
+            NodeElementVizData value,
+            boolean isVisited,
+            boolean isExceptionNode
+    ) {
+        NodeColorsSchema colorSchema = settings.getColorSchema();
 
         StringBuilder builder = new StringBuilder();
         builder
                 .append(nodeId)
                 .append(" [\n")
                 .append("label=")
-                .append(createLabelFullNodeInfo(settings, nodeId, value))
+                .append(createLabelFullNodeInfo(settings, nodeType, value))
                 .append("\n")
                 .append("shape=").append("plaintext").append("\n");
 
         if (isVisited) {
             builder.append("color=").append(colorSchema.getVisitedNodesColor()).append("\n");
-        } else if(isExceptionNode) {
+        } else if (isExceptionNode) {
             builder.append("color=").append(colorSchema.getErrorNodeColor()).append("\n");
             builder.append("style=filled, fillcolor=").append(colorSchema.getErrorNodeColor()).append("\n");
         }
@@ -49,58 +57,66 @@ public class FullDotVizModePainter implements DotVizModePainter {
         return builder.toString();
     }
 
-    private String createLabelFullNodeInfo(DotVizSettings settings, String nodeId, NodeElementVizData value) {
-        return createLabelFullNodeInfo(settings, nodeId, value.getNode());
+    private String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, NodeElementVizData value) {
+        return createLabelFullNodeInfo(settings, nodeType, value.getNodeId().getId(), value.getNode());
     }
 
-    public String createLabelFullNodeInfo(DotVizSettings settings, String nodeId, Node<?, ?> node) {
+    public String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node) {
         StringBuilder builder = new StringBuilder();
         builder
                 .append("<<TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\">")
-                .append(createLabelFullNodeInfo(settings, nodeId, node, 0))
+                .append(createLabelFullNodeInfo(settings, nodeType, nodeId, node, 0))
                 .append("</TABLE>>");
 
         return builder.toString();
     }
 
-    private String createLabelFullNodeInfo(DotVizSettings settings, String nodeId, Node<?, ?> node, int level) {
+    private String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node, int level) {
         StringBuilder result = new StringBuilder();
-        result.append(createFullInfoHeader(settings, nodeId, node, level));
-        result.append(createFullInfoBody(settings, nodeId, node, settings.getVizDataParamExtractor().extractNodeParams(node)));
+        result.append(createFullInfoHeader(settings, nodeType, nodeId, node, level));
+        result.append(createFullInfoBody(settings, nodeType, nodeId, node, settings.getVizDataParamExtractor().extractNodeParams(node)));
 
         if (node instanceof CompositeNode) {
             level++;
             CompositeNode<?, ?> compositeNode = ((CompositeNode<?, ?>) node);
             for (Node<?, ?> compositeInnerNode : compositeNode.getNodes()) {
-                result.append(createLabelFullNodeInfo(settings, "", compositeInnerNode, level));
+                NodeElementType nodeElementType = extractNodeElementType(settings, compositeInnerNode);
+                result.append(createLabelFullNodeInfo(settings, nodeElementType, "", compositeInnerNode, level));
             }
         }
 
         return result.toString();
     }
 
-    protected String createFullInfoHeader(DotVizSettings settings, String nodeId, Node<?, ?> node, int level) {
+    protected String createFullInfoHeader(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node, int level) {
         String spaces = DotUtils.repeatString(" ", level * 2);
         String fullNodeId = nodeId + " " + createAdditionalHeaderInfoNodeId(node);
 
         String align = "";
         if (level > 0) {
-            fullNodeId = spaces + level + fullNodeId;
+            fullNodeId = spaces + fullNodeId;
             align = "ALIGN=\"LEFT\"";
             spaces += "    "; // для отступа в названиях классов и параметрах
         }
 
-        FullModeColorSchema fullModeSchema = settings.getColorSchema().getFullMode();
+        NodeElementType.FullViz fullData = nodeType.getFullData();
+        String headerColor = fullData.headerColor;
+        FullModeColorSchema fullModeSchema = fullData.colorSchema;
+
         StringBuilder builder = new StringBuilder();
+        if (level == 0) {
+            builder
+                    .append("<TR>")
+                    .append("<TD BGCOLOR=\"" + headerColor + "\" ").append(align).append(">")
+                    .append(fullNodeId)
+                    .append("</TD>")
+                    .append("</TR>")
+            ;
+        }
+
         builder
                 .append("<TR>")
-                .append("<TD BGCOLOR=\"" + fullModeSchema.getNodeIdColor(fullNodeId, node) + "\" ").append(align).append(">")
-                .append(fullNodeId)
-                .append("</TD>")
-                .append("</TR>")
-
-                .append("<TR>")
-                .append("<TD BGCOLOR=\"" + fullModeSchema.getClassNameColor(fullNodeId, node) + "\" ").append(align).append(">")
+                .append("<TD BGCOLOR=\"" + headerColor + "\" ").append(align).append(">")
                 .append(spaces).append(node.getClass().getName())
                 .append("</TD>")
                 .append("</TR>");
@@ -108,12 +124,12 @@ public class FullDotVizModePainter implements DotVizModePainter {
         return builder.toString();
     }
 
-    protected String createFullInfoBody(DotVizSettings settings, String nodeId, Node<?, ?> node, Map<String, String> customParams) {
+    protected String createFullInfoBody(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node, Map<String, String> customParams) {
         if (customParams == null || customParams.isEmpty()) {
             return "";
         }
 
-        FullModeColorSchema fullModeSchema = settings.getColorSchema().getFullMode();
+        FullModeColorSchema fullModeSchema = nodeType.getFullData().colorSchema;
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : customParams.entrySet()) {
             builder
@@ -142,6 +158,12 @@ public class FullDotVizModePainter implements DotVizModePainter {
 //        }
 
         return result;
+    }
+
+    private NodeElementType extractNodeElementType(DotVizSettings settings, Node<?, ?> compositeInnerNode) {
+        NodeColorsSchema colorSchema = settings.getColorSchema();
+        NodeElementTypeId nodeElementTypeId = colorSchema.getTypeDeterminant().determineType(compositeInnerNode);
+        return colorSchema.getElementsTypes().get(nodeElementTypeId);
     }
 
 }

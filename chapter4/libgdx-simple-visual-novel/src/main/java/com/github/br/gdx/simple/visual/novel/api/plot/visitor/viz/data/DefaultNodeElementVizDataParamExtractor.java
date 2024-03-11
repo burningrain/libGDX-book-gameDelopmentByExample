@@ -8,7 +8,7 @@ import java.util.Map;
 public class DefaultNodeElementVizDataParamExtractor implements NodeElementVizDataParamExtractor {
 
     @Override
-    public Map<String, String> extractNodeParams(Node<?, ?> params) {
+    public Map<String, String> extractNodeParams(Node<?, ?> node) {
         return Collections.emptyMap();
     }
 

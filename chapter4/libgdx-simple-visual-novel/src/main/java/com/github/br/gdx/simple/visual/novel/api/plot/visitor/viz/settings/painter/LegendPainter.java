@@ -1,8 +1,9 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.painter;
 
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementType;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorSchema;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorsSchema;
 
 import java.util.Collection;
 import java.util.Map;
@@ -10,8 +11,8 @@ import java.util.Map;
 public class LegendPainter {
 
     public String createLegend(DotVizSettings settings) {
-        NodeColorSchema colorSchema = settings.getColorSchema();
-        Map<String, NodeElementType> legendParams = colorSchema.getLegendParams();
+        NodeColorsSchema colorSchema = settings.getColorSchema();
+        Map<NodeElementTypeId, NodeElementType> legendParams = colorSchema.getElementsTypes();
 
         StringBuilder builder = new StringBuilder();
         builder.append("subgraph cluster_legend { \n" + "    label = \"Legend\";\n");
@@ -64,7 +65,7 @@ public class LegendPainter {
         StringBuilder builder = new StringBuilder();
 
         for (NodeElementType field : fields) {
-            String name = field.getElementId();
+            String name = field.getElementId().getId();
             String value = field.getFullData().headerColor;
             String label = field.getLabel();
 
@@ -104,7 +105,7 @@ public class LegendPainter {
     protected String createEdges(Collection<NodeElementType> colorsData) {
         StringBuilder builder = new StringBuilder();
         for (NodeElementType field : colorsData) {
-            String name = field.getElementId();
+            String name = field.getElementId().getId();
             String value = field.getFullData().headerColor;
 
             builder.append(value).append(" -> ").append(name).append(";\n");
@@ -121,8 +122,8 @@ public class LegendPainter {
                 continue;
             }
 
-            String name = field.getElementId();
-            String prevName = prev.getElementId();
+            String name = field.getElementId().getId();
+            String prevName = prev.getElementId().getId();
 
             builder.append(prevName).append(" -> ").append(name).append(";\n");
             prev = field;

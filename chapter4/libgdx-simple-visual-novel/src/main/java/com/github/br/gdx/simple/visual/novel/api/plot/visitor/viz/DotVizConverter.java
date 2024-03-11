@@ -2,8 +2,11 @@ package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementType;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorsSchema;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
 import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 
@@ -160,7 +163,13 @@ public class DotVizConverter implements VizConverter {
                               boolean isVisited,
                               boolean isExceptionNode) {
         String nodeId = createNodeId(label, value);
-        return settings.getCurrentDotVizModePainter().createNodeInfo(settings, nodeId, label, value, isVisited, isExceptionNode);
+
+        NodeColorsSchema colorSchema = settings.getColorSchema();
+        ElementTypeDeterminant typeDeterminant = colorSchema.getTypeDeterminant();
+        NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(value.getNode());
+        NodeElementType nodeType = colorSchema.getElementsTypes().get(nodeElementTypeId);
+
+        return settings.getCurrentDotVizModePainter().createNodeInfo(settings, nodeType, nodeId, label, value, isVisited, isExceptionNode);
     }
 
     private String createNodeId(String label, NodeElementVizData value) {

@@ -1,10 +1,10 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings;
 
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.DefaultNodeElementVizDataParamExtractor;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorSchema;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorsSchema;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizDataParamExtractor;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.painter.*;
-import com.github.br.gdx.simple.visual.novel.utils.Supplier;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.utils.Supplier;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 public class DotVizSettings {
@@ -17,7 +17,7 @@ public class DotVizSettings {
     private final DotVizModePainter fullDotVizModePainter;
     private final NodeElementVizDataParamExtractor vizDataParamExtractor;
 
-    private final NodeColorSchema colorSchema;
+    private final NodeColorsSchema colorSchema;
 
     public DotVizSettings(Builder builder) {
         this.rankDirType = builder.rankDirType;
@@ -57,7 +57,7 @@ public class DotVizSettings {
         return vizDataParamExtractor;
     }
 
-    public NodeColorSchema getColorSchema() {
+    public NodeColorsSchema getColorSchema() {
         return colorSchema;
     }
 
@@ -74,10 +74,10 @@ public class DotVizSettings {
         private DotVizModePainter shortDotVizModePainter = new ShortDotVizModePainter(new ShortLegendPainter());
         private DotVizModePainter fullDotVizModePainter = new FullDotVizModePainter(new LegendPainter());
         private NodeElementVizDataParamExtractor vizDataParamExtractor = new DefaultNodeElementVizDataParamExtractor();
-        private final NodeColorSchema.Builder colorSchemaBuilder = NodeColorSchema.builder();
-        private NodeColorSchema colorSchema;
+        private final NodeColorsSchema.Builder colorSchemaBuilder = NodeColorsSchema.builder();
+        private NodeColorsSchema colorSchema;
 
-        public Builder setColorsSchema(Supplier<NodeColorSchema.Builder> supplier) {
+        public Builder setColorsSchema(Supplier<NodeColorsSchema.Builder> supplier) {
             Utils.checkNotNull(supplier, "supplier");
             supplier.accept(colorSchemaBuilder);
             return this;

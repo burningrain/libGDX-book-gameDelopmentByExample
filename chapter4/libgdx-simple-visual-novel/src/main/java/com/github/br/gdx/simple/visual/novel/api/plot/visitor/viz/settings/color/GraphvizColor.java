@@ -3,7 +3,7 @@ package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.colo
 /**
  * https://graphviz.org/doc/info/colors.html
  */
-public interface SvgColor {
+public interface GraphvizColor {
 
     String ALICE_BLUE = "aliceblue";
     String ANTIQUE_WHITE = "antiquewhite";
