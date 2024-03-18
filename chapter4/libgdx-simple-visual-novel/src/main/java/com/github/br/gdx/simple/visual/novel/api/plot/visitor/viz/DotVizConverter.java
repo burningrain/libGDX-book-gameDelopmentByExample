@@ -7,6 +7,7 @@ import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeEleme
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.painter.GraphvizShape;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
 import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
 
@@ -21,6 +22,7 @@ public class DotVizConverter implements VizConverter {
         builder.append("digraph G {\n")
                 .append("charset=\"UTF-8\"").append("\n");
         builder.append("rankdir=").append(settings.getRankDirType()).append("\n");
+        builder.append("graph [pad=\".75\", ranksep=\"0.25\", nodesep=\"0.25\"];").append("\n");
 
         if (settings.isShowLegend()) {
             String legend = settings.getCurrentDotVizModePainter().createLegend(settings);
@@ -31,12 +33,14 @@ public class DotVizConverter implements VizConverter {
         ElementId beginSceneId = pLotViz.getBeginSceneId();
         Set<String> nodePaths = convertToNodePaths(pLotViz.getPath());
         CurrentState exceptionNode = (pLotViz.getException() != null)? pLotViz.getCurrentNodeId() : null;
+        String exceptionMessage = (pLotViz.getException() != null)? pLotViz.getException().getMessage() : null;
 
+        NodeColorsSchema colorSchema = settings.getColorSchema();
         builder.append("subgraph cluster_plot {").append("\n");
-        builder.append("color=").append(settings.getColorSchema().getBorderColor()).append("\n");
-        printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "", exceptionNode);
-        builder.append("}").append("\n");
+        builder.append("color=").append(colorSchema.getBorderColor()).append("\n");
 
+        printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "", exceptionNode, exceptionMessage);
+        builder.append("}").append("\n");
         builder.append("}");
         return builder.toString();
     }
@@ -92,7 +96,8 @@ public class DotVizConverter implements VizConverter {
             Map<ElementId, ? extends SceneViz<?>> scenes,
             Set<String> nodePaths,
             String currentPath,
-            CurrentState exceptionNode
+            CurrentState exceptionNode,
+            String exceptionMessage
     ) {
         SceneViz<?> sceneViz = scenes.get(sceneId);
         LinkedHashMap<ElementId, NodeElementVizData> nodes = sceneViz.getNodes();
@@ -120,8 +125,17 @@ public class DotVizConverter implements VizConverter {
             boolean isExceptionNode = exceptionNode != null &&
                     exceptionNode.sceneId.equals(sceneId) &&
                     exceptionNode.nodeId.equals(value.getNodeId());
-            result.append(createNode(settings, label, value, isNodeVisited, isExceptionNode));
+
+            String nodeId = createNodeId(label, value);
+            String node = createNode(nodeId, settings, label, value, isNodeVisited, isExceptionNode);
+            result.append(node);
+
+            if (isExceptionNode) {
+                printErrorMessage(result, exceptionMessage, settings, nodeId);
+            }
         }
+
+        NodeColorsSchema colorSchema = settings.getColorSchema();
         // отрисовка ребер
         LinkedHashMap<ElementId, Edge<?>> edges = sceneViz.getEdges();
         for (Map.Entry<ElementId, Edge<?>> edgeEntry : edges.entrySet()) {
@@ -131,7 +145,7 @@ public class DotVizConverter implements VizConverter {
                     .append(label).append("_").append(edge.getDestId().getId());
 
             if (visitedNodes.contains(edge.getSourceId()) && visitedNodes.contains(edge.getDestId())) {
-                result.append("[").append("color=green").append("]");
+                result.append("[").append("color=").append(colorSchema.getVisitedNodesColor()).append(", penwidth = 2").append("]");
             }
             result.append(";\n");
         }
@@ -142,7 +156,7 @@ public class DotVizConverter implements VizConverter {
         for (NodeElementVizData sceneLink : sceneLinks) {
             String cp = parentPath + sceneId.getId() + "." + sceneLink.getNodeId().getId();
             ElementId sceneLinkId = DotUtils.extractSceneLinkId(sceneLink.getNode());
-            printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp, exceptionNode);
+            printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp, exceptionNode, exceptionMessage);
             // создаем связь к подсценарию
             String parentNodeLabel = sceneLink.getNodeId().getId();
             SceneViz<?> subScene = scenes.get(sceneLinkId);
@@ -157,13 +171,45 @@ public class DotVizConverter implements VizConverter {
         }
     }
 
-    private String createNode(DotVizSettings settings,
+    private void printErrorMessage(StringBuilder builder, String errorMessage, DotVizSettings settings, String nodeId) {
+        // создает искусственную ноду с описанием ошибки, просто чтобы отображалась
+        NodeColorsSchema colorSchema = settings.getColorSchema();
+
+        // создаем ноду
+        String exceptionNodeId = "exception_node";
+        builder.append(exceptionNodeId)
+                .append("[")
+                .append("shape=").append(GraphvizShape.PLAINTEXT).append("\n")
+                .append("label=").append("\"")
+                .append(errorMessage)
+                .append("\"")
+                .append("color=").append(colorSchema.getErrorNodeColor())
+                .append("\n")
+                .append("]")
+        ;
+        // создаем связь с ошибочной нодой
+
+        // создаем ребро
+        builder.append(nodeId).append(" -> ").append(exceptionNodeId);
+        builder
+                .append("[")
+                .append("color=").append(colorSchema.getErrorNodeColor()).append(", penwidth = 2")
+                .append(", dir=none, style=dashed")
+                .append(", label=")
+                    .append("\"")
+                        .append("error message")
+                    .append("\"\n")
+                .append("]")
+                .append("\n")
+        ;
+    }
+
+    private String createNode(String nodeId,
+                              DotVizSettings settings,
                               String label,
                               NodeElementVizData value,
                               boolean isVisited,
                               boolean isExceptionNode) {
-        String nodeId = createNodeId(label, value);
-
         NodeColorsSchema colorSchema = settings.getColorSchema();
         ElementTypeDeterminant typeDeterminant = colorSchema.getTypeDeterminant();
         NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(value.getNode());
@@ -173,7 +219,15 @@ public class DotVizConverter implements VizConverter {
     }
 
     private String createNodeId(String label, NodeElementVizData value) {
-        return label + "_" + value.getNodeId().getId();
+        return createNodeId(label, value.getNodeId().getId());
+    }
+
+    private String createNodeId(CurrentState exceptionNode) {
+        return createNodeId(exceptionNode.sceneId.getId(), exceptionNode.nodeId.getId());
+    }
+
+    private String createNodeId(String sceneId, String nodeId) {
+        return sceneId + "_" + nodeId;
     }
 
 }

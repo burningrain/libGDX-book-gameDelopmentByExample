@@ -49,6 +49,20 @@ public class NodeColorsSchema {
         return new Builder();
     }
 
+    public Builder copy() {
+        Builder builder = new Builder();
+        builder.setBorderColor(this.borderColor);
+        builder.setVisitedNodesColor(this.visitedNodesColor);
+        builder.setErrorNodeColor(this.errorNodeColor);
+
+        builder.elementsTypes.clear();
+        builder.elementsTypes.addAll(this.elementsTypes.values());
+
+        builder.setElementTypeDeterminant(this.typeDeterminant);
+
+        return builder;
+    }
+
     public String getBorderColor() {
         return borderColor;
     }
@@ -58,9 +72,6 @@ public class NodeColorsSchema {
     }
 
     public static class Builder {
-
-        private ShortModeColorSchema shortMode = new DefaultShortModeColorSchema();
-        private FullModeColorSchema fullMode = new DefaultFullModeColorSchema();
 
         private ElementTypeDeterminant typeDeterminant = new DefaultElementTypeDeterminant();
 
@@ -90,6 +101,11 @@ public class NodeColorsSchema {
 
         public Builder addElementsTypes(List<NodeElementType> legendParams) {
             this.elementsTypes.addAll(legendParams);
+            return this;
+        }
+
+        public Builder clearAllElementsTypes() {
+            this.elementsTypes.clear();
             return this;
         }
 

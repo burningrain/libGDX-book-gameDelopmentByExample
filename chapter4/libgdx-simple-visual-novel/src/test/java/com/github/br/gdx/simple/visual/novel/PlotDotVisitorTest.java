@@ -27,10 +27,10 @@ import java.util.Arrays;
 
 public class PlotDotVisitorTest {
 
-    private static DotVizSettings createDotVizSettings(DotVizSettings.NodeInfoType nodeInfoType) {
+    private static DotVizSettings createDotVizSettings() {
         return DotVizSettings.builder()
                 .setRankDirType(DotVizSettings.RankDirType.LR) //TODO убрать это как режим и сделать простым параметром настройки вывода
-                .setNodeInfoType(nodeInfoType) //TODO убрать это как режим и сделать простым параметром настройки вывода
+                .setNodeInfoType(DotVizSettings.NodeInfoType.FULL) //TODO убрать это как режим и сделать простым параметром настройки вывода
                 .setShowLegend(true) //TODO убрать это как режим и сделать простым параметром настройки вывода
                 .setColorsSchema(new Supplier<NodeColorsSchema.Builder>() {
                     @Override
@@ -87,11 +87,12 @@ public class PlotDotVisitorTest {
 
         final Scene<TestUserContext, CustomNodeVisitor> mainScene = mainGraphSceneBuilder.build();
 
+        DotVizSettings dotVizSettings = createDotVizSettings();
         Plot<Integer, TestUserContext, CustomNodeVisitor> plot =
                 Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
                                 PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
                         )
-                        .setDotVizSettings(createDotVizSettings(DotVizSettings.NodeInfoType.SHORT))
+                        .setDotVizSettings(dotVizSettings)
                         .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                                 .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                             @Override
@@ -145,14 +146,10 @@ public class PlotDotVisitorTest {
         plot.execute(1); // d_1
 
         System.out.println("--------------------- FULL INFO ---------------------");
-        System.out.println(plot.getPlotAsDot(
-                createDotVizSettings(DotVizSettings.NodeInfoType.FULL),
-                1)
-        );
+        System.out.println(plot.getPlotAsDot(dotVizSettings,1));
         System.out.println("--------------------- SHORT INFO ---------------------");
         System.out.println(plot.getPlotAsDot(
-                createDotVizSettings(DotVizSettings.NodeInfoType.SHORT),
-                1)
+                dotVizSettings.copy().setNodeInfoType(DotVizSettings.NodeInfoType.SHORT).build(),1)
         );
     }
 

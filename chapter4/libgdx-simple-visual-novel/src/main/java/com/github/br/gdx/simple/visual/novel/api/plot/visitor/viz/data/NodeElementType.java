@@ -1,6 +1,7 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data;
 
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.*;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.painter.GraphvizShape;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 public class NodeElementType {
@@ -8,24 +9,24 @@ public class NodeElementType {
     public static final NodeElementType SIMPLE_NODE =
             builder()
                     .setElementId("simple_node")
-                    .setLabel("simple node")
-                    .setShortData(ShortViz.builder().setShape("circle").build())
+                    .setLabel("simple\nnode")
+                    .setShortData(ShortViz.builder().setShape(GraphvizShape.CIRCLE).build())
                     .setFullData(FullViz.builder().setHeaderColor(GraphvizColor.PAPAYA_WHIP).build())
                     .build();
 
     public static final NodeElementType COMPOSITE_NODE =
             builder()
                     .setElementId("composite_node")
-                    .setLabel("composite node")
-                    .setShortData(ShortViz.builder().setShape("Mcircle").build())
+                    .setLabel("composite\nnode")
+                    .setShortData(ShortViz.builder().setShape(GraphvizShape.M_CIRCLE).build())
                     .setFullData(FullViz.builder().setHeaderColor(GraphvizColor.PEACH_PUFF).build())
                     .build();
 
     public static final NodeElementType SCENE_LINK =
             builder()
                     .setElementId("scene_link_node")
-                    .setLabel("scene link node")
-                    .setShortData(ShortViz.builder().setShape("doubleoctagon").build())
+                    .setLabel("scene link\nnode")
+                    .setShortData(ShortViz.builder().setShape(GraphvizShape.DOUBLE_OCTAGON).build())
                     .setFullData(FullViz.builder().setHeaderColor(GraphvizColor.LIGHT_CYAN).build())
                     .build();
 

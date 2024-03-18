@@ -1,11 +1,14 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings;
 
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.DefaultNodeElementVizDataParamExtractor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.color.NodeColorsSchema;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.data.NodeElementVizDataParamExtractor;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.painter.*;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.utils.Supplier;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
+
+import java.util.ArrayList;
 
 public class DotVizSettings {
 
@@ -59,6 +62,31 @@ public class DotVizSettings {
 
     public NodeColorsSchema getColorSchema() {
         return colorSchema;
+    }
+
+    public Builder copy() {
+        Builder builder = new Builder();
+        builder.setColorsSchema(new Supplier<NodeColorsSchema.Builder>() {
+            @Override
+            public void accept(NodeColorsSchema.Builder builder) {
+                builder.setBorderColor(colorSchema.getBorderColor());
+                builder.setVisitedNodesColor(colorSchema.getVisitedNodesColor());
+                builder.setErrorNodeColor(colorSchema.getErrorNodeColor());
+
+                builder.clearAllElementsTypes();
+                builder.addElementsTypes(new ArrayList<NodeElementType>(colorSchema.getElementsTypes().values()));
+
+                builder.setElementTypeDeterminant(colorSchema.getTypeDeterminant());
+            }
+        });
+        builder.setRankDirType(this.rankDirType);
+        builder.setNodeInfoType(this.nodeInfoType);
+        builder.setShowLegend(this.isShowLegend);
+        builder.setShortDotVizModePainter(this.shortDotVizModePainter);
+        builder.setFullDotVizModePainter(this.fullDotVizModePainter);
+        builder.setVizDataParamExtractor(this.vizDataParamExtractor);
+
+        return builder;
     }
 
     public static Builder builder() {

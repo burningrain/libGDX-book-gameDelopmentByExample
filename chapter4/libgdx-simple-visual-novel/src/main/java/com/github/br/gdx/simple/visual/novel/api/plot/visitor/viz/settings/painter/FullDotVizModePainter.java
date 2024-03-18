@@ -48,6 +48,7 @@ public class FullDotVizModePainter implements DotVizModePainter {
 
         if (isVisited) {
             builder.append("color=").append(colorSchema.getVisitedNodesColor()).append("\n");
+            builder.append("style=filled, fillcolor=").append(colorSchema.getVisitedNodesColor()).append("\n");
         } else if (isExceptionNode) {
             builder.append("color=").append(colorSchema.getErrorNodeColor()).append("\n");
             builder.append("style=filled, fillcolor=").append(colorSchema.getErrorNodeColor()).append("\n");

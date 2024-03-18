@@ -9,7 +9,7 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 public class TestErrorNode<T extends UserContext> implements Node<T, CustomNodeVisitor> {
     @Override
     public NodeResult execute(PlotContext<?, T> plotContext, boolean isVisited) {
-        throw new RuntimeException("RuntimeException");
+        throw new RuntimeException();
     }
 
     @Override
