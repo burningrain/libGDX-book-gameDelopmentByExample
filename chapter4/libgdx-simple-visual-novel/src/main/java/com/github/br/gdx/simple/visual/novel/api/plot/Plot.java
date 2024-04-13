@@ -1,9 +1,5 @@
 package com.github.br.gdx.simple.visual.novel.api.plot;
 
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.settings.DotVizSettings;
-import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
-import com.github.br.gdx.simple.visual.novel.utils.StateStack;
-import com.github.br.gdx.simple.visual.novel.utils.Utils;
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.AuxiliaryContext;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
@@ -15,12 +11,14 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.DotVizConverter;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.viz.PlotVizVisitorBuilder;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.DefaultPlotVisitor;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneResult;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
+import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
+import com.github.br.gdx.simple.visual.novel.utils.StateStack;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
@@ -31,18 +29,16 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
     private final ElementId beginSceneId;
 
-    private final DotVizConverter dotVizConverter;
-    private final DotVizSettings defaultDotVizSettings;
+    private final PlotVisitor<V> defaultPlotVisitor;
 
     public Plot(Builder<ID, UC, V> builder) {
         this.sceneManager = Utils.checkNotNull(builder.sceneManager, "sceneManager");
         this.plotContextManager = Utils.checkNotNull(builder.plotContextManager, "plotContextManager");
         this.config = Utils.checkNotNull(builder.config, "config");
+        this.defaultPlotVisitor = Utils.checkNotNull(builder.defaultPlotVisitor, "defaultPlotVisitor");
         this.exceptionHandler = builder.exceptionHandler;
 
         this.beginSceneId = builder.beginSceneId;
-        this.defaultDotVizSettings = builder.dotVizSettings;
-        this.dotVizConverter = new DotVizConverter();
     }
 
     private void changeCurrentSceneToChild(PlotContext<ID, UC> plotContext, ElementId nextSceneId) {
@@ -165,46 +161,44 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             exceptionHandler.handle(ex, plotContext);
         } else {
             throw new PlotException(plotContext, "Use https://dreampuf.github.io/GraphvizOnline/ for visualising of the graph:\n" +
-                    getPlotAsDot("ex message: " + ex.getMessage(), auxiliaryContext, defaultDotVizSettings, ex), ex);
+                    getPlotAsString("ex message: " + ex.getMessage(), auxiliaryContext, defaultPlotVisitor, ex), ex);
         }
     }
 
-    private String getPlotAsDot(String messageForCurrentState, AuxiliaryContext auxiliaryContext, DotVizSettings settings, Exception ex) {
-        PlotVizVisitorBuilder dotVisitorBuilder = new PlotVizVisitorBuilder(dotVizConverter);
-        this.accept((PlotVisitor<V>) dotVisitorBuilder);
+    private String getPlotAsString(String messageForCurrentState, AuxiliaryContext auxiliaryContext, PlotVisitor<V> plotVisitor, Exception ex) {
+        this.accept(plotVisitor);
 
         CurrentState currentState = auxiliaryContext.stateStack.peek();
-        dotVisitorBuilder.visitCurrentNodeId(currentState.sceneId, currentState.nodeId, messageForCurrentState);
+        plotVisitor.visitCurrentNodeId(currentState.sceneId, currentState.nodeId, messageForCurrentState);
         if (ex != null) {
-            dotVisitorBuilder.visitException(ex);
+            plotVisitor.visitException(ex);
         }
-        dotVisitorBuilder.visitPlotPath(auxiliaryContext.getPath());
-        return dotVisitorBuilder.build(settings);
+        plotVisitor.visitPlotPath(auxiliaryContext.getPath());
+        return plotVisitor.buildString();
     }
 
-    public String getPlotAsDot(ID plotId) {
-        return getPlotAsDot(defaultDotVizSettings, plotId);
+    public String getPlotAsString(ID plotId) {
+        return getPlotAsString(defaultPlotVisitor, plotId);
     }
 
-    public String getPlotAsDot(DotVizSettings settings, ID plotId) {
+    public String getPlotAsString(PlotVisitor<V> plotVisitor, ID plotId) {
         Utils.checkNotNull(plotId, "plotId");
         PlotContext<ID, UC> plotContext = plotContextManager.getPlotContext(plotId);
         if (plotContext == null) {
             throw new IllegalArgumentException("Plot with id=[" + plotId + "] is not found");
         }
 
-        return getPlotAsDot("-- you are here --", plotContext.getAuxiliaryContext(), settings, null);
+        return getPlotAsString("-- you are here --", plotContext.getAuxiliaryContext(), plotVisitor, null);
     }
 
-    public String getPlotAsDot(DotVizSettings dotVizSettings) {
-        PlotVizVisitorBuilder dotVisitorBuilder = new PlotVizVisitorBuilder(dotVizConverter);
-        this.accept((PlotVisitor<V>) dotVisitorBuilder);
+    public String getPlotAsString(PlotVisitor<V> plotVisitor) {
+        this.accept(plotVisitor);
 
-        return dotVisitorBuilder.build(dotVizSettings);
+        return plotVisitor.buildString();
     }
 
-    public String getPlotAsDot() {
-        return getPlotAsDot(defaultDotVizSettings);
+    public String getPlotAsString() {
+        return getPlotAsString(defaultPlotVisitor);
     }
 
     private PlotContext<ID, UC> createStartPlotContext(
@@ -258,7 +252,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         private SceneManager<UC, V> sceneManager;
         private PlotContextManager<ID, UC> plotContextManager = new ThreadLocalPlotContextManagerImpl<>();
         private PlotExceptionHandler<ID, UC> exceptionHandler;
-        private DotVizSettings dotVizSettings;
+        private PlotVisitor<V> defaultPlotVisitor = new DefaultPlotVisitor();
 
         private ElementId beginSceneId;
 
@@ -287,8 +281,8 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             return this;
         }
 
-        public Builder<ID, UC, V> setDotVizSettings(DotVizSettings dotVizSettings) {
-            this.dotVizSettings = dotVizSettings;
+        public Builder<ID, UC, V> setDefaultPlotVisitor(PlotVisitor<V> defaultPlotVisitor) {
+            this.defaultPlotVisitor = Utils.checkNotNull(defaultPlotVisitor, "defaultPlotVisitor");
             return this;
         }
 
@@ -296,9 +290,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             Utils.checkNotNull(beginSceneId, "beginSceneId");
             Utils.checkNotNull(sceneManager, "sceneManager");
             Utils.checkNotNull(plotContextManager, "plotContextManager");
-            if (dotVizSettings == null) {
-                dotVizSettings = DotVizSettings.builder().build();
-            }
+            Utils.checkNotNull(defaultPlotVisitor, "defaultPlotVisitor");
 
             return new Plot<>(this);
         }

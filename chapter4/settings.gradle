@@ -4,4 +4,5 @@ include 'libgdx-simple-console'
 include 'libgdx-simple-animation'
 include 'libgdx-simple-common'
 include 'libgdx-simple-visual-novel'
+include 'libgdx-simple-visual-novel-viz-dot'
 

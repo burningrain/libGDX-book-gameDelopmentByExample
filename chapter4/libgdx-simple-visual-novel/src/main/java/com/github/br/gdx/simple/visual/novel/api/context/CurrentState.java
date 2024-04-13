@@ -1,6 +1,7 @@
 package com.github.br.gdx.simple.visual.novel.api.context;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
+import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 import java.util.Objects;
 
@@ -9,22 +10,17 @@ public class CurrentState implements Comparable<CurrentState> {
     public ElementId sceneId; // nullable because the first scene
     public ElementId nodeId;  // nullable because the first state
 
-    private CurrentState() {
+    private CurrentState(ElementId sceneId, ElementId nodeId) {
+        this.sceneId = Utils.checkNotNull(sceneId, "sceneId");
+        this.nodeId = nodeId;
     }
 
     public static CurrentState of(ElementId sceneId, ElementId nodeId) {
-        CurrentState currentState = new CurrentState();
-        currentState.sceneId = sceneId;
-        currentState.nodeId = nodeId;
-
-        return currentState;
+        return new CurrentState(sceneId, nodeId);
     }
 
     public CurrentState copy() {
-        CurrentState result = new CurrentState();
-        result.sceneId = this.sceneId;
-        result.nodeId = this.nodeId;
-        return result;
+        return new CurrentState(this.sceneId, this.nodeId);
     }
 
     @Override

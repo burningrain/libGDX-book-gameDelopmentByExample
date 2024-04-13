@@ -8,5 +8,8 @@ sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 dependencies {
+
+    implementation project(":libgdx-simple-visual-novel")
     testImplementation "junit:junit:4.11"
+
 }

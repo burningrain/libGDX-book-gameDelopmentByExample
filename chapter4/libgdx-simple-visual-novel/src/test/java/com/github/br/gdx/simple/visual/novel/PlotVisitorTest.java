@@ -2,6 +2,7 @@ package com.github.br.gdx.simple.visual.novel;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.Pair;
+import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
@@ -14,6 +15,8 @@ import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.*;
 import com.github.br.gdx.simple.visual.novel.impl.*;
 import org.junit.Test;
+
+import java.util.List;
 
 public class PlotVisitorTest {
 
@@ -133,6 +136,31 @@ public class PlotVisitorTest {
             @Override
             public void visitBeginSceneId(ElementId sceneId) {
                 System.out.println("begin scene: " + sceneId + "\n");
+            }
+
+            @Override
+            public void visitCurrentNodeId(ElementId sceneId, ElementId nodeId, String currentNodeMessage) {
+                System.out.println("current nodeId: " + sceneId + " " + nodeId + " " + currentNodeMessage + "\n");
+            }
+
+            @Override
+            public void visitPlotPath(List<CurrentState> path) {
+                StringBuilder builder = new StringBuilder();
+                for (CurrentState currentState : path) {
+                    builder.append(currentState.toString()).append("\n");
+                }
+
+                System.out.println(builder.toString() + "\n");
+            }
+
+            @Override
+            public void visitException(Exception ex) {
+                System.out.println(ex.getMessage() + "\n");
+            }
+
+            @Override
+            public String buildString() {
+                return "";
             }
         });
 

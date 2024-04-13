@@ -1,10 +1,12 @@
 package com.github.br.gdx.simple.visual.novel.api.plot.visitor;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
+import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
-import com.github.br.gdx.simple.visual.novel.inner.graph.GraphElementId;
+
+import java.util.List;
 
 public interface PlotVisitor<V extends NodeVisitor> {
 
@@ -15,5 +17,13 @@ public interface PlotVisitor<V extends NodeVisitor> {
     void visitBeginNodeId(ElementId sceneId, ElementId beginNodeId);
 
     void visitBeginSceneId(ElementId sceneId);
+
+    void visitCurrentNodeId(ElementId sceneId, ElementId nodeId, String currentNodeMessage);
+
+    void visitPlotPath(List<CurrentState> path);
+
+    void visitException(Exception ex);
+
+    String buildString();
 
 }
