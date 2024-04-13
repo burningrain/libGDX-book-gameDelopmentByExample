@@ -2,7 +2,6 @@ package com.github.br.gdx.simple.visual.novel;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
-import com.github.br.gdx.simple.visual.novel.api.exception.PlotException;
 import com.github.br.gdx.simple.visual.novel.api.exception.PlotExceptionHandler;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
@@ -30,7 +29,7 @@ public class ExceptionHandlerTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
-                        .setDefaultNodeType(NodeType.NOT_WAITING)
+                        .setDefaultNodeType(NodeType.IMMEDIATELY)
                         .build()
         );
 
@@ -91,7 +90,7 @@ public class ExceptionHandlerTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
-                        .setDefaultNodeType(NodeType.NOT_WAITING)
+                        .setDefaultNodeType(NodeType.IMMEDIATELY)
                         .build()
         );
 

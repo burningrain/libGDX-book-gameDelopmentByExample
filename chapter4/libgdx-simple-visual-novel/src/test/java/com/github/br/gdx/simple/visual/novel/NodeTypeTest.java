@@ -72,7 +72,7 @@ public class NodeTypeTest {
         TestUserContext userContext = new TestUserContext();
         final SceneBuilder<TestUserContext, CustomNodeVisitor> sceneBuilder = Scene.builder(
                 SceneConfig.builder()
-                        .setDefaultNodeType(NodeType.NOT_WAITING)
+                        .setDefaultNodeType(NodeType.IMMEDIATELY)
                         .build()
         );
 
@@ -123,9 +123,9 @@ public class NodeTypeTest {
 
         // статус первой ноды (node1) будет проигнорирован, так как она возвращает NEXT
         ElementId node1 = sceneBuilder.registerNode(new TestNode<TestUserContext>(), NodeType.WAITING_INPUT);
-        ElementId node2 = sceneBuilder.registerNode(new TestNode<TestUserContext>(), NodeType.NOT_WAITING);
+        ElementId node2 = sceneBuilder.registerNode(new TestNode<TestUserContext>(), NodeType.IMMEDIATELY);
         ElementId node3 = sceneBuilder.registerNode(new TestNode<TestUserContext>(), NodeType.WAITING_INPUT);
-        ElementId node4 = sceneBuilder.registerNode(new TestNode<TestUserContext>(), NodeType.NOT_WAITING);
+        ElementId node4 = sceneBuilder.registerNode(new TestNode<TestUserContext>(), NodeType.IMMEDIATELY);
 
         final Scene<TestUserContext, CustomNodeVisitor> scene = sceneBuilder.graph()
                 .node(node1).to()

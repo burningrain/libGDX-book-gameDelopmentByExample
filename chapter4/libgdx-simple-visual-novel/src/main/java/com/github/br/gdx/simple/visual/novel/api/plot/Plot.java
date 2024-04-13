@@ -136,7 +136,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             if (NullObjects.THIS_IS_END_ELEMENT_IN_THE_SCENE.equals(currentState.nodeId) && parentState == null) {
                 auxiliaryContext.setProcessFinished(true);
             }
-        } while (NodeType.NOT_WAITING == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());
+        } while (NodeType.IMMEDIATELY == sceneResult.getNodeType() && !auxiliaryContext.isProcessFinished());
 
         plotContextManager.savePlotContext(plotContext);
 

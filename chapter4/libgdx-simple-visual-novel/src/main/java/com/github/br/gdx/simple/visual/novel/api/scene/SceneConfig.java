@@ -39,7 +39,7 @@ public class SceneConfig {
 
         private GeneratorNodeId generatorNodeId;
         private GeneratorEdgeId generatorEdgeId;
-        private NodeType defaultNodeType = NodeType.NOT_WAITING;
+        private NodeType defaultNodeType = NodeType.IMMEDIATELY;
 
         public Builder setGeneratorNodeId(GeneratorNodeId generatorNodeId) {
             this.generatorNodeId = Utils.checkNotNull(generatorNodeId, "generatorNodeId");
