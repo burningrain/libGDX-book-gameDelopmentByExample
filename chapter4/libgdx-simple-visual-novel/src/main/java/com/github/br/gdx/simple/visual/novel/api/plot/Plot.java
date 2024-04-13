@@ -11,8 +11,9 @@ import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.DefaultPlotVisitor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.DefaultPlotVisitorFactory;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitorFactory;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneResult;
 import com.github.br.gdx.simple.visual.novel.api.scene.SceneUtils;
@@ -29,13 +30,13 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
 
     private final ElementId beginSceneId;
 
-    private final PlotVisitor<V> defaultPlotVisitor;
+    private final PlotVisitorFactory<V> defaultPlotVisitorFactory;
 
     public Plot(Builder<ID, UC, V> builder) {
         this.sceneManager = Utils.checkNotNull(builder.sceneManager, "sceneManager");
         this.plotContextManager = Utils.checkNotNull(builder.plotContextManager, "plotContextManager");
         this.config = Utils.checkNotNull(builder.config, "config");
-        this.defaultPlotVisitor = Utils.checkNotNull(builder.defaultPlotVisitor, "defaultPlotVisitor");
+        this.defaultPlotVisitorFactory = Utils.checkNotNull(builder.defaultPlotVisitorFactory, "defaultPlotVisitorFactory");
         this.exceptionHandler = builder.exceptionHandler;
 
         this.beginSceneId = builder.beginSceneId;
@@ -161,7 +162,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             exceptionHandler.handle(ex, plotContext);
         } else {
             throw new PlotException(plotContext, "Use https://dreampuf.github.io/GraphvizOnline/ for visualising of the graph:\n" +
-                    getPlotAsString("ex message: " + ex.getMessage(), auxiliaryContext, defaultPlotVisitor, ex), ex);
+                    getPlotAsString("ex message: " + ex.getMessage(), auxiliaryContext, defaultPlotVisitorFactory.createVisitor(), ex), ex);
         }
     }
 
@@ -178,7 +179,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
     }
 
     public String getPlotAsString(ID plotId) {
-        return getPlotAsString(defaultPlotVisitor, plotId);
+        return getPlotAsString(defaultPlotVisitorFactory.createVisitor(), plotId);
     }
 
     public String getPlotAsString(PlotVisitor<V> plotVisitor, ID plotId) {
@@ -198,7 +199,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
     }
 
     public String getPlotAsString() {
-        return getPlotAsString(defaultPlotVisitor);
+        return getPlotAsString(defaultPlotVisitorFactory.createVisitor());
     }
 
     private PlotContext<ID, UC> createStartPlotContext(
@@ -252,7 +253,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
         private SceneManager<UC, V> sceneManager;
         private PlotContextManager<ID, UC> plotContextManager = new ThreadLocalPlotContextManagerImpl<>();
         private PlotExceptionHandler<ID, UC> exceptionHandler;
-        private PlotVisitor<V> defaultPlotVisitor = new DefaultPlotVisitor();
+        private PlotVisitorFactory<V> defaultPlotVisitorFactory = new DefaultPlotVisitorFactory<>();
 
         private ElementId beginSceneId;
 
@@ -281,8 +282,8 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             return this;
         }
 
-        public Builder<ID, UC, V> setDefaultPlotVisitor(PlotVisitor<V> defaultPlotVisitor) {
-            this.defaultPlotVisitor = Utils.checkNotNull(defaultPlotVisitor, "defaultPlotVisitor");
+        public Builder<ID, UC, V> setDefaultPlotVisitorFactory(PlotVisitorFactory<V> plotVisitorFactory) {
+            this.defaultPlotVisitorFactory = Utils.checkNotNull(plotVisitorFactory, "plotVisitorFactory");
             return this;
         }
 
@@ -290,7 +291,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             Utils.checkNotNull(beginSceneId, "beginSceneId");
             Utils.checkNotNull(sceneManager, "sceneManager");
             Utils.checkNotNull(plotContextManager, "plotContextManager");
-            Utils.checkNotNull(defaultPlotVisitor, "defaultPlotVisitor");
+            Utils.checkNotNull(defaultPlotVisitorFactory, "defaultPlotVisitorFactory");
 
             return new Plot<>(this);
         }

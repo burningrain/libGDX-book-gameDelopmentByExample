@@ -18,8 +18,7 @@ public class PlotVizVisitorBuilder<T extends NodeVisitor> implements PlotVisitor
     private final DotVizSettings settings;
 
     public PlotVizVisitorBuilder(DotVizSettings settings) {
-        this.settings = settings;
-        this.converter = new DotVizConverter();
+        this(new DotVizConverter(), settings);
     }
 
     public PlotVizVisitorBuilder(VizConverter converter, DotVizSettings settings) {

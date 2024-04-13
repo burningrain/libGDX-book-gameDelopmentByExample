@@ -8,6 +8,7 @@ import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
 import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
 import com.github.br.gdx.simple.visual.novel.api.plot.SceneSupplier;
+import com.github.br.gdx.simple.visual.novel.api.plot.visitor.DefaultPlotVisitorFactory;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.impl.*;
@@ -91,7 +92,7 @@ public class PlotDotVisitorTest {
                 Plot.<Integer, TestUserContext, CustomNodeVisitor>builder(
                                 PlotConfig.<Integer>builder().setGeneratorPlotId(new GeneratorTestPlotIdImpl()).build()
                         )
-                        .setDefaultPlotVisitor(new PlotVizVisitorBuilder<CustomNodeVisitor>(new DotVizConverter(), dotVizSettings))
+                        .setDefaultPlotVisitorFactory(new PlotVizVisitorFactory<CustomNodeVisitor>(dotVizSettings))
                         .setSceneManager(new DefaultSceneManager<TestUserContext, CustomNodeVisitor>()
                                 .addScene(mainSceneId, new SceneSupplier<TestUserContext, CustomNodeVisitor>() {
                                             @Override
