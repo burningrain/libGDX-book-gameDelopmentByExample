@@ -2,6 +2,7 @@ package com.github.br.gdx.simple.visual.novel.viz;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
+import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
@@ -59,6 +60,11 @@ public class PlotVizVisitorBuilder<T extends NodeVisitor> implements PlotVisitor
     @Override
     public void visitException(Exception ex) {
         pLotViz.setException(ex);
+    }
+
+    @Override
+    public void setUserContext(UserContext userContext) {
+        pLotViz.setUserContext(userContext);
     }
 
     @Override

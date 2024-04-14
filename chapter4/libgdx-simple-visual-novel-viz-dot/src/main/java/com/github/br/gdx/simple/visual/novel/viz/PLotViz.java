@@ -2,6 +2,7 @@ package com.github.br.gdx.simple.visual.novel.viz;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
+import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
@@ -15,7 +16,8 @@ public class PLotViz<T extends NodeVisitor> {
     private CurrentState currentNodeId;
     private String currentNodeMessage;
     private List<CurrentState> path; // nullable
-    private Exception exception;
+    private Exception exception;     // nullable
+    private UserContext userContext; // nullable
 
     public void addNode(ElementId sceneId, ElementId nodeId, Node<?, T> node) {
         SceneViz<T> sceneViz = scenes.get(sceneId);
@@ -56,6 +58,10 @@ public class PLotViz<T extends NodeVisitor> {
         this.exception = ex;
     }
 
+    public void setUserContext(UserContext userContext) {
+        this.userContext = userContext;
+    }
+
     public Map<ElementId, SceneViz<T>> getScenes() {
         return scenes;
     }
@@ -78,6 +84,10 @@ public class PLotViz<T extends NodeVisitor> {
 
     public Exception getException() {
         return exception;
+    }
+
+    public UserContext getUserContext() {
+        return userContext;
     }
 
 }

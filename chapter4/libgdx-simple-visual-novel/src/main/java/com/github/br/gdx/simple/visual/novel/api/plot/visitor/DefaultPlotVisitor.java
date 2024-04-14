@@ -2,6 +2,7 @@ package com.github.br.gdx.simple.visual.novel.api.plot.visitor;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
+import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
@@ -51,6 +52,11 @@ public class DefaultPlotVisitor<V extends NodeVisitor> implements PlotVisitor<V>
     @Override
     public void visitException(Exception ex) {
         builder.append(ex.getMessage()).append("\n");
+    }
+
+    @Override
+    public void setUserContext(UserContext userContext) {
+        builder.append("UserContext:").append("\n").append(userContext).append("\n");
     }
 
     @Override

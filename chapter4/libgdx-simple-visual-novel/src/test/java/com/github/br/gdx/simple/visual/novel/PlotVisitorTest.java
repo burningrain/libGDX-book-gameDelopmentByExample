@@ -4,6 +4,7 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.Pair;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.context.PlotContext;
+import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.edge.Predicate;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
@@ -156,6 +157,11 @@ public class PlotVisitorTest {
             @Override
             public void visitException(Exception ex) {
                 System.out.println(ex.getMessage() + "\n");
+            }
+
+            @Override
+            public void setUserContext(UserContext userContext) {
+                System.out.println("UserContext:\n" +  userContext + "\n");
             }
 
             @Override

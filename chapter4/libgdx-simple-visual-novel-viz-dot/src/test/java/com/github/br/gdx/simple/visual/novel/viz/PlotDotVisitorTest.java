@@ -8,12 +8,11 @@ import com.github.br.gdx.simple.visual.novel.api.plot.DefaultSceneManager;
 import com.github.br.gdx.simple.visual.novel.api.plot.Plot;
 import com.github.br.gdx.simple.visual.novel.api.plot.PlotConfig;
 import com.github.br.gdx.simple.visual.novel.api.plot.SceneSupplier;
-import com.github.br.gdx.simple.visual.novel.api.plot.visitor.DefaultPlotVisitorFactory;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.impl.*;
 import com.github.br.gdx.simple.visual.novel.viz.settings.DotVizSettings;
-import com.github.br.gdx.simple.visual.novel.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.viz.settings.color.DotColorsSchema;
 import com.github.br.gdx.simple.visual.novel.viz.settings.color.GraphvizColor;
 import com.github.br.gdx.simple.visual.novel.viz.settings.painter.GraphvizShape;
 import com.github.br.gdx.simple.visual.novel.api.scene.Scene;
@@ -32,9 +31,9 @@ public class PlotDotVisitorTest {
                 .setRankDirType(DotVizSettings.RankDirType.LR) //TODO убрать это как режим и сделать простым параметром настройки вывода
                 .setNodeInfoType(DotVizSettings.NodeInfoType.FULL) //TODO убрать это как режим и сделать простым параметром настройки вывода
                 .setShowLegend(true) //TODO убрать это как режим и сделать простым параметром настройки вывода
-                .setColorsSchema(new Supplier<NodeColorsSchema.Builder>() {
+                .setColorsSchema(new Supplier<DotColorsSchema.Builder>() {
                     @Override
-                    public void accept(NodeColorsSchema.Builder builder) {
+                    public void accept(DotColorsSchema.Builder builder) {
                         builder.addElementsTypes(Arrays.asList(
                                 CustomTypeDeterminant.TYPE_A,
                                 CustomTypeDeterminant.TYPE_B,

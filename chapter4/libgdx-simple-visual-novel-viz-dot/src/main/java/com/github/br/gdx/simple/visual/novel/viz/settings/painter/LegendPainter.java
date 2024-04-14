@@ -3,7 +3,7 @@ package com.github.br.gdx.simple.visual.novel.viz.settings.painter;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.settings.DotVizSettings;
-import com.github.br.gdx.simple.visual.novel.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.viz.settings.color.DotColorsSchema;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
 public class LegendPainter {
 
     public String createLegend(DotVizSettings settings) {
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
         Map<NodeElementTypeId, NodeElementType> legendParams = colorSchema.getElementsTypes();
 
         StringBuilder builder = new StringBuilder();

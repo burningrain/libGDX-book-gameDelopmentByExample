@@ -2,11 +2,12 @@ package com.github.br.gdx.simple.visual.novel.viz;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
+import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.viz.settings.DotVizSettings;
-import com.github.br.gdx.simple.visual.novel.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.viz.settings.color.DotColorsSchema;
 import com.github.br.gdx.simple.visual.novel.viz.settings.painter.GraphvizShape;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
 import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
@@ -29,13 +30,21 @@ public class DotVizConverter implements VizConverter {
             builder.append(legend).append("\n");
         }
 
+        if (settings.isShowContext()) {
+            UserContext userContext = pLotViz.getUserContext();
+            if (userContext != null) {
+                String context = settings.getUserContextPainter().createContext(settings, userContext);
+                builder.append(context).append("\n");
+            }
+        }
+
         Map<ElementId, ? extends SceneViz<?>> scenes = pLotViz.getScenes();
         ElementId beginSceneId = pLotViz.getBeginSceneId();
         Set<String> nodePaths = convertToNodePaths(pLotViz.getPath());
         CurrentState exceptionNode = (pLotViz.getException() != null)? pLotViz.getCurrentNodeId() : null;
         String exceptionMessage = (pLotViz.getException() != null)? pLotViz.getException().getMessage() : null;
 
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
         builder.append("subgraph cluster_plot {").append("\n");
         builder.append("color=").append(colorSchema.getBorderColor()).append("\n");
 
@@ -135,7 +144,7 @@ public class DotVizConverter implements VizConverter {
             }
         }
 
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
         // отрисовка ребер
         LinkedHashMap<ElementId, Edge<?>> edges = sceneViz.getEdges();
         for (Map.Entry<ElementId, Edge<?>> edgeEntry : edges.entrySet()) {
@@ -173,7 +182,7 @@ public class DotVizConverter implements VizConverter {
 
     private void printErrorMessage(StringBuilder builder, String errorMessage, DotVizSettings settings, String nodeId) {
         // создает искусственную ноду с описанием ошибки, просто чтобы отображалась
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
 
         // создаем ноду
         String exceptionNodeId = "exception_node";
@@ -210,7 +219,7 @@ public class DotVizConverter implements VizConverter {
                               NodeElementVizData value,
                               boolean isVisited,
                               boolean isExceptionNode) {
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
         ElementTypeDeterminant typeDeterminant = colorSchema.getTypeDeterminant();
         NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(value.getNode());
         NodeElementType nodeType = colorSchema.getElementsTypes().get(nodeElementTypeId);

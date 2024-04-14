@@ -162,24 +162,31 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             exceptionHandler.handle(ex, plotContext);
         } else {
             throw new PlotException(plotContext, "Use https://dreampuf.github.io/GraphvizOnline/ for visualising of the graph:\n" +
-                    getPlotAsString("ex message: " + ex.getMessage(), auxiliaryContext, defaultPlotVisitorFactory.createVisitor(), ex), ex);
+                    getPlotAsString("ex message: " + ex.getMessage(), plotContext, defaultPlotVisitorFactory.createVisitor(), ex), ex);
         }
     }
 
-    private String getPlotAsString(String messageForCurrentState, AuxiliaryContext auxiliaryContext, PlotVisitor<V> plotVisitor, Exception ex) {
+    private String getPlotAsString(String messageForCurrentState, PlotContext<ID, UC> plotContext, PlotVisitor<V> plotVisitor, Exception ex) {
         this.accept(plotVisitor);
 
+        AuxiliaryContext auxiliaryContext = plotContext.getAuxiliaryContext();
         CurrentState currentState = auxiliaryContext.stateStack.peek();
         plotVisitor.visitCurrentNodeId(currentState.sceneId, currentState.nodeId, messageForCurrentState);
         if (ex != null) {
             plotVisitor.visitException(ex);
         }
         plotVisitor.visitPlotPath(auxiliaryContext.getPath());
+        plotVisitor.setUserContext(plotContext.getUserContext());
         return plotVisitor.buildString();
     }
 
     public String getPlotAsString(ID plotId) {
         return getPlotAsString(defaultPlotVisitorFactory.createVisitor(), plotId);
+    }
+
+    public String getPlotAsString(PlotVisitor<V> plotVisitor) {
+        this.accept(plotVisitor);
+        return plotVisitor.buildString();
     }
 
     public String getPlotAsString(PlotVisitor<V> plotVisitor, ID plotId) {
@@ -189,13 +196,7 @@ public class Plot<ID, UC extends UserContext, V extends NodeVisitor<?>> {
             throw new IllegalArgumentException("Plot with id=[" + plotId + "] is not found");
         }
 
-        return getPlotAsString("-- you are here --", plotContext.getAuxiliaryContext(), plotVisitor, null);
-    }
-
-    public String getPlotAsString(PlotVisitor<V> plotVisitor) {
-        this.accept(plotVisitor);
-
-        return plotVisitor.buildString();
+        return getPlotAsString("-- you are here --", plotContext, plotVisitor, null);
     }
 
     public String getPlotAsString() {

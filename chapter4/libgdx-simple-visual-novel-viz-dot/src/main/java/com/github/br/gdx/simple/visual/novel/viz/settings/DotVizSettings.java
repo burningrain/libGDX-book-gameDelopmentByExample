@@ -2,7 +2,7 @@ package com.github.br.gdx.simple.visual.novel.viz.settings;
 
 import com.github.br.gdx.simple.visual.novel.viz.data.DefaultNodeElementVizDataParamExtractor;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
-import com.github.br.gdx.simple.visual.novel.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.viz.settings.color.DotColorsSchema;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementVizDataParamExtractor;
 import com.github.br.gdx.simple.visual.novel.viz.settings.painter.*;
 import com.github.br.gdx.simple.visual.novel.viz.utils.Supplier;
@@ -15,19 +15,23 @@ public class DotVizSettings {
     private final RankDirType rankDirType;
     private final NodeInfoType nodeInfoType;
     private final boolean isShowLegend;
+    private final boolean isShowContext;
 
     private final DotVizModePainter shortDotVizModePainter;
     private final DotVizModePainter fullDotVizModePainter;
     private final NodeElementVizDataParamExtractor vizDataParamExtractor;
 
-    private final NodeColorsSchema colorSchema;
+    private final DotColorsSchema colorSchema;
+    private final UserContextPainter userContextPainter;
 
     public DotVizSettings(Builder builder) {
         this.rankDirType = builder.rankDirType;
         this.nodeInfoType = builder.nodeInfoType;
         this.isShowLegend = builder.isShowLegend;
+        this.isShowContext = builder.isShowContext;
         this.shortDotVizModePainter = builder.shortDotVizModePainter;
         this.fullDotVizModePainter = builder.fullDotVizModePainter;
+        this.userContextPainter = builder.userContextPainter;
         this.vizDataParamExtractor = builder.vizDataParamExtractor;
         this.colorSchema = builder.colorSchema;
     }
@@ -42,6 +46,10 @@ public class DotVizSettings {
 
     public boolean isShowLegend() {
         return isShowLegend;
+    }
+
+    public boolean isShowContext() {
+        return isShowContext;
     }
 
     public DotVizModePainter getShortDotVizModePainter() {
@@ -60,15 +68,15 @@ public class DotVizSettings {
         return vizDataParamExtractor;
     }
 
-    public NodeColorsSchema getColorSchema() {
+    public DotColorsSchema getColorSchema() {
         return colorSchema;
     }
 
     public Builder copy() {
         Builder builder = new Builder();
-        builder.setColorsSchema(new Supplier<NodeColorsSchema.Builder>() {
+        builder.setColorsSchema(new Supplier<DotColorsSchema.Builder>() {
             @Override
-            public void accept(NodeColorsSchema.Builder builder) {
+            public void accept(DotColorsSchema.Builder builder) {
                 builder.setBorderColor(colorSchema.getBorderColor());
                 builder.setVisitedNodesColor(colorSchema.getVisitedNodesColor());
                 builder.setErrorNodeColor(colorSchema.getErrorNodeColor());
@@ -93,19 +101,25 @@ public class DotVizSettings {
         return new Builder();
     }
 
+    public UserContextPainter getUserContextPainter() {
+        return userContextPainter;
+    }
+
     public static class Builder {
 
         private RankDirType rankDirType = RankDirType.LR;
         private NodeInfoType nodeInfoType = NodeInfoType.SHORT;
         private boolean isShowLegend = true;
+        private boolean isShowContext = true; //TODO изменить на false по умолчанию
 
         private DotVizModePainter shortDotVizModePainter = new ShortDotVizModePainter(new ShortLegendPainter());
         private DotVizModePainter fullDotVizModePainter = new FullDotVizModePainter(new LegendPainter());
+        private UserContextPainter userContextPainter = new DefaultUserContextPainter();
         private NodeElementVizDataParamExtractor vizDataParamExtractor = new DefaultNodeElementVizDataParamExtractor();
-        private final NodeColorsSchema.Builder colorSchemaBuilder = NodeColorsSchema.builder();
-        private NodeColorsSchema colorSchema;
+        private final DotColorsSchema.Builder colorSchemaBuilder = DotColorsSchema.builder();
+        private DotColorsSchema colorSchema;
 
-        public Builder setColorsSchema(Supplier<NodeColorsSchema.Builder> supplier) {
+        public Builder setColorsSchema(Supplier<DotColorsSchema.Builder> supplier) {
             Utils.checkNotNull(supplier, "supplier");
             supplier.accept(colorSchemaBuilder);
             return this;
@@ -126,6 +140,11 @@ public class DotVizSettings {
             return this;
         }
 
+        public Builder setShowContext(boolean showContext) {
+            isShowContext = showContext;
+            return this;
+        }
+
         public Builder setShortDotVizModePainter(DotVizModePainter modePainter) {
             this.shortDotVizModePainter = Utils.checkNotNull(modePainter, "modePainter");
             return this;
@@ -133,6 +152,11 @@ public class DotVizSettings {
 
         public Builder setFullDotVizModePainter(DotVizModePainter modePainter) {
             this.fullDotVizModePainter = Utils.checkNotNull(modePainter, "modePainter");
+            return this;
+        }
+
+        public Builder setUserContextPainter(UserContextPainter userContextPainter) {
+            this.userContextPainter = Utils.checkNotNull(userContextPainter, "userContextPainter");
             return this;
         }
 
@@ -148,9 +172,14 @@ public class DotVizSettings {
 
     }
 
+    /**
+     * Тип отрисовки схемы
+     */
     public enum RankDirType {
 
-        LR("LR"), TB("TB");
+        LR("LR"), // слева-направо
+        TB("TB")  // сверху-вниз
+        ;
 
         private final String value;
 

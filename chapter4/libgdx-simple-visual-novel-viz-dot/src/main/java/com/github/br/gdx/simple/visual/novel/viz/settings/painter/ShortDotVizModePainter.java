@@ -3,7 +3,7 @@ package com.github.br.gdx.simple.visual.novel.viz.settings.painter;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.viz.settings.DotVizSettings;
-import com.github.br.gdx.simple.visual.novel.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.viz.settings.color.DotColorsSchema;
 
 public class ShortDotVizModePainter implements DotVizModePainter {
 
@@ -28,7 +28,7 @@ public class ShortDotVizModePainter implements DotVizModePainter {
             boolean isVisited,
             boolean isExceptionNode
     ) {
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
 
         StringBuilder builder = new StringBuilder();
         builder

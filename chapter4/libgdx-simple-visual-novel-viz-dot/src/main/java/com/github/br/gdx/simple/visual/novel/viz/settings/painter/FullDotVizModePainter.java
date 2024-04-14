@@ -8,7 +8,7 @@ import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.viz.settings.DotVizSettings;
 import com.github.br.gdx.simple.visual.novel.viz.settings.color.FullModeColorSchema;
-import com.github.br.gdx.simple.visual.novel.viz.settings.color.NodeColorsSchema;
+import com.github.br.gdx.simple.visual.novel.viz.settings.color.DotColorsSchema;
 
 import java.util.Map;
 
@@ -35,7 +35,7 @@ public class FullDotVizModePainter implements DotVizModePainter {
             boolean isVisited,
             boolean isExceptionNode
     ) {
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
 
         StringBuilder builder = new StringBuilder();
         builder
@@ -162,7 +162,7 @@ public class FullDotVizModePainter implements DotVizModePainter {
     }
 
     private NodeElementType extractNodeElementType(DotVizSettings settings, Node<?, ?> compositeInnerNode) {
-        NodeColorsSchema colorSchema = settings.getColorSchema();
+        DotColorsSchema colorSchema = settings.getColorSchema();
         NodeElementTypeId nodeElementTypeId = colorSchema.getTypeDeterminant().determineType(compositeInnerNode);
         return colorSchema.getElementsTypes().get(nodeElementTypeId);
     }

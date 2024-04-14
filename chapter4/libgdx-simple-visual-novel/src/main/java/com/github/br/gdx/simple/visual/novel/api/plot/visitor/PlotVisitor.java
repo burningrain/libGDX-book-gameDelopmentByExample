@@ -2,6 +2,7 @@ package com.github.br.gdx.simple.visual.novel.api.plot.visitor;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
+import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
@@ -23,6 +24,8 @@ public interface PlotVisitor<V extends NodeVisitor> {
     void visitPlotPath(List<CurrentState> path);
 
     void visitException(Exception ex);
+
+    void setUserContext(UserContext userContext);
 
     String buildString();
 

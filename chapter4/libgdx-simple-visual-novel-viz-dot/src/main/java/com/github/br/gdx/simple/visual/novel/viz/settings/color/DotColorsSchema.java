@@ -8,20 +8,22 @@ import com.github.br.gdx.simple.visual.novel.utils.Utils;
 
 import java.util.*;
 
-public class NodeColorsSchema {
+public class DotColorsSchema {
 
     private final String visitedNodesColor;
     private final String errorNodeColor;
     private final Map<NodeElementTypeId, NodeElementType> elementsTypes;
     private final String borderColor;
     private final ElementTypeDeterminant typeDeterminant;
+    private final String userContextHeaderColor;
 
-    private NodeColorsSchema(Builder builder) {
+    private DotColorsSchema(Builder builder) {
         this.visitedNodesColor = builder.visitedNodesColor;
         this.errorNodeColor = builder.errorNodeColor;
         this.elementsTypes = createElementsTypesMap(builder.elementsTypes);
         this.borderColor = builder.borderColor;
         this.typeDeterminant = builder.typeDeterminant;
+        this.userContextHeaderColor = builder.userContextHeaderColor;
     }
 
     private Map<NodeElementTypeId, NodeElementType> createElementsTypesMap(List<NodeElementType> elementsTypes) {
@@ -39,6 +41,10 @@ public class NodeColorsSchema {
 
     public String getErrorNodeColor() {
         return errorNodeColor;
+    }
+
+    public String getUserContextHeaderColor() {
+        return userContextHeaderColor;
     }
 
     public Map<NodeElementTypeId, NodeElementType> getElementsTypes() {
@@ -83,6 +89,7 @@ public class NodeColorsSchema {
             add(NodeElementType.COMPOSITE_NODE);
             add(NodeElementType.SCENE_LINK);
         }};
+        private String userContextHeaderColor = GraphvizColor.LIGHT_SALMON;
 
         public Builder setBorderColor(String borderColor) {
             this.borderColor = borderColor;
@@ -96,6 +103,11 @@ public class NodeColorsSchema {
 
         public Builder setErrorNodeColor(String errorNodeColor) {
             this.errorNodeColor = errorNodeColor;
+            return this;
+        }
+
+        public Builder setUserContextHeaderColor(String userContextHeaderColor) {
+            this.userContextHeaderColor = userContextHeaderColor;
             return this;
         }
 
@@ -114,8 +126,8 @@ public class NodeColorsSchema {
             return this;
         }
 
-        public NodeColorsSchema build() {
-            return new NodeColorsSchema(this);
+        public DotColorsSchema build() {
+            return new DotColorsSchema(this);
         }
 
     }
