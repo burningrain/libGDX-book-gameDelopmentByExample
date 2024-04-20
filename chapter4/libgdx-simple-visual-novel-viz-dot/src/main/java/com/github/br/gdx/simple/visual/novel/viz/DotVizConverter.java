@@ -41,14 +41,14 @@ public class DotVizConverter implements VizConverter {
         Map<ElementId, ? extends SceneViz<?>> scenes = pLotViz.getScenes();
         ElementId beginSceneId = pLotViz.getBeginSceneId();
         Set<String> nodePaths = convertToNodePaths(pLotViz.getPath());
-        CurrentState exceptionNode = (pLotViz.getException() != null)? pLotViz.getCurrentNodeId() : null;
+        CurrentState currentNode = pLotViz.getCurrentNodeId();
         String exceptionMessage = (pLotViz.getException() != null)? pLotViz.getException().getMessage() : null;
 
         DotColorsSchema colorSchema = settings.getColorSchema();
         builder.append("subgraph cluster_plot {").append("\n");
         builder.append("color=").append(colorSchema.getBorderColor()).append("\n");
 
-        printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "", exceptionNode, exceptionMessage);
+        printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "", currentNode, exceptionMessage);
         builder.append("}").append("\n");
         builder.append("}");
         return builder.toString();
@@ -105,7 +105,7 @@ public class DotVizConverter implements VizConverter {
             Map<ElementId, ? extends SceneViz<?>> scenes,
             Set<String> nodePaths,
             String currentPath,
-            CurrentState exceptionNode,
+            CurrentState currentNode,
             String exceptionMessage
     ) {
         SceneViz<?> sceneViz = scenes.get(sceneId);
@@ -131,15 +131,13 @@ public class DotVizConverter implements VizConverter {
             if (isNodeVisited) {
                 visitedNodes.add(value.getNodeId());
             }
-            boolean isExceptionNode = exceptionNode != null &&
-                    exceptionNode.sceneId.equals(sceneId) &&
-                    exceptionNode.nodeId.equals(value.getNodeId());
+            boolean isCurrentNode = currentNode.sceneId.equals(sceneId) && currentNode.nodeId.equals(value.getNodeId());
 
             String nodeId = createNodeId(label, value);
-            String node = createNode(nodeId, settings, label, value, isNodeVisited, isExceptionNode);
+            String node = createNode(nodeId, settings, label, value, isNodeVisited, isCurrentNode);
             result.append(node);
 
-            if (isExceptionNode) {
+            if (isCurrentNode && exceptionMessage != null) {
                 printErrorMessage(result, exceptionMessage, settings, nodeId);
             }
         }
@@ -165,7 +163,7 @@ public class DotVizConverter implements VizConverter {
         for (NodeElementVizData sceneLink : sceneLinks) {
             String cp = parentPath + sceneId.getId() + "." + sceneLink.getNodeId().getId();
             ElementId sceneLinkId = DotUtils.extractSceneLinkId(sceneLink.getNode());
-            printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp, exceptionNode, exceptionMessage);
+            printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp, currentNode, exceptionMessage);
             // создаем связь к подсценарию
             String parentNodeLabel = sceneLink.getNodeId().getId();
             SceneViz<?> subScene = scenes.get(sceneLinkId);
@@ -192,7 +190,7 @@ public class DotVizConverter implements VizConverter {
                 .append("label=").append("\"")
                 .append(errorMessage)
                 .append("\"")
-                .append("color=").append(colorSchema.getErrorNodeColor())
+                .append("color=").append(colorSchema.getCurrentNodeColor())
                 .append("\n")
                 .append("]")
         ;
@@ -202,7 +200,7 @@ public class DotVizConverter implements VizConverter {
         builder.append(nodeId).append(" -> ").append(exceptionNodeId);
         builder
                 .append("[")
-                .append("color=").append(colorSchema.getErrorNodeColor()).append(", penwidth = 2")
+                .append("color=").append(colorSchema.getCurrentNodeColor()).append(", penwidth = 2")
                 .append(", dir=none, style=dashed")
                 .append(", label=")
                     .append("\"")
@@ -218,13 +216,13 @@ public class DotVizConverter implements VizConverter {
                               String label,
                               NodeElementVizData value,
                               boolean isVisited,
-                              boolean isExceptionNode) {
+                              boolean isCurrentNode) {
         DotColorsSchema colorSchema = settings.getColorSchema();
         ElementTypeDeterminant typeDeterminant = colorSchema.getTypeDeterminant();
         NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(value.getNode());
         NodeElementType nodeType = colorSchema.getElementsTypes().get(nodeElementTypeId);
 
-        return settings.getCurrentDotVizModePainter().createNodeInfo(settings, nodeType, nodeId, label, value, isVisited, isExceptionNode);
+        return settings.getCurrentDotVizModePainter().createNodeInfo(settings, nodeType, nodeId, label, value, isVisited, isCurrentNode);
     }
 
     private String createNodeId(String label, NodeElementVizData value) {

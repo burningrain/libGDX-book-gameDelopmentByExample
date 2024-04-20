@@ -5,13 +5,14 @@ import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.ElementTypeDeterminant;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
+import com.github.br.gdx.simple.visual.novel.viz.utils.Supplier;
 
 import java.util.*;
 
 public class DotColorsSchema {
 
     private final String visitedNodesColor;
-    private final String errorNodeColor;
+    private final String currentNodeColor;
     private final Map<NodeElementTypeId, NodeElementType> elementsTypes;
     private final String borderColor;
     private final ElementTypeDeterminant typeDeterminant;
@@ -19,7 +20,7 @@ public class DotColorsSchema {
 
     private DotColorsSchema(Builder builder) {
         this.visitedNodesColor = builder.visitedNodesColor;
-        this.errorNodeColor = builder.errorNodeColor;
+        this.currentNodeColor = builder.currentNodeColor;
         this.elementsTypes = createElementsTypesMap(builder.elementsTypes);
         this.borderColor = builder.borderColor;
         this.typeDeterminant = builder.typeDeterminant;
@@ -39,8 +40,8 @@ public class DotColorsSchema {
         return visitedNodesColor;
     }
 
-    public String getErrorNodeColor() {
-        return errorNodeColor;
+    public String getCurrentNodeColor() {
+        return currentNodeColor;
     }
 
     public String getUserContextHeaderColor() {
@@ -59,7 +60,7 @@ public class DotColorsSchema {
         Builder builder = new Builder();
         builder.setBorderColor(this.borderColor);
         builder.setVisitedNodesColor(this.visitedNodesColor);
-        builder.setErrorNodeColor(this.errorNodeColor);
+        builder.setCurrentNodeColor(this.currentNodeColor);
 
         builder.elementsTypes.clear();
         builder.elementsTypes.addAll(this.elementsTypes.values());
@@ -83,7 +84,7 @@ public class DotColorsSchema {
 
         private String borderColor = GraphvizColor.GREY;
         private String visitedNodesColor = GraphvizColor.GREEN;
-        private String errorNodeColor = GraphvizColor.RED;
+        private String currentNodeColor = GraphvizColor.YELLOW;
         private final ArrayList<NodeElementType> elementsTypes = new ArrayList<NodeElementType>() {{
             add(NodeElementType.SIMPLE_NODE);
             add(NodeElementType.COMPOSITE_NODE);
@@ -92,7 +93,7 @@ public class DotColorsSchema {
         private String userContextHeaderColor = GraphvizColor.LIGHT_SALMON;
 
         public Builder setBorderColor(String borderColor) {
-            this.borderColor = borderColor;
+            this.borderColor = Utils.checkNotNull(borderColor, "borderColor");
             return this;
         }
 
@@ -101,13 +102,13 @@ public class DotColorsSchema {
             return this;
         }
 
-        public Builder setErrorNodeColor(String errorNodeColor) {
-            this.errorNodeColor = errorNodeColor;
+        public Builder setCurrentNodeColor(String currentNodeColor) {
+            this.currentNodeColor = Utils.checkNotNull(currentNodeColor, "currentNodeColor");
             return this;
         }
 
         public Builder setUserContextHeaderColor(String userContextHeaderColor) {
-            this.userContextHeaderColor = userContextHeaderColor;
+            this.userContextHeaderColor = Utils.checkNotNull(userContextHeaderColor, "userContextHeaderColor");
             return this;
         }
 
@@ -127,7 +128,52 @@ public class DotColorsSchema {
         }
 
         public DotColorsSchema build() {
+            addVisitedNodeElementType();
+            addCurrentNodeElementType();
+
             return new DotColorsSchema(this);
+        }
+
+        private void addVisitedNodeElementType() {
+            elementsTypes.add(
+                    NodeElementType.SIMPLE_NODE.copy()
+                            .setElementId("visited_node")
+                            .setLabel("visited\nnode")
+                            .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                                @Override
+                                public void accept(NodeElementType.ShortViz.Builder builder) {
+                                    builder.setBorderColor(visitedNodesColor);
+                                }
+                            })
+                            .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                                @Override
+                                public void accept(NodeElementType.FullViz.Builder builder) {
+                                    builder.setHeaderColor(visitedNodesColor);
+                                }
+                            })
+                            .build()
+            );
+        }
+
+        private void addCurrentNodeElementType() {
+            elementsTypes.add(
+                    NodeElementType.SIMPLE_NODE.copy()
+                            .setElementId("current_node")
+                            .setLabel("current\nnode")
+                            .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                                @Override
+                                public void accept(NodeElementType.ShortViz.Builder builder) {
+                                    builder.setBorderColor(currentNodeColor);
+                                }
+                            })
+                            .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                                @Override
+                                public void accept(NodeElementType.FullViz.Builder builder) {
+                                    builder.setHeaderColor(currentNodeColor);
+                                }
+                            })
+                            .build()
+            );
         }
 
     }

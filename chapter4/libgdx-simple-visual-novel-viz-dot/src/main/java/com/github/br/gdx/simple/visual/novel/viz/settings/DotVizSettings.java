@@ -79,7 +79,7 @@ public class DotVizSettings {
             public void accept(DotColorsSchema.Builder builder) {
                 builder.setBorderColor(colorSchema.getBorderColor());
                 builder.setVisitedNodesColor(colorSchema.getVisitedNodesColor());
-                builder.setErrorNodeColor(colorSchema.getErrorNodeColor());
+                builder.setCurrentNodeColor(colorSchema.getCurrentNodeColor());
 
                 builder.clearAllElementsTypes();
                 builder.addElementsTypes(new ArrayList<NodeElementType>(colorSchema.getElementsTypes().values()));

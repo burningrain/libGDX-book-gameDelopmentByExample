@@ -248,60 +248,93 @@ public class PlotDotVisitorTest {
         public static final NodeElementType TYPE_A = NodeElementType.builder()
                 .setElementId("TYPE_A")
                 .setLabel("Type A")
-                .setShortData(NodeElementType.ShortViz.builder()
-                        .setShape(GraphvizShape.DIAMOND)
-                        .setColor(GraphvizColor.VIOLET)
-                        .build()
+                .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                                         @Override
+                                         public void accept(NodeElementType.ShortViz.Builder builder) {
+                                             builder
+                                                     .setShape(GraphvizShape.DIAMOND)
+                                                     .setFillColor(GraphvizColor.VIOLET);
+                                         }
+                                     }
                 )
-                .setFullData(NodeElementType.FullViz.builder()
-                        .setHeaderColor(GraphvizColor.VIOLET)
-                        //.setColorSchema()
-                        .build()
+                .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                                        @Override
+                                        public void accept(NodeElementType.FullViz.Builder builder) {
+                                            builder
+                                                    .setHeaderColor(GraphvizColor.VIOLET);
+                                            //.setColorSchema()
+                                        }
+                                    }
                 )
                 .build();
 
         public static final NodeElementType TYPE_B = NodeElementType.builder()
                 .setElementId("TYPE_B")
                 .setLabel("Type B")
-                .setShortData(NodeElementType.ShortViz.builder()
-                        .setShape(GraphvizShape.DIAMOND)
-                        .setColor(GraphvizColor.AQUAMARINE)
-                        .build()
+                .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                                         @Override
+                                         public void accept(NodeElementType.ShortViz.Builder builder) {
+                                             builder
+                                                     .setShape(GraphvizShape.DIAMOND)
+                                                     .setFillColor(GraphvizColor.AQUAMARINE);
+                                         }
+                                     }
                 )
-                .setFullData(NodeElementType.FullViz.builder()
-                        .setHeaderColor(GraphvizColor.AQUAMARINE)
-                        //.setColorSchema()
-                        .build()
+                .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                                        @Override
+                                        public void accept(NodeElementType.FullViz.Builder builder) {
+                                            builder
+                                                    .setHeaderColor(GraphvizColor.AQUAMARINE);
+                                            //.setColorSchema()
+                                        }
+                                    }
                 )
                 .build();
 
         public static final NodeElementType TYPE_C = NodeElementType.builder()
                 .setElementId("TYPE_C")
                 .setLabel("Type C")
-                .setShortData(NodeElementType.ShortViz.builder()
-                        .setShape(GraphvizShape.DIAMOND)
-                        .setColor(GraphvizColor.LIGHT_GOLDEN_ROD_YELLOW)
-                        .build()
+                .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                                         @Override
+                                         public void accept(NodeElementType.ShortViz.Builder builder) {
+                                             builder
+                                                     .setShape(GraphvizShape.DIAMOND)
+                                                     .setFillColor(GraphvizColor.LIGHT_GOLDEN_ROD_YELLOW);
+                                         }
+                                     }
                 )
-                .setFullData(NodeElementType.FullViz.builder()
-                        .setHeaderColor(GraphvizColor.LIGHT_GOLDEN_ROD_YELLOW)
-                        //.setColorSchema()
-                        .build()
+                .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                                        @Override
+                                        public void accept(NodeElementType.FullViz.Builder builder) {
+                                            builder
+                                                    .setHeaderColor(GraphvizColor.LIGHT_GOLDEN_ROD_YELLOW);
+                                            //.setColorSchema()
+                                        }
+                                    }
                 )
                 .build();
 
         public static final NodeElementType TYPE_D = NodeElementType.builder()
                 .setElementId("TYPE_D")
                 .setLabel("Type D")
-                .setShortData(NodeElementType.ShortViz.builder()
-                        .setShape(GraphvizShape.DIAMOND)
-                        .setColor(GraphvizColor.MAROON)
-                        .build()
+                .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                                         @Override
+                                         public void accept(NodeElementType.ShortViz.Builder builder) {
+                                             builder
+                                                     .setShape(GraphvizShape.DIAMOND)
+                                                     .setFillColor(GraphvizColor.MAROON);
+                                         }
+                                     }
                 )
-                .setFullData(NodeElementType.FullViz.builder()
-                        .setHeaderColor(GraphvizColor.MAROON)
-                        //.setColorSchema()
-                        .build()
+                .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                                        @Override
+                                        public void accept(NodeElementType.FullViz.Builder builder) {
+                                            builder
+                                                    .setHeaderColor(GraphvizColor.MAROON)
+                                            //.setColorSchema()
+                                            ;
+                                        }
+                                    }
                 )
                 .build();
 

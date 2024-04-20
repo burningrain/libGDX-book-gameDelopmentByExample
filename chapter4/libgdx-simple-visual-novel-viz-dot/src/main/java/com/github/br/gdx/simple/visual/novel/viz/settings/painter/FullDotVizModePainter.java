@@ -33,7 +33,7 @@ public class FullDotVizModePainter implements DotVizModePainter {
             String label,
             NodeElementVizData value,
             boolean isVisited,
-            boolean isExceptionNode
+            boolean isCurrentNode
     ) {
         DotColorsSchema colorSchema = settings.getColorSchema();
 
@@ -49,9 +49,9 @@ public class FullDotVizModePainter implements DotVizModePainter {
         if (isVisited) {
             builder.append("color=").append(colorSchema.getVisitedNodesColor()).append("\n");
             builder.append("style=filled, fillcolor=").append(colorSchema.getVisitedNodesColor()).append("\n");
-        } else if (isExceptionNode) {
-            builder.append("color=").append(colorSchema.getErrorNodeColor()).append("\n");
-            builder.append("style=filled, fillcolor=").append(colorSchema.getErrorNodeColor()).append("\n");
+        } else if (isCurrentNode) {
+            builder.append("color=").append(colorSchema.getCurrentNodeColor()).append(",").append("\n");
+            builder.append("penwidth=2 ").append("\n");
         }
 
         builder.append("];\n");

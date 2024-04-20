@@ -46,7 +46,7 @@ public class DefaultUserContextPainter implements UserContextPainter {
             fillUserParams(result, "", userContext);
         } catch (Exception e) {
             result.append("<TR>").append("\n");
-            result.append("<TD COLSPAN=\"3\" BGCOLOR=\"").append(colorSchema.getErrorNodeColor()).append("\">").append("\n")
+            result.append("<TD COLSPAN=\"3\" BGCOLOR=\"").append(colorSchema.getCurrentNodeColor()).append("\">").append("\n")
                     .append(e.getMessage())
                     .append("</TD>").append("\n");
             result.append("</TR>").append("\n");

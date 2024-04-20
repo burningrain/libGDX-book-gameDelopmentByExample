@@ -23,8 +23,11 @@ public class ShortLegendPainter extends LegendPainter {
                     .append("[")
                         .append("label=\"\", shape=").append(shortData.shape);
 
-            if (shortData.color != null) {
-                builder.append("\nfillcolor=").append(shortData.color).append(", style=filled");
+            if (shortData.borderColor != null) {
+                builder.append("\ncolor=").append(shortData.borderColor);
+            }
+            if (shortData.fillColor != null) {
+                builder.append("\nfillcolor=").append(shortData.fillColor).append(", style=filled");
             }
 
             builder
