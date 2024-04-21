@@ -15,7 +15,8 @@ public interface DotVizModePainter {
             String label,
             NodeElementVizData value,
             boolean isVisited,
-            boolean isCurrentNode
+            boolean isCurrentNode,
+            boolean isHasException
     );
 
 }

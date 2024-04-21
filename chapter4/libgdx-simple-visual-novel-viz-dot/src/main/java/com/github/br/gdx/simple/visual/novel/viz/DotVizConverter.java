@@ -37,13 +37,14 @@ public class DotVizConverter implements VizConverter {
         ElementId beginSceneId = pLotViz.getBeginSceneId();
         Set<String> nodePaths = convertToNodePaths(pLotViz.getPath());
         CurrentState currentNode = pLotViz.getCurrentNodeId();
+        boolean isHasException = pLotViz.getException() != null;
         String exceptionMessage = (pLotViz.getException() != null)? pLotViz.getException().getMessage() : null;
 
         DotColorsSchema colorSchema = settings.getColorSchema();
         builder.append("subgraph cluster_plot {").append("\n");
         builder.append("color=").append(colorSchema.getBorderColor()).append("\n");
 
-        printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "", currentNode, exceptionMessage);
+        printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "", currentNode, isHasException, exceptionMessage);
         builder.append("}").append("\n");
 
         if (settings.isShowLegend()) {
@@ -107,6 +108,7 @@ public class DotVizConverter implements VizConverter {
             Set<String> nodePaths,
             String currentPath,
             CurrentState currentNode,
+            boolean isHasException,
             String exceptionMessage
     ) {
         SceneViz<?> sceneViz = scenes.get(sceneId);
@@ -135,10 +137,10 @@ public class DotVizConverter implements VizConverter {
             boolean isCurrentNode = currentNode.sceneId.equals(sceneId) && currentNode.nodeId.equals(value.getNodeId());
 
             String nodeId = createNodeId(label, value);
-            String node = createNode(nodeId, settings, label, value, isNodeVisited, isCurrentNode);
+            String node = createNode(nodeId, settings, label, value, isNodeVisited, isCurrentNode, isHasException);
             result.append(node);
 
-            if (isCurrentNode && exceptionMessage != null) {
+            if (isCurrentNode && isHasException) {
                 printErrorMessage(result, exceptionMessage, settings, nodeId);
             }
         }
@@ -164,7 +166,7 @@ public class DotVizConverter implements VizConverter {
         for (NodeElementVizData sceneLink : sceneLinks) {
             String cp = parentPath + sceneId.getId() + "." + sceneLink.getNodeId().getId();
             ElementId sceneLinkId = DotUtils.extractSceneLinkId(sceneLink.getNode());
-            printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp, currentNode, exceptionMessage);
+            printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp, currentNode, isHasException, exceptionMessage);
             // создаем связь к подсценарию
             String parentNodeLabel = sceneLink.getNodeId().getId();
             SceneViz<?> subScene = scenes.get(sceneLinkId);
@@ -191,7 +193,7 @@ public class DotVizConverter implements VizConverter {
                 .append("label=").append("\"")
                 .append(errorMessage)
                 .append("\"")
-                .append("color=").append(colorSchema.getCurrentNodeColor())
+                .append("color=").append(colorSchema.getErrorNodeColor())
                 .append("\n")
                 .append("]")
         ;
@@ -201,7 +203,7 @@ public class DotVizConverter implements VizConverter {
         builder.append(nodeId).append(" -> ").append(exceptionNodeId);
         builder
                 .append("[")
-                .append("color=").append(colorSchema.getCurrentNodeColor()).append(", penwidth = 2")
+                .append("color=").append(colorSchema.getErrorNodeColor()).append(", penwidth = 2")
                 .append(", dir=none, style=dashed")
                 .append(", label=")
                     .append("\"")
@@ -217,13 +219,15 @@ public class DotVizConverter implements VizConverter {
                               String label,
                               NodeElementVizData value,
                               boolean isVisited,
-                              boolean isCurrentNode) {
+                              boolean isCurrentNode,
+                              boolean isHasException
+    ) {
         DotColorsSchema colorSchema = settings.getColorSchema();
         ElementTypeDeterminant typeDeterminant = colorSchema.getTypeDeterminant();
         NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(value.getNode());
         NodeElementType nodeType = colorSchema.getElementsTypes().get(nodeElementTypeId);
 
-        return settings.getCurrentDotVizModePainter().createNodeInfo(settings, nodeType, nodeId, label, value, isVisited, isCurrentNode);
+        return settings.getCurrentDotVizModePainter().createNodeInfo(settings, nodeType, nodeId, label, value, isVisited, isCurrentNode, isHasException);
     }
 
     private String createNodeId(String label, NodeElementVizData value) {

@@ -26,7 +26,8 @@ public class ShortDotVizModePainter implements DotVizModePainter {
             String label,
             NodeElementVizData value,
             boolean isVisited,
-            boolean isCurrentNode
+            boolean isCurrentNode,
+            boolean isHasException
     ) {
         DotColorsSchema colorSchema = settings.getColorSchema();
         NodeElementType.ShortViz shortData = nodeType.getShortData();
@@ -44,7 +45,8 @@ public class ShortDotVizModePainter implements DotVizModePainter {
         if (isVisited) {
             builder.append("color=").append(colorSchema.getVisitedNodesColor()).append("\n");
         } else if (isCurrentNode) {
-            builder.append("color=").append(colorSchema.getCurrentNodeColor()).append(",").append("\n");
+            String color = isHasException? colorSchema.getErrorNodeColor() : colorSchema.getCurrentNodeColor();
+            builder.append("color=").append(color).append(",").append("\n");
             builder.append("penwidth=2 ").append("\n");
         } else if (shortData.borderColor != null) {
             builder.append("color=").append(shortData.borderColor).append("\n");

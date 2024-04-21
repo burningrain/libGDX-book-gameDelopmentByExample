@@ -11,6 +11,7 @@ import java.util.*;
 
 public class DotColorsSchema {
 
+    private final String errorNodeColor;
     private final String visitedNodesColor;
     private final String currentNodeColor;
     private final Map<NodeElementTypeId, NodeElementType> elementsTypes;
@@ -19,6 +20,7 @@ public class DotColorsSchema {
     private final String userContextHeaderColor;
 
     private DotColorsSchema(Builder builder) {
+        this.errorNodeColor = builder.errorNodeColor;
         this.visitedNodesColor = builder.visitedNodesColor;
         this.currentNodeColor = builder.currentNodeColor;
         this.elementsTypes = createElementsTypesMap(builder.elementsTypes);
@@ -78,10 +80,15 @@ public class DotColorsSchema {
         return typeDeterminant;
     }
 
+    public String getErrorNodeColor() {
+        return errorNodeColor;
+    }
+
     public static class Builder {
 
         private ElementTypeDeterminant typeDeterminant = new DefaultElementTypeDeterminant();
 
+        private String errorNodeColor = GraphvizColor.RED;
         private String borderColor = GraphvizColor.GREY;
         private String visitedNodesColor = GraphvizColor.GREEN;
         private String currentNodeColor = GraphvizColor.ORANGE;
@@ -91,6 +98,11 @@ public class DotColorsSchema {
             add(NodeElementType.SCENE_LINK);
         }};
         private String userContextHeaderColor = GraphvizColor.LIGHT_SALMON;
+
+        public Builder setErrorNodeColor(String errorNodeColor) {
+            this.errorNodeColor = Utils.checkNotNull(errorNodeColor, "errorNodeColor");
+            return this;
+        }
 
         public Builder setBorderColor(String borderColor) {
             this.borderColor = Utils.checkNotNull(borderColor, "borderColor");
