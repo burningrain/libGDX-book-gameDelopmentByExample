@@ -84,7 +84,7 @@ public class DotColorsSchema {
 
         private String borderColor = GraphvizColor.GREY;
         private String visitedNodesColor = GraphvizColor.GREEN;
-        private String currentNodeColor = GraphvizColor.YELLOW;
+        private String currentNodeColor = GraphvizColor.ORANGE;
         private final ArrayList<NodeElementType> elementsTypes = new ArrayList<NodeElementType>() {{
             add(NodeElementType.SIMPLE_NODE);
             add(NodeElementType.COMPOSITE_NODE);
@@ -138,17 +138,19 @@ public class DotColorsSchema {
             elementsTypes.add(
                     NodeElementType.SIMPLE_NODE.copy()
                             .setElementId("visited_node")
-                            .setLabel("visited\nnode")
+                            .setLabel("visited node")
                             .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
                                 @Override
                                 public void accept(NodeElementType.ShortViz.Builder builder) {
+                                    builder.setFillColor(GraphvizColor.WHITE);
                                     builder.setBorderColor(visitedNodesColor);
                                 }
                             })
                             .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
                                 @Override
                                 public void accept(NodeElementType.FullViz.Builder builder) {
-                                    builder.setHeaderColor(visitedNodesColor);
+                                    builder.setHeaderColor(GraphvizColor.WHITE);
+                                    builder.setBorderColor(visitedNodesColor);
                                 }
                             })
                             .build()
@@ -159,17 +161,19 @@ public class DotColorsSchema {
             elementsTypes.add(
                     NodeElementType.SIMPLE_NODE.copy()
                             .setElementId("current_node")
-                            .setLabel("current\nnode")
+                            .setLabel("current node")
                             .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
                                 @Override
                                 public void accept(NodeElementType.ShortViz.Builder builder) {
+                                    builder.setFillColor(GraphvizColor.WHITE);
                                     builder.setBorderColor(currentNodeColor);
                                 }
                             })
                             .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
                                 @Override
                                 public void accept(NodeElementType.FullViz.Builder builder) {
-                                    builder.setHeaderColor(currentNodeColor);
+                                    builder.setHeaderColor(GraphvizColor.WHITE);
+                                    builder.setBorderColor(currentNodeColor);
                                 }
                             })
                             .build()

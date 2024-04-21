@@ -10,7 +10,7 @@ public class NodeElementType {
     public static final NodeElementType SIMPLE_NODE =
             builder()
                     .setElementId("simple_node")
-                    .setLabel("simple\nnode")
+                    .setLabel("simple node")
                     .setShortDataBuilder(new Supplier<ShortViz.Builder>() {
                         @Override
                         public void accept(ShortViz.Builder builder) {
@@ -28,7 +28,7 @@ public class NodeElementType {
     public static final NodeElementType COMPOSITE_NODE =
             builder()
                     .setElementId("composite_node")
-                    .setLabel("composite\nnode")
+                    .setLabel("composite node")
                     .setShortDataBuilder(new Supplier<ShortViz.Builder>() {
                         @Override
                         public void accept(ShortViz.Builder builder) {
@@ -46,7 +46,7 @@ public class NodeElementType {
     public static final NodeElementType SCENE_LINK =
             builder()
                     .setElementId("scene_link_node")
-                    .setLabel("scene link\nnode")
+                    .setLabel("scene link node")
                     .setShortDataBuilder(new Supplier<ShortViz.Builder>() {
                         @Override
                         public void accept(ShortViz.Builder builder) {
@@ -63,6 +63,7 @@ public class NodeElementType {
 
     private final NodeElementTypeId elementId;
     private final String label;
+    private final String descriptionLabel;
 
     private final FullViz fullData;
     private final ShortViz shortData;
@@ -70,10 +71,12 @@ public class NodeElementType {
     public static class FullViz {
 
         public final String headerColor;
+        public final String borderColor;
         public final FullModeColorSchema colorSchema;
 
         private FullViz(Builder builder) {
             this.headerColor = builder.headerColor;
+            this.borderColor = builder.borderColor;
             this.colorSchema = builder.colorSchema;
         }
 
@@ -81,6 +84,7 @@ public class NodeElementType {
             Builder builder = new Builder();
             builder.setColorSchema(this.colorSchema);
             builder.setHeaderColor(this.headerColor);
+            builder.setBorderColor(this.borderColor);
             return builder;
         }
 
@@ -93,10 +97,16 @@ public class NodeElementType {
             private static final FullModeColorSchema DEFAULT_FULL_MODE_COLOR_SCHEMA = new DefaultFullModeColorSchema();
 
             private String headerColor;
+            private String borderColor;
             private FullModeColorSchema colorSchema = DEFAULT_FULL_MODE_COLOR_SCHEMA;
 
             public Builder setHeaderColor(String headerColor) {
                 this.headerColor = Utils.checkNotNull(headerColor, "headerColor");
+                return this;
+            }
+
+            public Builder setBorderColor(String borderColor) {
+                this.borderColor = Utils.checkNotNull(borderColor, "borderColor");
                 return this;
             }
 
@@ -180,6 +190,7 @@ public class NodeElementType {
     private NodeElementType(Builder builder) {
         this.elementId = builder.elementId;
         this.label = builder.label;
+        this.descriptionLabel = this.elementId.getId() + "_description";
         this.fullData = builder.fullDataBuilder.build();
         this.shortData = builder.shortDataBuilder.build();
     }
@@ -190,6 +201,10 @@ public class NodeElementType {
 
     public String getLabel() {
         return label;
+    }
+
+    public String getDescriptionLabel() {
+        return descriptionLabel;
     }
 
     public FullViz getFullData() {
@@ -229,6 +244,9 @@ public class NodeElementType {
             public void accept(FullViz.Builder builder) {
                 FullViz fullData = NodeElementType.this.getFullData();
                 builder.setHeaderColor(fullData.headerColor);
+                if (fullData.borderColor != null) {
+                    builder.setBorderColor(fullData.borderColor);
+                }
                 builder.setColorSchema(fullData.colorSchema);
             }
         });

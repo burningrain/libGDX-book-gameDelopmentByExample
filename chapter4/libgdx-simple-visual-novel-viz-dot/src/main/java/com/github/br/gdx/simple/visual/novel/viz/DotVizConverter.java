@@ -25,11 +25,6 @@ public class DotVizConverter implements VizConverter {
         builder.append("rankdir=").append(settings.getRankDirType()).append("\n");
         builder.append("graph [pad=\".75\", ranksep=\"0.25\", nodesep=\"0.25\"];").append("\n");
 
-        if (settings.isShowLegend()) {
-            String legend = settings.getCurrentDotVizModePainter().createLegend(settings);
-            builder.append(legend).append("\n");
-        }
-
         if (settings.isShowContext()) {
             UserContext userContext = pLotViz.getUserContext();
             if (userContext != null) {
@@ -50,6 +45,12 @@ public class DotVizConverter implements VizConverter {
 
         printScene(settings, builder, "MAIN", beginSceneId, scenes, nodePaths, "", currentNode, exceptionMessage);
         builder.append("}").append("\n");
+
+        if (settings.isShowLegend()) {
+            String legend = settings.getCurrentDotVizModePainter().createLegend(settings);
+            builder.append(legend).append("\n");
+        }
+
         builder.append("}");
         return builder.toString();
     }

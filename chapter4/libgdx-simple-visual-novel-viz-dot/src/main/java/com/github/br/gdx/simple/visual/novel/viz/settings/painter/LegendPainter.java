@@ -66,13 +66,22 @@ public class LegendPainter {
 
         for (NodeElementType field : fields) {
             String name = field.getElementId().getId();
-            String value = field.getFullData().headerColor;
+            NodeElementType.FullViz fullData = field.getFullData();
+            String descriptionLabel = field.getDescriptionLabel();
+            String borderColor = fullData.borderColor;
             String label = field.getLabel();
 
             builder
-                    .append(value)
+                    .append(descriptionLabel)
                     .append(" ")
-                    .append("[label=\"\", shape=rounded, style=filled, fillcolor=").append(value).append("]")
+                    .append("[label=\"\", shape=rounded, style=filled, fillcolor=").append(fullData.headerColor)
+                    ;
+            if (borderColor != null) {
+                builder.append(" ").append("color=").append(borderColor);
+            }
+
+            builder
+                    .append("]")
                     .append("\n")
             ;
             builder
@@ -94,8 +103,8 @@ public class LegendPainter {
                 continue;
             }
 
-            String value = field.getFullData().headerColor;
-            String prevValue = prev.getFullData().headerColor;
+            String value = field.getDescriptionLabel();
+            String prevValue = prev.getDescriptionLabel();
 
             builder.append(prevValue).append(" -> ").append(value).append(";\n");
             prev = field;
@@ -106,7 +115,7 @@ public class LegendPainter {
         StringBuilder builder = new StringBuilder();
         for (NodeElementType field : colorsData) {
             String name = field.getElementId().getId();
-            String value = field.getFullData().headerColor;
+            String value = field.getDescriptionLabel();
 
             builder.append(value).append(" -> ").append(name).append(";\n");
         }

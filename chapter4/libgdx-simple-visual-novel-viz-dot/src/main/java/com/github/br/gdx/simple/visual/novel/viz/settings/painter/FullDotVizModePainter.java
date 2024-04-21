@@ -50,8 +50,8 @@ public class FullDotVizModePainter implements DotVizModePainter {
             builder.append("color=").append(colorSchema.getVisitedNodesColor()).append("\n");
             builder.append("style=filled, fillcolor=").append(colorSchema.getVisitedNodesColor()).append("\n");
         } else if (isCurrentNode) {
-            builder.append("color=").append(colorSchema.getCurrentNodeColor()).append(",").append("\n");
-            builder.append("penwidth=2 ").append("\n");
+            builder.append("color=").append(colorSchema.getCurrentNodeColor()).append("\n");
+            builder.append("style=filled, fillcolor=").append(colorSchema.getCurrentNodeColor()).append("\n");
         }
 
         builder.append("];\n");

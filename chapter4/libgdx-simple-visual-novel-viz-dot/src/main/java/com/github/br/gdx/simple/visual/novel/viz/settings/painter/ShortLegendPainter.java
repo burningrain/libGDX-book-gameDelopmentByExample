@@ -12,13 +12,13 @@ public class ShortLegendPainter extends LegendPainter {
 
         for (NodeElementType field : fields) {
             String name = field.getElementId().getId();
-            String value = field.getFullData().headerColor;
+            String descriptionLabel = field.getDescriptionLabel();
             String label = field.getLabel();
 
             NodeElementType.ShortViz shortData = field.getShortData();
 
             builder
-                    .append(value)
+                    .append(descriptionLabel)
                     .append(" ")
                     .append("[")
                         .append("label=\"\", shape=").append(shortData.shape);
