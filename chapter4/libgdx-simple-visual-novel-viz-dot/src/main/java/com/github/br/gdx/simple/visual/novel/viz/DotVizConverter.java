@@ -33,6 +33,12 @@ public class DotVizConverter implements VizConverter {
             }
         }
 
+        List<CurrentState> path = pLotViz.getPath();
+        if (settings.isShowPath() && path != null && !path.isEmpty()) {
+            String pathSubgraph = settings.getPathPainter().createPath(settings, pLotViz.getUserContext(), path);
+            builder.append(pathSubgraph).append("\n");
+        }
+
         Map<ElementId, ? extends SceneViz<?>> scenes = pLotViz.getScenes();
         ElementId beginSceneId = pLotViz.getBeginSceneId();
         Set<String> nodePaths = convertToNodePaths(pLotViz.getPath());

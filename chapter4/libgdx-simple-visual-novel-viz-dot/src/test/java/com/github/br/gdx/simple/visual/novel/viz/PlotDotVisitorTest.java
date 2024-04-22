@@ -29,7 +29,7 @@ public class PlotDotVisitorTest {
     private static DotVizSettings createDotVizSettings() {
         return DotVizSettings.builder()
                 .setRankDirType(DotVizSettings.RankDirType.LR) //TODO убрать это как режим и сделать простым параметром настройки вывода
-                .setNodeInfoType(DotVizSettings.NodeInfoType.FULL) //TODO убрать это как режим и сделать простым параметром настройки вывода
+                .setNodeInfoType(DotVizSettings.NodeInfoType.SHORT) //TODO убрать это как режим и сделать простым параметром настройки вывода
                 .setShowLegend(true) //TODO убрать это как режим и сделать простым параметром настройки вывода
                 .setColorsSchema(new Supplier<DotColorsSchema.Builder>() {
                     @Override
@@ -142,7 +142,7 @@ public class PlotDotVisitorTest {
         plot.execute(1);
         plot.execute(1);
 
-        //plot.execute(1); // d_1
+        plot.execute(1); // d_1
 
         System.out.println("--------------------- FULL INFO ---------------------");
         System.out.println(plot.getPlotAsString(new PlotVizVisitorBuilder<CustomNodeVisitor>(dotVizSettings), 1));

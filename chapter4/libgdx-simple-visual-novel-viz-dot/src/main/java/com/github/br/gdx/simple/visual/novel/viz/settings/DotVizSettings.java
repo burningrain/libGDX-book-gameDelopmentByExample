@@ -16,6 +16,7 @@ public class DotVizSettings {
     private final NodeInfoType nodeInfoType;
     private final boolean isShowLegend;
     private final boolean isShowContext;
+    private final boolean isShowPath;
 
     private final DotVizModePainter shortDotVizModePainter;
     private final DotVizModePainter fullDotVizModePainter;
@@ -23,15 +24,18 @@ public class DotVizSettings {
 
     private final DotColorsSchema colorSchema;
     private final UserContextPainter userContextPainter;
+    private final PathPainter pathPainter;
 
     public DotVizSettings(Builder builder) {
         this.rankDirType = builder.rankDirType;
         this.nodeInfoType = builder.nodeInfoType;
         this.isShowLegend = builder.isShowLegend;
         this.isShowContext = builder.isShowContext;
+        this.isShowPath = builder.isShowPath;
         this.shortDotVizModePainter = builder.shortDotVizModePainter;
         this.fullDotVizModePainter = builder.fullDotVizModePainter;
         this.userContextPainter = builder.userContextPainter;
+        this.pathPainter = builder.pathPainter;
         this.vizDataParamExtractor = builder.vizDataParamExtractor;
         this.colorSchema = builder.colorSchema;
     }
@@ -46,6 +50,10 @@ public class DotVizSettings {
 
     public boolean isShowLegend() {
         return isShowLegend;
+    }
+
+    public boolean isShowPath() {
+        return isShowPath;
     }
 
     public boolean isShowContext() {
@@ -105,16 +113,22 @@ public class DotVizSettings {
         return userContextPainter;
     }
 
+    public PathPainter getPathPainter() {
+        return pathPainter;
+    }
+
     public static class Builder {
 
         private RankDirType rankDirType = RankDirType.LR;
         private NodeInfoType nodeInfoType = NodeInfoType.SHORT;
         private boolean isShowLegend = true;
         private boolean isShowContext = true; //TODO изменить на false по умолчанию
+        private boolean isShowPath = true;    //TODO изменить на false по умолчанию
 
         private DotVizModePainter shortDotVizModePainter = new ShortDotVizModePainter(new ShortLegendPainter());
         private DotVizModePainter fullDotVizModePainter = new FullDotVizModePainter(new LegendPainter());
         private UserContextPainter userContextPainter = new DefaultUserContextPainter();
+        private PathPainter pathPainter = new DefaultPathPainter();
         private NodeElementVizDataParamExtractor vizDataParamExtractor = new DefaultNodeElementVizDataParamExtractor();
         private final DotColorsSchema.Builder colorSchemaBuilder = DotColorsSchema.builder();
         private DotColorsSchema colorSchema;
@@ -140,6 +154,11 @@ public class DotVizSettings {
             return this;
         }
 
+        public Builder setShowPath(boolean showPath) {
+            isShowPath = showPath;
+            return this;
+        }
+
         public Builder setShowContext(boolean showContext) {
             isShowContext = showContext;
             return this;
@@ -157,6 +176,11 @@ public class DotVizSettings {
 
         public Builder setUserContextPainter(UserContextPainter userContextPainter) {
             this.userContextPainter = Utils.checkNotNull(userContextPainter, "userContextPainter");
+            return this;
+        }
+
+        public Builder setPathPainter(PathPainter pathPainter) {
+            this.pathPainter = Utils.checkNotNull(pathPainter, "pathPainter");
             return this;
         }
 
