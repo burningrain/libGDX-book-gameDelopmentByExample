@@ -140,80 +140,75 @@ public class DotColorsSchema {
         }
 
         public DotColorsSchema build() {
-            addVisitedNodeElementType();
-            addCurrentNodeElementType();
-            addErrorNodeElementType();
+            elementsTypes.add(0, createVisitedNodeElementType());
+            elementsTypes.add(1, createCurrentNodeElementType());
+            elementsTypes.add(2, createErrorNodeElementType());
 
             return new DotColorsSchema(this);
         }
 
-        private void addVisitedNodeElementType() {
-            elementsTypes.add(
-                    NodeElementType.SIMPLE_NODE.copy()
-                            .setElementId("visited_node")
-                            .setLabel("visited node")
-                            .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
-                                @Override
-                                public void accept(NodeElementType.ShortViz.Builder builder) {
-                                    builder.setFillColor(GraphvizColor.WHITE);
-                                    builder.setBorderColor(visitedNodesColor);
-                                }
-                            })
-                            .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
-                                @Override
-                                public void accept(NodeElementType.FullViz.Builder builder) {
-                                    builder.setHeaderColor(GraphvizColor.WHITE);
-                                    builder.setBorderColor(visitedNodesColor);
-                                }
-                            })
-                            .build()
-            );
+        private NodeElementType createVisitedNodeElementType() {
+            return NodeElementType.SIMPLE_NODE.copy()
+                    .setElementId("visited_node")
+                    .setLabel("visited node")
+                    .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                        @Override
+                        public void accept(NodeElementType.ShortViz.Builder builder) {
+                            builder.setFillColor(GraphvizColor.WHITE);
+                            builder.setBorderColor(visitedNodesColor);
+                        }
+                    })
+                    .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                        @Override
+                        public void accept(NodeElementType.FullViz.Builder builder) {
+                            builder.setHeaderColor(GraphvizColor.WHITE);
+                            builder.setBorderColor(visitedNodesColor);
+                        }
+                    })
+                    .build();
         }
 
-        private void addCurrentNodeElementType() {
-            elementsTypes.add(
-                    NodeElementType.SIMPLE_NODE.copy()
-                            .setElementId("current_node")
-                            .setLabel("current node")
-                            .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
-                                @Override
-                                public void accept(NodeElementType.ShortViz.Builder builder) {
-                                    builder.setFillColor(GraphvizColor.WHITE);
-                                    builder.setBorderColor(currentNodeColor);
-                                }
-                            })
-                            .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
-                                @Override
-                                public void accept(NodeElementType.FullViz.Builder builder) {
-                                    builder.setHeaderColor(GraphvizColor.WHITE);
-                                    builder.setBorderColor(currentNodeColor);
-                                }
-                            })
-                            .build()
-            );
+        private NodeElementType createCurrentNodeElementType() {
+            return NodeElementType.SIMPLE_NODE.copy()
+                    .setElementId("current_node")
+                    .setLabel("current node")
+                    .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                        @Override
+                        public void accept(NodeElementType.ShortViz.Builder builder) {
+                            builder.setFillColor(GraphvizColor.WHITE);
+                            builder.setBorderColor(currentNodeColor);
+                        }
+                    })
+                    .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                        @Override
+                        public void accept(NodeElementType.FullViz.Builder builder) {
+                            builder.setHeaderColor(GraphvizColor.WHITE);
+                            builder.setBorderColor(currentNodeColor);
+                        }
+                    })
+                    .build();
         }
 
-        private void addErrorNodeElementType() {
-            elementsTypes.add(
-                    NodeElementType.SIMPLE_NODE.copy()
-                            .setElementId("error_node")
-                            .setLabel("error node")
-                            .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
-                                @Override
-                                public void accept(NodeElementType.ShortViz.Builder builder) {
-                                    builder.setFillColor(GraphvizColor.WHITE);
-                                    builder.setBorderColor(errorNodeColor);
-                                }
-                            })
-                            .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
-                                @Override
-                                public void accept(NodeElementType.FullViz.Builder builder) {
-                                    builder.setHeaderColor(GraphvizColor.WHITE);
-                                    builder.setBorderColor(errorNodeColor);
-                                }
-                            })
-                            .build()
-            );
+        private NodeElementType createErrorNodeElementType() {
+            return NodeElementType.SIMPLE_NODE.copy()
+                    .setElementId("error_node")
+                    .setLabel("error node")
+                    .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                        @Override
+                        public void accept(NodeElementType.ShortViz.Builder builder) {
+                            builder.setFillColor(GraphvizColor.WHITE);
+                            builder.setBorderColor(errorNodeColor);
+                        }
+                    })
+                    .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                        @Override
+                        public void accept(NodeElementType.FullViz.Builder builder) {
+                            builder.setHeaderColor(GraphvizColor.WHITE);
+                            builder.setBorderColor(errorNodeColor);
+                        }
+                    })
+                    .build();
+
         }
 
     }

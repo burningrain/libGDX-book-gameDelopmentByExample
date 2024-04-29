@@ -114,7 +114,6 @@ public class FullDotVizModePainter implements DotVizModePainter {
 
         NodeElementType.FullViz fullData = nodeType.getFullData();
         String headerColor = fullData.headerColor;
-        FullModeColorSchema fullModeSchema = fullData.colorSchema;
 
         StringBuilder builder = new StringBuilder();
         if (level == 0) {

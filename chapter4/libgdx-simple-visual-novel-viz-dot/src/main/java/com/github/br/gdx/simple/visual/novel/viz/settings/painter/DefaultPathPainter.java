@@ -2,13 +2,13 @@ package com.github.br.gdx.simple.visual.novel.viz.settings.painter;
 
 import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
-import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.utils.NullObjects;
-import com.github.br.gdx.simple.visual.novel.viz.DotUtils;
-import com.github.br.gdx.simple.visual.novel.viz.PLotViz;
-import com.github.br.gdx.simple.visual.novel.viz.SceneViz;
+import com.github.br.gdx.simple.visual.novel.viz.*;
+import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
+import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.viz.settings.DotVizSettings;
+import com.github.br.gdx.simple.visual.novel.viz.settings.color.DotColorsSchema;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,14 +60,27 @@ public class DefaultPathPainter implements PathPainter {
                 indentMap.put(indent, DotUtils.repeatString(" ", indent * 4));
                 continue;
             }
-            builder
-                    .append("<TR>").append("\n")
-                        .append("<TD ALIGN=\"RIGHT\">").append(counter).append("</TD>").append("\n")
-                        .append("<TD ALIGN=\"RIGHT\">").append(indent).append("</TD>").append("\n")
-                    .append("<TD ALIGN=\"RIGHT\">").append(getNodeType(scenes, currentState)).append("</TD>").append("\n")
-                        .append("<TD>").append(currentState.sceneId.getId()).append("</TD>").append("\n")
-                        .append("<TD ALIGN=\"LEFT\">").append(indentMap.get(indent)).append(currentState.nodeId.getId()).append("</TD>").append("\n")
-                    .append("</TR>").append("\n")
+
+            NodeWrapperViz<?> nodeWrapperViz = getNodeType(scenes, currentState);
+            String pathNodeColor = getPathNodeColor(settings, nodeWrapperViz);
+            builder.append("<TR>").append("\n");
+
+            builder.append("<TD ALIGN=\"RIGHT\">").append(counter).append("</TD>").append("\n")
+                    .append("<TD ALIGN=\"RIGHT\">").append(indent).append("</TD>").append("\n")
+                    .append("<TD ALIGN=\"RIGHT\">").append(nodeWrapperViz.nodeType.name()).append("</TD>").append("\n");
+
+            builder.append("<TD");
+            if (pathNodeColor != null) {
+                builder.append(" BGCOLOR=\"").append(pathNodeColor).append("\"");
+            }
+            builder.append(">").append(currentState.sceneId.getId()).append("</TD>").append("\n");
+
+            builder.append("<TD ALIGN=\"LEFT\"");
+            if (pathNodeColor != null) {
+                builder.append(" BGCOLOR=\"").append(pathNodeColor).append("\"");
+            }
+            builder.append(">").append(indentMap.get(indent)).append(currentState.nodeId.getId()).append("</TD>").append("\n");
+            builder.append("</TR>").append("\n")
             ;
             counter++;
         }
@@ -78,11 +91,23 @@ public class DefaultPathPainter implements PathPainter {
         return builder.toString();
     }
 
-    private String getNodeType(Map<ElementId, ? extends SceneViz<?>> scenes, CurrentState currentState) {
+    private String getPathNodeColor(DotVizSettings settings, NodeWrapperViz<?> nodeWrapperViz) {
+        DotColorsSchema colorSchema = settings.getColorSchema();
+        ElementTypeDeterminant typeDeterminant = colorSchema.getTypeDeterminant();
+        NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(nodeWrapperViz.node);
+        NodeElementType nodeType = colorSchema.getElementsTypes().get(nodeElementTypeId);
+
+        String fillColor = nodeType.getShortData().fillColor;
+        String headerColor = nodeType.getFullData().headerColor;
+        DotVizSettings.NodeInfoType nodeInfoType = settings.getNodeInfoType();
+
+        return DotVizSettings.NodeInfoType.SHORT == nodeInfoType ? fillColor : headerColor;
+    }
+
+    private NodeWrapperViz<?> getNodeType(Map<ElementId, ? extends SceneViz<?>> scenes, CurrentState currentState) {
         SceneViz<?> sceneViz = scenes.get(currentState.sceneId);
         NodeElementVizData nodeElementVizData = sceneViz.getNodes().get(currentState.nodeId);
-        NodeType nodeType = nodeElementVizData.getNodeWrapper().nodeType;
-        return nodeType.name();
+        return nodeElementVizData.getNodeWrapper();
     }
 
 }
