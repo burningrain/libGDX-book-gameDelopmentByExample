@@ -142,10 +142,12 @@ public class PlotDotVisitorTest {
         plot.execute(1);
         plot.execute(1);
 
-        plot.execute(1); // d_1
+        //plot.execute(1); // d_1
 
         System.out.println("--------------------- FULL INFO ---------------------");
-        System.out.println(plot.getPlotAsString(new PlotVizVisitorBuilder<CustomNodeVisitor>(dotVizSettings), 1));
+        System.out.println(plot.getPlotAsString(new PlotVizVisitorBuilder<CustomNodeVisitor>(
+                dotVizSettings.copy().setNodeInfoType(DotVizSettings.NodeInfoType.FULL).build()
+        ), 1));
         System.out.println("--------------------- SHORT INFO ---------------------");
         System.out.println(plot.getPlotAsString(
                 new PlotVizVisitorBuilder<CustomNodeVisitor>(

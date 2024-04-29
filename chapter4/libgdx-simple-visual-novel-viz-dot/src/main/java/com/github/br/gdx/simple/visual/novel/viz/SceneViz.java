@@ -14,7 +14,7 @@ public class SceneViz<T extends NodeVisitor> {
     private final LinkedHashMap<ElementId, Edge<?>> edges = new LinkedHashMap<>();
     private ElementId beginNodeId;
 
-    public void putNode(ElementId nodeId, Node<?, T> node) {
+    public void putNode(ElementId nodeId, NodeWrapperViz<T> node) {
         nodes.put(nodeId, new NodeElementVizData(nodeId, node));
     }
 

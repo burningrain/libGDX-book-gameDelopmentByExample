@@ -142,6 +142,7 @@ public class DotColorsSchema {
         public DotColorsSchema build() {
             addVisitedNodeElementType();
             addCurrentNodeElementType();
+            addErrorNodeElementType();
 
             return new DotColorsSchema(this);
         }
@@ -186,6 +187,29 @@ public class DotColorsSchema {
                                 public void accept(NodeElementType.FullViz.Builder builder) {
                                     builder.setHeaderColor(GraphvizColor.WHITE);
                                     builder.setBorderColor(currentNodeColor);
+                                }
+                            })
+                            .build()
+            );
+        }
+
+        private void addErrorNodeElementType() {
+            elementsTypes.add(
+                    NodeElementType.SIMPLE_NODE.copy()
+                            .setElementId("error_node")
+                            .setLabel("error node")
+                            .setShortDataBuilder(new Supplier<NodeElementType.ShortViz.Builder>() {
+                                @Override
+                                public void accept(NodeElementType.ShortViz.Builder builder) {
+                                    builder.setFillColor(GraphvizColor.WHITE);
+                                    builder.setBorderColor(errorNodeColor);
+                                }
+                            })
+                            .setFullDataBuilder(new Supplier<NodeElementType.FullViz.Builder>() {
+                                @Override
+                                public void accept(NodeElementType.FullViz.Builder builder) {
+                                    builder.setHeaderColor(GraphvizColor.WHITE);
+                                    builder.setBorderColor(errorNodeColor);
                                 }
                             })
                             .build()

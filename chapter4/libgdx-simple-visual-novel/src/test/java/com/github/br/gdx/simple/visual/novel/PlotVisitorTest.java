@@ -120,8 +120,8 @@ public class PlotVisitorTest {
         plot.accept(new PlotVisitor<CustomNodeVisitor>() {
 
             @Override
-            public void visitNode(ElementId sceneId, ElementId nodeId, Node<?, CustomNodeVisitor> node) {
-                node.accept(sceneId, nodeId, customNodeVisitor);
+            public void visitNode(ElementId sceneId, ElementId nodeId, Node<?, CustomNodeVisitor> node, NodeType nodeType) {
+                node.accept(sceneId, nodeId, nodeType, customNodeVisitor);
             }
 
             @Override

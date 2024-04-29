@@ -42,7 +42,7 @@ public class ExceptionHandlerTest {
             }
 
             @Override
-            public void accept(ElementId sceneId, ElementId nodeId, CustomNodeVisitor visitor) {
+            public void accept(ElementId sceneId, ElementId nodeId, NodeType nodeType, CustomNodeVisitor visitor) {
 
             }
         });
@@ -103,7 +103,7 @@ public class ExceptionHandlerTest {
             }
 
             @Override
-            public void accept(ElementId sceneId, ElementId nodeId, CustomNodeVisitor visitor) {
+            public void accept(ElementId sceneId, ElementId nodeId, NodeType nodeType, CustomNodeVisitor visitor) {
 
             }
         });

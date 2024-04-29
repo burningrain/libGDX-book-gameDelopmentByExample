@@ -146,8 +146,8 @@ public class Scene<UC extends UserContext, V extends NodeVisitor<?>> {
     public void accept(final ElementId sceneId, final PlotVisitor plotVisitor) {
         graph.accept(new GraphVisitor<Node<UC, V>, Edge>() {
             @Override
-            public void visitNode(GraphElementId nodeId, Node<UC, V> node) {
-                plotVisitor.visitNode(sceneId, SceneUtils.toId(nodeId), node);
+            public void visitNode(GraphElementId nodeId, Node<UC, V> node, NodeType nodeType) {
+                plotVisitor.visitNode(sceneId, SceneUtils.toId(nodeId), node, nodeType);
             }
 
             @Override

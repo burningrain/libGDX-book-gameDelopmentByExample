@@ -1,5 +1,6 @@
 package com.github.br.gdx.simple.visual.novel.viz.settings.painter;
 
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementVizData;
 import com.github.br.gdx.simple.visual.novel.viz.settings.DotVizSettings;
@@ -32,12 +33,15 @@ public class ShortDotVizModePainter implements DotVizModePainter {
         DotColorsSchema colorSchema = settings.getColorSchema();
         NodeElementType.ShortViz shortData = nodeType.getShortData();
 
+        NodeType processNodeType = value.getNodeWrapper().nodeType;
+        String type = NodeType.WAITING_INPUT == processNodeType? "w" : "i";
+
         StringBuilder builder = new StringBuilder();
         builder
                 .append(nodeId)
                 .append(" [\n")
                 .append("label=\"")
-                .append(value.getNodeId().getId())
+                .append(value.getNodeId().getId()).append("\n[" + type + "]")
                 .append("\"").append("\n")
                 .append("shape=").append(shortData.shape).append("\n");
 

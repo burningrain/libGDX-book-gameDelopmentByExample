@@ -4,6 +4,7 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
 
@@ -15,8 +16,8 @@ public class DefaultPlotVisitor<V extends NodeVisitor> implements PlotVisitor<V>
     private final DefaultNodeVisitor defaultNodeVisitor = new DefaultNodeVisitor();
 
     @Override
-    public void visitNode(ElementId sceneId, ElementId nodeId, Node<?, V> node) {
-        node.accept(sceneId, nodeId, (V) defaultNodeVisitor); //TODO кривота тут. про дженерики прочесть все-таки книгу
+    public void visitNode(ElementId sceneId, ElementId nodeId, Node<?, V> node, NodeType nodeType) {
+        node.accept(sceneId, nodeId, nodeType, (V) defaultNodeVisitor); //TODO кривота тут. про дженерики прочесть все-таки книгу
         builder.append(defaultNodeVisitor.getData());
     }
 

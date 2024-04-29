@@ -35,7 +35,7 @@ public class DotVizConverter implements VizConverter {
 
         List<CurrentState> path = pLotViz.getPath();
         if (settings.isShowPath() && path != null && !path.isEmpty()) {
-            String pathSubgraph = settings.getPathPainter().createPath(settings, pLotViz.getUserContext(), path);
+            String pathSubgraph = settings.getPathPainter().createPath(settings, pLotViz, path);
             builder.append(pathSubgraph).append("\n");
         }
 
@@ -131,7 +131,7 @@ public class DotVizConverter implements VizConverter {
         HashSet<ElementId> visitedNodes = new HashSet<>();
         for (Map.Entry<ElementId, NodeElementVizData> nodeEntry : nodes.entrySet()) {
             NodeElementVizData value = nodeEntry.getValue();
-            if (DotUtils.isSceneLink(value.getNode())) {
+            if (DotUtils.isSceneLink(value.getNodeWrapper().node)) {
                 sceneLinks.add(value);
             }
 
@@ -171,7 +171,7 @@ public class DotVizConverter implements VizConverter {
         // отрисовка вложенных подсценариев
         for (NodeElementVizData sceneLink : sceneLinks) {
             String cp = parentPath + sceneId.getId() + "." + sceneLink.getNodeId().getId();
-            ElementId sceneLinkId = DotUtils.extractSceneLinkId(sceneLink.getNode());
+            ElementId sceneLinkId = DotUtils.extractSceneLinkId(sceneLink.getNodeWrapper().node);
             printScene(settings, result, sceneLink.getNodeId().getId(), sceneLinkId, scenes, nodePaths, cp, currentNode, isHasException, exceptionMessage);
             // создаем связь к подсценарию
             String parentNodeLabel = sceneLink.getNodeId().getId();
@@ -230,7 +230,7 @@ public class DotVizConverter implements VizConverter {
     ) {
         DotColorsSchema colorSchema = settings.getColorSchema();
         ElementTypeDeterminant typeDeterminant = colorSchema.getTypeDeterminant();
-        NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(value.getNode());
+        NodeElementTypeId nodeElementTypeId = typeDeterminant.determineType(value.getNodeWrapper().node);
         NodeElementType nodeType = colorSchema.getElementsTypes().get(nodeElementTypeId);
 
         return settings.getCurrentDotVizModePainter().createNodeInfo(settings, nodeType, nodeId, label, value, isVisited, isCurrentNode, isHasException);

@@ -8,6 +8,6 @@ public interface Node<UC extends UserContext, V extends NodeVisitor> {
 
     NodeResult execute(PlotContext<?, UC> plotContext, boolean isVisited);
 
-    void accept(ElementId sceneId, ElementId nodeId, V visitor);
+    void accept(ElementId sceneId, ElementId nodeId, NodeType nodeType, V visitor);
 
 }

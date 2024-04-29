@@ -4,6 +4,7 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.plot.visitor.PlotVisitor;
 import com.github.br.gdx.simple.visual.novel.utils.Utils;
@@ -28,8 +29,8 @@ public class PlotVizVisitorBuilder<T extends NodeVisitor> implements PlotVisitor
     }
 
     @Override
-    public void visitNode(ElementId sceneId, ElementId nodeId, Node<?, T> node) {
-        pLotViz.addNode(sceneId, nodeId, node);
+    public void visitNode(ElementId sceneId, ElementId nodeId, Node<?, T> node, NodeType nodeType) {
+        pLotViz.addNode(sceneId, nodeId, node, nodeType);
     }
 
     @Override

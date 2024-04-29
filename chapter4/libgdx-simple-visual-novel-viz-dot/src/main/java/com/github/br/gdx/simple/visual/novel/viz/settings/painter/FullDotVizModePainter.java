@@ -1,8 +1,11 @@
 package com.github.br.gdx.simple.visual.novel.viz.settings.painter;
 
+import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.node.CompositeNode;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.viz.DotUtils;
+import com.github.br.gdx.simple.visual.novel.viz.NodeWrapperViz;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementType;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementTypeId;
 import com.github.br.gdx.simple.visual.novel.viz.data.NodeElementVizData;
@@ -51,7 +54,7 @@ public class FullDotVizModePainter implements DotVizModePainter {
             builder.append("color=").append(colorSchema.getVisitedNodesColor()).append("\n");
             builder.append("style=filled, fillcolor=").append(colorSchema.getVisitedNodesColor()).append("\n");
         } else if (isCurrentNode) {
-            String color = isHasException? colorSchema.getErrorNodeColor() : colorSchema.getCurrentNodeColor();
+            String color = isHasException ? colorSchema.getErrorNodeColor() : colorSchema.getCurrentNodeColor();
             builder.append("color=").append(color).append("\n");
             builder.append("style=filled, fillcolor=").append(color).append("\n");
         }
@@ -61,37 +64,44 @@ public class FullDotVizModePainter implements DotVizModePainter {
     }
 
     private String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, NodeElementVizData value) {
-        return createLabelFullNodeInfo(settings, nodeType, value.getNodeId().getId(), value.getNode());
+        return createLabelFullNodeInfo(settings, nodeType, value.getNodeWrapper());
     }
 
-    public String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node) {
+    private String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, NodeWrapperViz<?> nodeWrapper) {
         StringBuilder builder = new StringBuilder();
         builder
                 .append("<<TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\">")
-                .append(createLabelFullNodeInfo(settings, nodeType, nodeId, node, 0))
+                .append(createLabelFullNodeInfo(settings, nodeType, nodeWrapper, 0))
                 .append("</TABLE>>");
 
         return builder.toString();
     }
 
-    private String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node, int level) {
+    private String createLabelFullNodeInfo(DotVizSettings settings, NodeElementType nodeType, NodeWrapperViz<?> nodeWrapper, int level) {
+        Node<?, ?> node = nodeWrapper.node;
+
         StringBuilder result = new StringBuilder();
-        result.append(createFullInfoHeader(settings, nodeType, nodeId, node, level));
-        result.append(createFullInfoBody(settings, nodeType, nodeId, node, settings.getVizDataParamExtractor().extractNodeParams(node)));
+        result.append(createFullInfoHeader(settings, nodeType, nodeWrapper, level));
+        result.append(createFullInfoBody(settings, nodeType, nodeWrapper, settings.getVizDataParamExtractor().extractNodeParams(node)));
 
         if (node instanceof CompositeNode) {
             level++;
             CompositeNode<?, ?> compositeNode = ((CompositeNode<?, ?>) node);
             for (Node<?, ?> compositeInnerNode : compositeNode.getNodes()) {
                 NodeElementType nodeElementType = extractNodeElementType(settings, compositeInnerNode);
-                result.append(createLabelFullNodeInfo(settings, nodeElementType, "", compositeInnerNode, level));
+
+                NodeWrapperViz<?> compositeInnerNodeWrapper = NodeWrapperViz.of(ElementId.of(""), nodeWrapper.nodeId, compositeInnerNode, NodeType.IMMEDIATELY);
+                result.append(createLabelFullNodeInfo(settings, nodeElementType, compositeInnerNodeWrapper, level));
             }
         }
 
         return result.toString();
     }
 
-    protected String createFullInfoHeader(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node, int level) {
+    protected String createFullInfoHeader(DotVizSettings settings, NodeElementType nodeType, NodeWrapperViz<?> nodeWrapper, int level) {
+        String nodeId = nodeWrapper.nodeId.getId();
+        Node<?, ?> node = nodeWrapper.node;
+
         String spaces = DotUtils.repeatString(" ", level * 2);
         String fullNodeId = nodeId + " " + createAdditionalHeaderInfoNodeId(node);
 
@@ -109,9 +119,14 @@ public class FullDotVizModePainter implements DotVizModePainter {
         StringBuilder builder = new StringBuilder();
         if (level == 0) {
             builder
-                    .append("<TR>")
-                    .append("<TD BGCOLOR=\"" + headerColor + "\" ").append(align).append(">")
+                    .append("<TR>").append("<TD BGCOLOR=\"").append(headerColor).append("\" ").append(align).append(">")
                     .append(fullNodeId)
+                    .append("</TD>")
+                    .append("</TR>")
+            ;
+            builder
+                    .append("<TR>").append("<TD BGCOLOR=\"").append(headerColor).append("\" ").append(align).append(">")
+                    .append(nodeWrapper.nodeType.name())
                     .append("</TD>")
                     .append("</TR>")
             ;
@@ -127,7 +142,12 @@ public class FullDotVizModePainter implements DotVizModePainter {
         return builder.toString();
     }
 
-    protected String createFullInfoBody(DotVizSettings settings, NodeElementType nodeType, String nodeId, Node<?, ?> node, Map<String, String> customParams) {
+    protected String createFullInfoBody(
+            DotVizSettings settings,
+            NodeElementType nodeType,
+            NodeWrapperViz<?> nodeWrapper,
+            Map<String, String> customParams
+    ) {
         if (customParams == null || customParams.isEmpty()) {
             return "";
         }
@@ -136,11 +156,9 @@ public class FullDotVizModePainter implements DotVizModePainter {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : customParams.entrySet()) {
             builder
-                    .append("<TR>")
-                    .append("<TD BGCOLOR=\"" + fullModeSchema.getCustomParamNameColor(nodeId, node, customParams, entry.getKey()) + "\"").append(">")
+                    .append("<TR>").append("<TD BGCOLOR=\"").append(fullModeSchema.getCustomParamNameColor(nodeWrapper, customParams, entry.getKey())).append("\"").append(">")
                     .append(entry.getKey())
-                    .append("</TD>")
-                    .append("<TD BGCOLOR=\"" + fullModeSchema.getCustomParamValueColor(nodeId, node, customParams, entry.getKey(), entry.getValue()) + "\"").append(">")
+                    .append("</TD>").append("<TD BGCOLOR=\"").append(fullModeSchema.getCustomParamValueColor(nodeWrapper, customParams, entry.getKey(), entry.getValue())).append("\"").append(">")
                     .append(entry.getValue())
                     .append("</TD>")
                     .append("</TR>")

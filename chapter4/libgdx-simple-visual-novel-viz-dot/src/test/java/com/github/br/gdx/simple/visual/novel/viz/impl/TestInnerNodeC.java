@@ -6,6 +6,7 @@ import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResult;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeResultType;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 
 public class TestInnerNodeC<T extends UserContext> implements Node<T, CustomNodeVisitor> {
     @Override
@@ -14,7 +15,7 @@ public class TestInnerNodeC<T extends UserContext> implements Node<T, CustomNode
     }
 
     @Override
-    public void accept(ElementId sceneId, ElementId nodeId, CustomNodeVisitor visitor) {
+    public void accept(ElementId sceneId, ElementId nodeId, NodeType nodeType, CustomNodeVisitor visitor) {
     }
 
 }

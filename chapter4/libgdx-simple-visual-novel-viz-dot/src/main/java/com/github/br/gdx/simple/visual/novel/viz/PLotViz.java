@@ -4,6 +4,7 @@ import com.github.br.gdx.simple.visual.novel.api.ElementId;
 import com.github.br.gdx.simple.visual.novel.api.context.CurrentState;
 import com.github.br.gdx.simple.visual.novel.api.context.UserContext;
 import com.github.br.gdx.simple.visual.novel.api.node.Node;
+import com.github.br.gdx.simple.visual.novel.api.node.NodeType;
 import com.github.br.gdx.simple.visual.novel.api.node.NodeVisitor;
 import com.github.br.gdx.simple.visual.novel.api.scene.Edge;
 
@@ -19,13 +20,13 @@ public class PLotViz<T extends NodeVisitor> {
     private Exception exception;     // nullable
     private UserContext userContext; // nullable
 
-    public void addNode(ElementId sceneId, ElementId nodeId, Node<?, T> node) {
+    public void addNode(ElementId sceneId, ElementId nodeId, Node<?, T> node, NodeType nodeType) {
         SceneViz<T> sceneViz = scenes.get(sceneId);
         if (sceneViz == null) {
             sceneViz = new SceneViz<>();
             scenes.put(sceneId, sceneViz);
         }
-        sceneViz.putNode(nodeId, node);
+        sceneViz.putNode(nodeId, NodeWrapperViz.<T>of(sceneId, nodeId, node, nodeType));
     }
 
     public void addEdge(ElementId sceneId, ElementId nodeId, Edge<?> edge) {

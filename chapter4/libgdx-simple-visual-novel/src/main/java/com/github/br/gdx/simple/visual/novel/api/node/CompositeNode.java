@@ -51,8 +51,8 @@ public class CompositeNode<UC extends UserContext, V extends NodeVisitor> implem
     }
 
     @Override
-    public void accept(ElementId sceneId, ElementId nodeId, V visitor) {
-        visitor.visit(sceneId, nodeId, this);
+    public void accept(ElementId sceneId, ElementId nodeId, NodeType nodeType, V visitor) {
+        visitor.visit(sceneId, nodeId, nodeType, this);
     }
 
 }

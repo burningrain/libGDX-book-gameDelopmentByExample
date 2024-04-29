@@ -63,7 +63,8 @@ public class Graph<N, E> {
 
     public void accept(GraphVisitor<N, E> graphVisitor) {
         for (Map.Entry<GraphElementId, NodeWrapper<N, E>> nodesEntry : nodes.entrySet()) {
-            graphVisitor.visitNode(nodesEntry.getKey(), nodesEntry.getValue().getNode());
+            NodeWrapper<N, E> value = nodesEntry.getValue();
+            graphVisitor.visitNode(nodesEntry.getKey(), value.getNode(), value.getNodeType());
         }
         for (Map.Entry<GraphElementId, EdgeWrapper<N, E>> edgesEntry : edges.entrySet()) {
             graphVisitor.visitEdge(edgesEntry.getKey(), edgesEntry.getValue().getEdge());
