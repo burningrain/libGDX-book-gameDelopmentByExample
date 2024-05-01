@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="80" height="30" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#417c5c" nextlayerid="4" nextobjectid="26">
+ <tileset firstgid="1" source="floor.tsx"/>
+ <tileset firstgid="8" source="collectable.tsx"/>
+ <objectgroup id="3" name="Collectables" locked="1">
+  <object id="8" gid="8" x="193.333" y="399.333" width="20" height="18"/>
+  <object id="9" gid="8" x="257.667" y="399.333" width="20" height="18"/>
+  <object id="10" gid="8" x="432.667" y="399.667" width="20" height="18"/>
+  <object id="11" gid="8" x="369.333" y="399" width="20" height="18"/>
+  <object id="12" gid="8" x="97.3333" y="319.667" width="20" height="18"/>
+  <object id="13" gid="8" x="529.333" y="318.667" width="20" height="18"/>
+  <object id="14" gid="8" x="312.75" y="399.75" width="20" height="18"/>
+  <object id="16" gid="8" x="465.5" y="367" width="20" height="18"/>
+  <object id="17" gid="8" x="161" y="367" width="20" height="18"/>
+  <object id="18" gid="8" x="736.667" y="255" width="20" height="18"/>
+  <object id="19" gid="8" x="975.333" y="174.333" width="20" height="18"/>
+  <object id="20" gid="8" x="1184.67" y="142.333" width="20" height="18"/>
+  <object id="21" gid="8" x="1087.33" y="112.333" width="20" height="18"/>
+  <object id="22" gid="8" x="1202" y="32.3333" width="20" height="18"/>
+  <object id="23" gid="8" x="1138" y="351.667" width="20" height="18"/>
+  <object id="24" gid="8" x="912.667" y="445.667" width="20" height="18"/>
+  <object id="25" gid="8" x="912.667" y="335.667" width="20" height="18"/>
+ </objectgroup>
+ <layer id="1" name="platforms" width="80" height="30">
+  <data encoding="base64" compression="zlib">
+   eJztl1kOwyAMBaOu979xVbWo1H3eIKAUvZGsfISYMCxxto1kuIogOeivD/rrg/7auYMgGM0R/fVBf33Qn07EC/31we9vH/T3S2Yv0t832fOM/j6gethzSH8vNHdWzYyeIz7F1Q0E8VndX3Qfte67lf3NOIui5+S/MWs8K/qrx3De4mOa7Xs0LX1JdyWyuUaN8fSOy4DckkvVXwTkDTmM5qqve3FUf3LdyX8BzZ9VF1t9tJx3M8/ITF9oz5Y5LlfkT8tp1SSZQHnrOR3tL9IXcld7s/xZ+Z7tV/cXWXcZfzJXrz9vvx8lrHWH/FlzUX9v9vDnvZN2D7X12kXzSRdRf/I5bR6O6m8Px2gtafWKV8eM9vcAsBgMMQ==
+  </data>
+ </layer>
+</map>

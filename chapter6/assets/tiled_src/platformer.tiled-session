@@ -1,0 +1,46 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        ":/automap-tiles.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 3
+        },
+        "floor.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "pete.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 352.33333333333326,
+                "y": 137
+            }
+        }
+    },
+    "last.externalTilesetPath": "D:/projects/libGDX-book-gameDelopmentByExample/chapter6/assets/tiled_src",
+    "last.imagePath": "D:/projects/libGDX-book-gameDelopmentByExample/chapter6/assets",
+    "map.height": 30,
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": null,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+    ],
+    "project": "platformer.tiled-project",
+    "recentFiles": [
+        "pete.tmx",
+        "floor.tsx"
+    ],
+    "tileset.lastUsedFilter": "Файлы набора тайлов Tiled (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
+}
