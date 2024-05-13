@@ -69,6 +69,8 @@ public class GameScreenStateManager implements Screen {
 
         showScreen(loadingScreen);
         this.isLoading = true;
+
+        System.gc();
     }
 
     private void hideScreen(Screen screen) {
@@ -90,10 +92,7 @@ public class GameScreenStateManager implements Screen {
     @Override
     public void render(float delta) {
         if (gameManager.assetManager.update()) {
-            isLoading = false;
-            hideScreen(loadingScreen);
-            loadingScreen.reset();
-            showScreen(currentState.screen);
+            handleLoadingComplete();
         } else {
             loadingScreen.updateProgress(gameManager.assetManager.getProgress());
         }
@@ -103,6 +102,13 @@ public class GameScreenStateManager implements Screen {
         } else {
             currentState.screen.render(delta);
         }
+    }
+
+    private void handleLoadingComplete() {
+        isLoading = false;
+        hideScreen(loadingScreen);
+        loadingScreen.reset();
+        showScreen(currentState.screen);
     }
 
     @Override
