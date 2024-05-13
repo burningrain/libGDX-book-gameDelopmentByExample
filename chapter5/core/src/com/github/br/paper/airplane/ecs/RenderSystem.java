@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -24,7 +23,6 @@ import com.github.br.paper.airplane.ecs.component.TransformComponent;
 public class RenderSystem extends EntitySystem {
 
     private final Family family = Family.all(TransformComponent.class, TextureComponent.class).get();
-
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
     private final ComponentMapper<TextureComponent> textureMapper = ComponentMapper.getFor(TextureComponent.class);
 
@@ -45,9 +43,9 @@ public class RenderSystem extends EntitySystem {
         this.worldHeight = worldHeight;
 
         camera = new OrthographicCamera();
-        camera.position.set(worldWidth / 2, worldHeight / 2, 0);
         camera.update();
         viewport = new FitViewport(worldWidth, worldHeight, camera);
+        viewport.apply(true);
 
         this.box2dWorld = box2dWorld;
         debugRenderer = new Box2DDebugRenderer();
@@ -79,14 +77,14 @@ public class RenderSystem extends EntitySystem {
 
             spriteBatch.draw(
                     textureComponent.region,
-                    transformComponent.x,
-                    transformComponent.y,
-                    0,
-                    0,
+                    transformComponent.position.x,
+                    transformComponent.position.y,
+                    transformComponent.origin.x,
+                    transformComponent.origin.y,
                     textureComponent.region.getRegionWidth(),
                     textureComponent.region.getRegionHeight(),
-                    1,
-                    1,
+                    transformComponent.scale.x,
+                    transformComponent.scale.y,
                     transformComponent.angle
             );
         }

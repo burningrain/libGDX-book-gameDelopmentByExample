@@ -12,6 +12,7 @@ import com.github.br.paper.airplane.ecs.PhysicsSystem;
 import com.github.br.paper.airplane.ecs.RenderSystem;
 import com.github.br.paper.airplane.ecs.component.TextureComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
+import com.github.br.paper.airplane.level.GameEntityFactory;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 
 public class Level0Screen extends AbstractGameScreen {
@@ -30,19 +31,10 @@ public class Level0Screen extends AbstractGameScreen {
         engine.addSystem(new PhysicsSystem(world));
         engine.addSystem(renderSystem);
 
-        TransformComponent transformComponent = new TransformComponent();
-        transformComponent.x = GameConstants.VIRTUAL_SCREEN_WIDTH / 2;
-        transformComponent.y = GameConstants.VIRTUAL_SCREEN_HEIGHT / 2;
-        transformComponent.angle = 125;
-
-        TextureComponent textureComponent = new TextureComponent();
-        textureComponent.region = new TextureRegion(getGameManager().assetManager.get("badlogic.jpg", Texture.class));
-
-        Entity entity = engine.createEntity();
-        entity.add(transformComponent);
-        entity.add(textureComponent);
-
-        engine.addEntity(entity);
+        // FIXME убрать после, пока для теста
+        GameEntityFactory gameEntityFactory = getGameManager().gameEntityFactory;
+        Entity badLogicLogo = gameEntityFactory.createBadLogicLogo(engine);
+        engine.addEntity(badLogicLogo);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.github.br.paper.airplane.screen.statemachine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 import com.github.br.paper.airplane.screen.loading.AssetsLoader;
@@ -91,13 +90,12 @@ public class GameScreenStateManager implements Screen {
 
     @Override
     public void render(float delta) {
-        if (gameManager.assetManager.update()) {
-            handleLoadingComplete();
-        } else {
-            loadingScreen.updateProgress(gameManager.assetManager.getProgress());
-        }
-
         if (isLoading) {
+            if (gameManager.assetManager.update()) {
+                handleLoadingComplete();
+            } else {
+                loadingScreen.updateProgress(gameManager.assetManager.getProgress());
+            }
             loadingScreen.render(delta);
         } else {
             currentState.screen.render(delta);
