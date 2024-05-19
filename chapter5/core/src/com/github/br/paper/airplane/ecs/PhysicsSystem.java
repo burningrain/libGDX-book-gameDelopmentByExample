@@ -8,13 +8,12 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
 
 public class PhysicsSystem extends EntitySystem implements ContactListener {
-
-    private static final float HALF = 0.5F;
 
     private final Family family = Family.all(TransformComponent.class, Box2dComponent.class).get();
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
@@ -23,7 +22,10 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     private final World world;
     private final Utils utils;
 
-    public PhysicsSystem(World world, Utils utils) {
+    private final GameSettings gameSettings;
+
+    public PhysicsSystem(GameSettings gameSettings, World world, Utils utils) {
+        this.gameSettings = gameSettings;
         this.world = world;
         this.utils = utils;
     }
@@ -42,9 +44,9 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
 
             Transform transform = box2dComponent.body.getTransform();
             Vector2 position = transform.getPosition();
-            transformComponent.position.x = utils.convertMetresToUnits(position.x) - transformComponent.width * HALF;
-            transformComponent.position.y = utils.convertMetresToUnits(position.y) - transformComponent.height * HALF;
-            transformComponent.angle = MathUtils.radiansToDegrees * transform.getRotation();
+            transformComponent.position.x = utils.convertMetresToUnits(position.x) - transformComponent.width / 2f;
+            transformComponent.position.y = utils.convertMetresToUnits(position.y) - transformComponent.height / 2f;
+            transformComponent.angle = MathUtils.radiansToDegrees * box2dComponent.body.getAngle();
         }
     }
 
@@ -54,8 +56,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
         // о конвертациях
 
         Vector2 position = new Vector2(
-                utils.convertUnitsToMetres(transformComponent.position.x + transformComponent.width * HALF),
-                utils.convertUnitsToMetres(transformComponent.position.y + transformComponent.height * HALF)
+                utils.convertUnitsToMetres(transformComponent.position.x + transformComponent.width / 2f),
+                utils.convertUnitsToMetres(transformComponent.position.y + transformComponent.height / 2f)
         );
         body.setTransform(position, MathUtils.degreesToRadians * transformComponent.angle);
         Shape shape = createShape(
@@ -78,7 +80,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
             return circleShape;
         } else if (Shape.Type.Polygon == shapeType) {
             PolygonShape polygonShape = new PolygonShape();
-            polygonShape.setAsBox(width * HALF,height * HALF);
+            polygonShape.setAsBox(width / 2f,height / 2f);
             return polygonShape;
         }
 

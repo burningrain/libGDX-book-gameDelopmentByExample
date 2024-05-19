@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
+import com.github.br.paper.airplane.ecs.component.HeroComponent;
 import com.github.br.paper.airplane.ecs.component.TextureComponent;
 import com.github.br.paper.airplane.level.GameComponentFactory;
 
@@ -37,12 +38,10 @@ public class GameEntityFactory {
                         gameSettings.getVirtualScreenHeight() / 2 - textureComponent.region.getRegionHeight() / 2
                 ),
                 new Vector2(1f, 1f),
-                new Vector2(0f, 0f),
                 0f,
                 textureComponent.region.getRegionWidth(),
                 textureComponent.region.getRegionHeight()
         ));
-
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -54,6 +53,8 @@ public class GameEntityFactory {
                 bodyDef,
                 null
         ));
+
+        entity.add(new HeroComponent());
 
         return entity;
     }

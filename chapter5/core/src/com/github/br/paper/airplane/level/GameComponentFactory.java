@@ -19,11 +19,11 @@ public class GameComponentFactory {
         this.assetManager = assetManager;
     }
 
-    public TransformComponent createTransformComponent(Vector2 position, Vector2 scale, Vector2 origin, float angle, float width, float height) {
+    public TransformComponent createTransformComponent(Vector2 position, Vector2 scale, float angle, float width, float height) {
         TransformComponent component = new TransformComponent();
         component.position = position;
         component.scale = scale;
-        component.origin = origin;
+        component.origin = new Vector2(width / 2f, height / 2f);
         component.angle = angle;
 
         component.width = width;

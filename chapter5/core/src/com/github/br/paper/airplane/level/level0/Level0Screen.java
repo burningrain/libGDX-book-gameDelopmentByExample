@@ -22,13 +22,13 @@ public class Level0Screen extends AbstractGameScreen {
         GameManager gameManager = this.getGameManager();
         GameSettings gameSettings = gameManager.gameSettings;
 
-        World world = new World(new Vector2(0, -10F), true);
+        World world = new World(new Vector2(0, -1f), true);
         engine = new Engine();
         renderSystem = new RenderSystem(world, gameSettings);
         renderSystem.setDrawDebugBox2d(true);
 
         engine.addSystem(new InputSystem());
-        engine.addSystem(new PhysicsSystem(world, gameManager.utils));
+        engine.addSystem(new PhysicsSystem(gameSettings, world, gameManager.utils));
         engine.addSystem(renderSystem);
 
         // FIXME убрать после, пока для теста
