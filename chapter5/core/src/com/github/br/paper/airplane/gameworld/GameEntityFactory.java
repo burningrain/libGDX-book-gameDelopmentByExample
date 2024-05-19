@@ -1,4 +1,4 @@
-package com.github.br.paper.airplane.level;
+package com.github.br.paper.airplane.gameworld;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
@@ -6,18 +6,24 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Shape;
-import com.github.br.paper.airplane.GameConstants;
+import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.TextureComponent;
+import com.github.br.paper.airplane.level.GameComponentFactory;
 
 public class GameEntityFactory {
 
     private final AssetManager assetManager;
     private final GameComponentFactory componentFactory;
 
-    public GameEntityFactory(AssetManager assetManager) {
+    private final GameSettings gameSettings;
+    private final Utils utils;
+
+    public GameEntityFactory(AssetManager assetManager, GameSettings gameSettings, Utils utils) {
         this.assetManager = assetManager;
         componentFactory = new GameComponentFactory(assetManager);
+        this.gameSettings = gameSettings;
+        this.utils = utils;
     }
 
     public Entity createBadLogicLogo(Engine engine) {
@@ -27,8 +33,8 @@ public class GameEntityFactory {
         entity.add(textureComponent);
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(
-                        GameConstants.VIRTUAL_SCREEN_WIDTH / 2 - textureComponent.region.getRegionWidth()/2,
-                        GameConstants.VIRTUAL_SCREEN_HEIGHT / 2 - textureComponent.region.getRegionHeight()/2
+                        gameSettings.getVirtualScreenWidth() / 2 - textureComponent.region.getRegionWidth() / 2,
+                        gameSettings.getVirtualScreenHeight() / 2 - textureComponent.region.getRegionHeight() / 2
                 ),
                 new Vector2(1f, 1f),
                 new Vector2(0f, 0f),

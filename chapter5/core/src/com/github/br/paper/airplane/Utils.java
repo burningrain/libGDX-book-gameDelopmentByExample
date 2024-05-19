@@ -2,15 +2,18 @@ package com.github.br.paper.airplane;
 
 public final class Utils {
 
-    private Utils() {
+    private final GameSettings gameSettings;
+
+    public Utils(GameSettings gameSettings) {
+        this.gameSettings = gameSettings;
     }
 
-    public static float convertUnitsToMetres(float pixels) {
-        return pixels / GameConstants.UNITS_PER_METER;
+    public float convertUnitsToMetres(float pixels) {
+        return pixels / gameSettings.getUnitsPerMeter();
     }
 
-    public static float convertMetresToUnits(float metres) {
-        return metres * GameConstants.UNITS_PER_METER;
+    public float convertMetresToUnits(float metres) {
+        return metres * gameSettings.getUnitsPerMeter();
     }
 
 }

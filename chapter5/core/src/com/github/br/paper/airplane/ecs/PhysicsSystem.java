@@ -5,7 +5,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -22,9 +21,11 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     private final ComponentMapper<Box2dComponent> box2dMapper = ComponentMapper.getFor(Box2dComponent.class);
 
     private final World world;
+    private final Utils utils;
 
-    public PhysicsSystem(World world) {
+    public PhysicsSystem(World world, Utils utils) {
         this.world = world;
+        this.utils = utils;
     }
 
     @Override
@@ -41,8 +42,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
 
             Transform transform = box2dComponent.body.getTransform();
             Vector2 position = transform.getPosition();
-            transformComponent.position.x = Utils.convertMetresToUnits(position.x) - transformComponent.width * HALF;
-            transformComponent.position.y = Utils.convertMetresToUnits(position.y) - transformComponent.height * HALF;
+            transformComponent.position.x = utils.convertMetresToUnits(position.x) - transformComponent.width * HALF;
+            transformComponent.position.y = utils.convertMetresToUnits(position.y) - transformComponent.height * HALF;
             transformComponent.angle = MathUtils.radiansToDegrees * transform.getRotation();
         }
     }
@@ -53,14 +54,14 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
         // о конвертациях
 
         Vector2 position = new Vector2(
-                Utils.convertUnitsToMetres(transformComponent.position.x + transformComponent.width * HALF),
-                Utils.convertUnitsToMetres(transformComponent.position.y + transformComponent.height * HALF)
+                utils.convertUnitsToMetres(transformComponent.position.x + transformComponent.width * HALF),
+                utils.convertUnitsToMetres(transformComponent.position.y + transformComponent.height * HALF)
         );
         body.setTransform(position, MathUtils.degreesToRadians * transformComponent.angle);
         Shape shape = createShape(
                 box2dComponent,
-                Utils.convertUnitsToMetres(transformComponent.width),
-                Utils.convertUnitsToMetres(transformComponent.height)
+                utils.convertUnitsToMetres(transformComponent.width),
+                utils.convertUnitsToMetres(transformComponent.height)
         );
         Fixture fixture = body.createFixture(shape, box2dComponent.density);
         body.setUserData(box2dComponent.userData);
@@ -73,7 +74,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
         Shape.Type shapeType = box2dComponent.shapeType;
         if (Shape.Type.Circle == shapeType) {
             CircleShape circleShape = new CircleShape();
-            circleShape.setRadius(Utils.convertUnitsToMetres(box2dComponent.radius)); //todo грязно
+            circleShape.setRadius(utils.convertUnitsToMetres(box2dComponent.radius)); //todo грязно
             return circleShape;
         } else if (Shape.Type.Polygon == shapeType) {
             PolygonShape polygonShape = new PolygonShape();

@@ -14,30 +14,52 @@ import com.github.br.paper.airplane.screen.loading.LoadingScreen;
 
 public class PaperAirplaneGame extends ApplicationAdapter {
 
+    private GameSettings gameSettings;
+    private Utils utils;
     private AssetManager assetManager;
     private GameManager gameManager;
 
     @Override
     public void create() {
+        gameSettings = createGameSettings();
+        utils = new Utils(gameSettings);
+
         assetManager = new AssetManager();
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+
         Box2D.init();
 
         gameManager = new GameManager();
         gameManager.init(
+                gameSettings,
+                utils,
                 assetManager,
                 new LoadingScreen(
                         new SimpleProgressBarImpl(
-                                GameConstants.PROGRESSBAR_WIDTH,
-                                GameConstants.PROGRESSBAR_HEIGHT,
-                                (GameConstants.VIRTUAL_SCREEN_WIDTH - GameConstants.PROGRESSBAR_WIDTH) / 2,
-                                (GameConstants.VIRTUAL_SCREEN_HEIGHT - GameConstants.PROGRESSBAR_HEIGHT) / 2
+                                gameSettings.getProgressBarWidth(),
+                                gameSettings.getProgressBarHeight(),
+                                (gameSettings.getVirtualScreenWidth() - gameSettings.getProgressBarWidth()) / 2,
+                                (gameSettings.getVirtualScreenHeight() - gameSettings.getProgressBarHeight()) / 2
                         ),
-                        GameConstants.VIRTUAL_SCREEN_WIDTH,
-                        GameConstants.VIRTUAL_SCREEN_HEIGHT
+                        gameSettings.getVirtualScreenWidth(),
+                        gameSettings.getVirtualScreenHeight()
                 ),
                 GameLevels.LEVEL_0
         );
+    }
+
+    private GameSettings createGameSettings() {
+        return GameSettings.builder()
+
+                .setProgressBarWidth(100)
+                .setProgressBarHeight(25)
+
+                .setVirtualScreenWidth(1280)
+                .setVirtualScreenHeight(720)
+
+                .setUnitsPerMeter(128)
+
+                .build();
     }
 
     @Override

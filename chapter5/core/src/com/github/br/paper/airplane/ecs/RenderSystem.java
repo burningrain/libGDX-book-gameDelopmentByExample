@@ -16,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.github.br.paper.airplane.GameConstants;
+import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.ecs.component.TextureComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
 
@@ -28,8 +28,6 @@ public class RenderSystem extends EntitySystem {
 
     private final SpriteBatch spriteBatch = new SpriteBatch();
 
-    private final float worldWidth;
-    private final float worldHeight;
     private Viewport viewport;
     private OrthographicCamera camera;
 
@@ -38,18 +36,20 @@ public class RenderSystem extends EntitySystem {
     private Box2DDebugRenderer debugRenderer;
     private OrthographicCamera box2dCam;
 
-    public RenderSystem(World box2dWorld, float worldWidth, float worldHeight) {
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
+    private final GameSettings gameSettings;
+
+    public RenderSystem(World box2dWorld, GameSettings gameSettings) {
+        this.gameSettings = gameSettings;
 
         camera = new OrthographicCamera();
         camera.update();
-        viewport = new FitViewport(worldWidth, worldHeight, camera);
+        viewport = new FitViewport(gameSettings.getVirtualScreenWidth(), gameSettings.getVirtualScreenHeight(), camera);
         viewport.apply(true);
 
         this.box2dWorld = box2dWorld;
         debugRenderer = new Box2DDebugRenderer();
-        box2dCam = new OrthographicCamera(GameConstants.UNIT_WIDTH, GameConstants.UNIT_HEIGHT);
+
+        box2dCam = new OrthographicCamera(gameSettings.getUnitWidth(), gameSettings.getUnitHeight());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class RenderSystem extends EntitySystem {
     }
 
     private void drawDebugBox2d() {
-        box2dCam.position.set(GameConstants.UNIT_WIDTH / 2, GameConstants.UNIT_HEIGHT / 2, 0);
+        box2dCam.position.set(gameSettings.getUnitWidth() / 2, gameSettings.getUnitHeight() / 2, 0);
         box2dCam.update();
         debugRenderer.render(box2dWorld, box2dCam.combined);
     }
