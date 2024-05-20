@@ -22,14 +22,18 @@ public class Level0Screen extends AbstractGameScreen {
         GameManager gameManager = this.getGameManager();
         GameSettings gameSettings = gameManager.gameSettings;
 
-        World world = new World(new Vector2(0, -1f), true);
         engine = new Engine();
-        renderSystem = new RenderSystem(world, gameSettings);
-        renderSystem.setDrawDebugBox2d(true);
-
+        PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils).setDrawDebugBox2d(true);
         engine.addSystem(new InputSystem());
-        engine.addSystem(new PhysicsSystem(gameSettings, world, gameManager.utils));
-        engine.addSystem(renderSystem);
+        engine.addSystem(physicsSystem);
+        engine.addSystem(renderSystem = new RenderSystem(gameSettings, new Runnable() {
+            @Override
+            public void run() {
+                if (physicsSystem.isDrawDebugBox2d()) {
+                    physicsSystem.drawDebugBox2d();
+                }
+            }
+        }));
 
         // FIXME убрать после, пока для теста
         GameEntityFactory gameEntityFactory = getGameManager().gameEntityFactory;

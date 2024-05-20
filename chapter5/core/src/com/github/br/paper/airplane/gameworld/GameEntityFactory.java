@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
@@ -45,12 +46,15 @@ public class GameEntityFactory {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.bullet = true;
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = 0;
 
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,
-                0,
-                1f,
                 bodyDef,
+                fixtureDef,
                 null
         ));
 

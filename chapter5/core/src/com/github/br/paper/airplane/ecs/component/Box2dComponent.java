@@ -10,11 +10,9 @@ public class Box2dComponent implements Component {
 
     // TODO подумать, куда лучше приткнуть это все
     public Shape.Type shapeType;
-    public float radius;
 
-    public float density = 1;
     public BodyDef bodyDef;
-    //public FixtureDef fixtureDef;
+    public FixtureDef fixtureDef;
     public Object userData;
 
     public Body body;

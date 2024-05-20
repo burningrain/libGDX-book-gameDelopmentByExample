@@ -31,40 +31,25 @@ public class RenderSystem extends EntitySystem {
     private Viewport viewport;
     private OrthographicCamera camera;
 
-    private boolean isDrawDebugBox2d;
-    private World box2dWorld;
-    private Box2DDebugRenderer debugRenderer;
-    private OrthographicCamera box2dCam;
+    private Runnable runnable;
 
     private final GameSettings gameSettings;
 
-    public RenderSystem(World box2dWorld, GameSettings gameSettings) {
+    public RenderSystem(GameSettings gameSettings, Runnable runnable) {
         this.gameSettings = gameSettings;
+        this.runnable = runnable;
 
         camera = new OrthographicCamera();
         camera.update();
         viewport = new FitViewport(gameSettings.getVirtualScreenWidth(), gameSettings.getVirtualScreenHeight(), camera);
         viewport.apply(true);
-
-        this.box2dWorld = box2dWorld;
-        debugRenderer = new Box2DDebugRenderer();
-
-        box2dCam = new OrthographicCamera(gameSettings.getUnitWidth(), gameSettings.getUnitHeight());
     }
 
     @Override
     public void update(float deltaTime) {
         clearScreen();
         drawEntities();
-        if (isDrawDebugBox2d) {
-            drawDebugBox2d();
-        }
-    }
-
-    private void drawDebugBox2d() {
-        box2dCam.position.set(gameSettings.getUnitWidth() / 2, gameSettings.getUnitHeight() / 2, 0);
-        box2dCam.update();
-        debugRenderer.render(box2dWorld, box2dCam.combined);
+        runnable.run();
     }
 
     private void drawEntities() {
@@ -111,14 +96,6 @@ public class RenderSystem extends EntitySystem {
     private void clearScreen() {
         Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, Color.BLACK.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    }
-
-    public boolean isDrawDebugBox2d() {
-        return isDrawDebugBox2d;
-    }
-
-    public void setDrawDebugBox2d(boolean drawDebugBox2d) {
-        isDrawDebugBox2d = drawDebugBox2d;
     }
 
 }

@@ -14,6 +14,11 @@ public class GameSettings {
     private final float unitWidth;
     private final float unitHeight;
 
+    private final float timeStep;
+    private final int velocityIterations;
+    private final int positionIterations;
+
+
     private GameSettings(Builder builder) {
         this.progressBarWidth = builder.progressBarWidth;
         this.progressBarHeight = builder.progressBarHeight;
@@ -25,6 +30,10 @@ public class GameSettings {
         this.unitsPerMeter = builder.unitsPerMeter;
         this.unitWidth = this.virtualScreenWidth / this.unitsPerMeter;
         this.unitHeight = this.virtualScreenHeight / this.unitsPerMeter;
+
+        this.timeStep = builder.timeStep;
+        this.velocityIterations = builder.velocityIterations;
+        this.positionIterations = builder.positionIterations;
     }
 
     public static Builder builder() {
@@ -59,6 +68,17 @@ public class GameSettings {
         return unitHeight;
     }
 
+    public float getTimeStep() {
+        return timeStep;
+    }
+
+    public int getVelocityIterations() {
+        return velocityIterations;
+    }
+
+    public int getPositionIterations() {
+        return positionIterations;
+    }
 
     public static class Builder {
 
@@ -69,6 +89,10 @@ public class GameSettings {
         private int virtualScreenHeight = 720;
 
         private float unitsPerMeter = 128f;
+
+        private float timeStep = 1/60f;
+        private int velocityIterations = 6;
+        private int positionIterations = 2;
 
         public Builder setProgressBarWidth(int progressBarWidth) {
             this.progressBarWidth = progressBarWidth;
@@ -92,6 +116,21 @@ public class GameSettings {
 
         public Builder setUnitsPerMeter(float unitsPerMeter) {
             this.unitsPerMeter = unitsPerMeter;
+            return this;
+        }
+
+        public Builder setTimeStep(float timeStep) {
+            this.timeStep = timeStep;
+            return this;
+        }
+
+        public Builder setVelocityIterations(int velocityIterations) {
+            this.velocityIterations = velocityIterations;
+            return this;
+        }
+
+        public Builder setPositionIterations(int positionIterations) {
+            this.positionIterations = positionIterations;
             return this;
         }
 

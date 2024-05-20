@@ -1,11 +1,11 @@
 package com.github.br.paper.airplane.level;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
 import com.github.br.paper.airplane.ecs.component.TextureComponent;
@@ -41,16 +41,14 @@ public class GameComponentFactory {
 
     public Box2dComponent createBox2dComponent(
             Shape.Type shapeType,
-            float radius,
-            float density,
             BodyDef bodyDef,
+            FixtureDef fixtureDef,
             Object userData
     ) {
         Box2dComponent component = new Box2dComponent();
         component.shapeType = shapeType;
-        component.radius = radius;
 
-        component.density = density;
+        component.fixtureDef = fixtureDef;
         component.bodyDef = bodyDef;
         component.userData = userData;
 

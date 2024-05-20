@@ -8,9 +8,10 @@ public class TransformComponent implements Component {
     public Vector2 position;
     public Vector2 scale;
     public Vector2 origin;
-
     public float angle;
+
     public float width;
     public float height;
+    public float radius;
 
 }

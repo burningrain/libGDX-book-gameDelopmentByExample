@@ -5,6 +5,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -15,6 +16,10 @@ import com.github.br.paper.airplane.ecs.component.TransformComponent;
 
 public class PhysicsSystem extends EntitySystem implements ContactListener {
 
+    private boolean isDrawDebugBox2d;
+    private Box2DDebugRenderer debugRenderer;
+    private OrthographicCamera box2dCam;
+
     private final Family family = Family.all(TransformComponent.class, Box2dComponent.class).get();
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
     private final ComponentMapper<Box2dComponent> box2dMapper = ComponentMapper.getFor(Box2dComponent.class);
@@ -24,15 +29,46 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
 
     private final GameSettings gameSettings;
 
-    public PhysicsSystem(GameSettings gameSettings, World world, Utils utils) {
+    private float accumulator = 0;
+
+    public boolean isDrawDebugBox2d() {
+        return isDrawDebugBox2d;
+    }
+
+    public PhysicsSystem setDrawDebugBox2d(boolean drawDebugBox2d) {
+        isDrawDebugBox2d = drawDebugBox2d;
+        return this;
+    }
+
+    public PhysicsSystem(GameSettings gameSettings, Utils utils) {
         this.gameSettings = gameSettings;
-        this.world = world;
+        this.world = new World(new Vector2(0, -3f), true);
         this.utils = utils;
+
+        debugRenderer = new Box2DDebugRenderer();
+        box2dCam = new OrthographicCamera(gameSettings.getUnitWidth(), gameSettings.getUnitHeight());
+    }
+
+    public void drawDebugBox2d() {
+        box2dCam.position.set(gameSettings.getUnitWidth() / 2, gameSettings.getUnitHeight() / 2, 0);
+        box2dCam.update();
+        debugRenderer.render(world, box2dCam.combined);
+    }
+
+    private void doPhysicsStep(float deltaTime, float timeStep, int velocityIter, int positionIter) {
+        // fixed time step
+        // max frame time to avoid spiral of death (on slow devices)
+        float frameTime = Math.min(deltaTime, 0.25f);
+        accumulator += frameTime;
+        while (accumulator >= timeStep) {
+            world.step(timeStep, velocityIter, positionIter);
+            accumulator -= timeStep;
+        }
     }
 
     @Override
     public void update (float deltaTime) {
-        world.step(1 / 60f, 6, 2);
+        doPhysicsStep(deltaTime, gameSettings.getTimeStep(), gameSettings.getVelocityIterations(), gameSettings.getPositionIterations());
 
         ImmutableArray<Entity> entities = getEngine().getEntitiesFor(family);
         for (Entity entity : entities) {
@@ -48,6 +84,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
             transformComponent.position.y = utils.convertMetresToUnits(position.y) - transformComponent.height / 2f;
             transformComponent.angle = MathUtils.radiansToDegrees * box2dComponent.body.getAngle();
         }
+
+
     }
 
     private Body createBody(World world, Box2dComponent box2dComponent, TransformComponent transformComponent) {
@@ -62,25 +100,29 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
         body.setTransform(position, MathUtils.degreesToRadians * transformComponent.angle);
         Shape shape = createShape(
                 box2dComponent,
-                utils.convertUnitsToMetres(transformComponent.width),
-                utils.convertUnitsToMetres(transformComponent.height)
+                transformComponent
         );
-        Fixture fixture = body.createFixture(shape, box2dComponent.density);
+
+        box2dComponent.fixtureDef.shape = shape;
+        Fixture fixture = body.createFixture(box2dComponent.fixtureDef);
         body.setUserData(box2dComponent.userData);
 
         shape.dispose();
         return body;
     }
 
-    private Shape createShape(Box2dComponent box2dComponent, float width, float height) {
+    private Shape createShape(Box2dComponent box2dComponent, TransformComponent transformComponent) {
         Shape.Type shapeType = box2dComponent.shapeType;
         if (Shape.Type.Circle == shapeType) {
             CircleShape circleShape = new CircleShape();
-            circleShape.setRadius(utils.convertUnitsToMetres(box2dComponent.radius)); //todo грязно
+            circleShape.setRadius(utils.convertUnitsToMetres(transformComponent.radius)); //todo грязно
             return circleShape;
         } else if (Shape.Type.Polygon == shapeType) {
             PolygonShape polygonShape = new PolygonShape();
-            polygonShape.setAsBox(width / 2f,height / 2f);
+            polygonShape.setAsBox(
+                    utils.convertUnitsToMetres(transformComponent.width) / 2f,
+                    utils.convertUnitsToMetres(transformComponent.height) / 2f
+            );
             return polygonShape;
         }
 
