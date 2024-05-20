@@ -49,7 +49,7 @@ public class GameEntityFactory {
         bodyDef.bullet = true;
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 0;
+        fixtureDef.density = 0.4f;
 
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,

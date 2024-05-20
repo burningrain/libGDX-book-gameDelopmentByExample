@@ -18,7 +18,7 @@ public class InputSystem extends EntitySystem {
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
     private final ComponentMapper<Box2dComponent> box2dMapper = ComponentMapper.getFor(Box2dComponent.class);
 
-    private final Vector2 impulse = new Vector2(0, 2);
+    private final Vector2 impulse = new Vector2(0, 3);
 
     private final InputAdapter inputAdapter = new InputAdapter() {
 
@@ -59,7 +59,7 @@ public class InputSystem extends EntitySystem {
 
         Box2dComponent box2dComponent = box2dMapper.get(hero);
         if (box2dComponent.body != null) {
-            box2dComponent.body.applyLinearImpulse(impulse, Vector2.Zero, true);
+            box2dComponent.body.applyLinearImpulse(impulse, box2dComponent.body.getWorldCenter(), true);
         }
 
         isPressed = true;
