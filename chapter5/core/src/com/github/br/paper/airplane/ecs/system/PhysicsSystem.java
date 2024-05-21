@@ -1,4 +1,4 @@
-package com.github.br.paper.airplane.ecs;
+package com.github.br.paper.airplane.ecs.system;
 
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
+import com.github.br.paper.airplane.ecs.component.DeleteComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
 
 public class PhysicsSystem extends EntitySystem implements ContactListener {
@@ -23,6 +24,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     private final Family family = Family.all(TransformComponent.class, Box2dComponent.class).get();
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
     private final ComponentMapper<Box2dComponent> box2dMapper = ComponentMapper.getFor(Box2dComponent.class);
+    private final ComponentMapper<DeleteComponent> deleteMapper = ComponentMapper.getFor(DeleteComponent.class);
 
     private final World world;
     private final Utils utils;
@@ -78,6 +80,12 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
                 box2dComponent.body = createBody(this.world, box2dComponent, transformComponent);
             }
 
+            DeleteComponent deleteComponent = deleteMapper.get(entity);
+            if (deleteComponent != null) {
+                world.destroyBody(box2dComponent.body);
+                return;
+            }
+
             Transform transform = box2dComponent.body.getTransform();
             Vector2 position = transform.getPosition();
             transformComponent.position.x = utils.convertMetresToUnits(position.x) - transformComponent.width / 2f;
@@ -88,6 +96,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
 
     }
 
+    //TODO обязательно вынести создание тела из системы в генератор сущностей, а то создает логическую кривоту и плодит ифы
     private Body createBody(World world, Box2dComponent box2dComponent, TransformComponent transformComponent) {
         Body body = world.createBody(box2dComponent.bodyDef);
         // https://stackoverflow.com/questions/53987670/libgdx-box2d-body-is-being-place-at-the-wrong-y-coordinate

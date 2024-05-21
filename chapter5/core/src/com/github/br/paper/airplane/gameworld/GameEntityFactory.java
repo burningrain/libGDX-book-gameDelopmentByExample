@@ -11,6 +11,7 @@ import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
 import com.github.br.paper.airplane.ecs.component.TextureComponent;
+import com.github.br.paper.airplane.ecs.component.WallComponent;
 import com.github.br.paper.airplane.level.GameComponentFactory;
 
 public class GameEntityFactory {
@@ -31,17 +32,20 @@ public class GameEntityFactory {
     public Entity createBadLogicLogo(Engine engine) {
         Entity entity = engine.createEntity();
 
-        TextureComponent textureComponent = componentFactory.createTextureComponent("badlogic.jpg");
-        entity.add(textureComponent);
+//        TextureComponent textureComponent = componentFactory.createTextureComponent("badlogic.jpg");
+//        entity.add(textureComponent);
+
+        int width = 128;
+        int height = 128;
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(
-                        gameSettings.getVirtualScreenWidth() / 2 - textureComponent.region.getRegionWidth() / 2,
-                        gameSettings.getVirtualScreenHeight() / 2 - textureComponent.region.getRegionHeight() / 2
+                        gameSettings.getVirtualScreenWidth() / 2 - width,
+                        gameSettings.getVirtualScreenHeight() / 2 - height / 2
                 ),
                 new Vector2(1f, 1f),
                 0f,
-                textureComponent.region.getRegionWidth(),
-                textureComponent.region.getRegionHeight()
+                width,
+                height
         ));
 
         BodyDef bodyDef = new BodyDef();
@@ -49,7 +53,7 @@ public class GameEntityFactory {
         bodyDef.bullet = true;
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 0.4f;
+        fixtureDef.density = 1.4f;
 
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,
@@ -62,5 +66,41 @@ public class GameEntityFactory {
 
         return entity;
     }
+
+    public Entity createWall(Engine engine, int x, int y, int width, int height, int angle) {
+        Entity entity = engine.createEntity();
+
+//        TextureComponent textureComponent = componentFactory.createTextureComponent("badlogic.jpg");
+//        entity.add(textureComponent);
+        entity.add(componentFactory.createTransformComponent(
+                new Vector2(
+                        x,
+                        y
+                ),
+                new Vector2(1f, 1f),
+                angle,
+                width,
+                height
+        ));
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.bullet = false;
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = 0.1f;
+
+        entity.add(componentFactory.createBox2dComponent(
+                Shape.Type.Polygon,
+                bodyDef,
+                fixtureDef,
+                null
+        ));
+
+        entity.add(new WallComponent());
+
+        return entity;
+    }
+
 
 }

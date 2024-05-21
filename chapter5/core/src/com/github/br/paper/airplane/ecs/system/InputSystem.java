@@ -1,4 +1,4 @@
-package com.github.br.paper.airplane.ecs;
+package com.github.br.paper.airplane.ecs.system;
 
 import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.utils.ImmutableArray;
@@ -28,17 +28,17 @@ public class InputSystem extends EntitySystem {
         }
 
         @Override
-        public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
             return pressUp();
         }
 
         @Override
-        public boolean keyDown (int keycode) {
+        public boolean keyDown(int keycode) {
             return pressDown();
         }
 
         @Override
-        public boolean keyUp (int keycode) {
+        public boolean keyUp(int keycode) {
             return pressUp();
         }
 
