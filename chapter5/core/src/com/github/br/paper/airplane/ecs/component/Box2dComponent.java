@@ -13,7 +13,6 @@ public class Box2dComponent implements Component {
 
     public BodyDef bodyDef;
     public FixtureDef fixtureDef;
-    public Object userData;
 
     public Body body;
 
