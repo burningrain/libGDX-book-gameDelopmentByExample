@@ -20,10 +20,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     private OrthographicCamera box2dCam;
 
     private final Family family = Family.all(TransformComponent.class, Box2dComponent.class).get();
-    private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
-    private final ComponentMapper<Box2dComponent> box2dMapper = ComponentMapper.getFor(Box2dComponent.class);
-    private final ComponentMapper<DeleteComponent> deleteMapper = ComponentMapper.getFor(DeleteComponent.class);
-    private final ComponentMapper<ScriptComponent> scriptMapper = ComponentMapper.getFor(ScriptComponent.class);
+    private final Mappers mappers;
 
     private final World world;
     private final Utils utils;
@@ -41,10 +38,12 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
         return this;
     }
 
-    public PhysicsSystem(GameSettings gameSettings, Utils utils) {
+    public PhysicsSystem(GameSettings gameSettings, Utils utils, Mappers mappers) {
         this.gameSettings = gameSettings;
         this.world = new World(new Vector2(0, -3f), true);
+        this.world.setContactListener(this);
         this.utils = utils;
+        this.mappers = mappers;
 
         debugRenderer = new Box2DDebugRenderer();
         box2dCam = new OrthographicCamera(gameSettings.getUnitWidth(), gameSettings.getUnitHeight());
@@ -68,18 +67,18 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     }
 
     @Override
-    public void update (float deltaTime) {
+    public void update(float deltaTime) {
         doPhysicsStep(deltaTime, gameSettings.getTimeStep(), gameSettings.getVelocityIterations(), gameSettings.getPositionIterations());
 
         ImmutableArray<Entity> entities = getEngine().getEntitiesFor(family);
         for (Entity entity : entities) {
-            TransformComponent transformComponent = transformMapper.get(entity);
-            Box2dComponent box2dComponent = box2dMapper.get(entity);
+            TransformComponent transformComponent = mappers.transformMapper.get(entity);
+            Box2dComponent box2dComponent = mappers.box2dMapper.get(entity);
             if (box2dComponent.body == null) {
                 box2dComponent.body = createBody(this.world, entity, box2dComponent, transformComponent);
             }
 
-            DeleteComponent deleteComponent = deleteMapper.get(entity);
+            DeleteComponent deleteComponent = mappers.deleteMapper.get(entity);
             if (deleteComponent != null) {
                 world.destroyBody(box2dComponent.body);
                 return;
@@ -219,7 +218,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
         if (entity == null) {
             return null;
         }
-        return scriptMapper.get(entity);
+        return mappers.scriptMapper.get(entity);
     }
 
 }

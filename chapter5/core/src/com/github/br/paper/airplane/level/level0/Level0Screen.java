@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.GameSettings;
+import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.system.*;
 import com.github.br.paper.airplane.gameworld.GameEntityFactory;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
@@ -19,15 +20,17 @@ public class Level0Screen extends AbstractGameScreen {
         GameSettings gameSettings = gameManager.gameSettings;
         GameEntityFactory gameEntityFactory = getGameManager().gameEntityFactory;
 
+        Mappers mappers = new Mappers();
         engine = new Engine();
-        PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils).setDrawDebugBox2d(true);
+        PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils, mappers).setDrawDebugBox2d(true);
         engine.addSystem(new DeleteSystem());
-        engine.addSystem(new InputSystem());
-        engine.addSystem(new ScriptSystem());
+        engine.addSystem(new InputSystem(mappers));
+        engine.addSystem(new ScriptSystem(mappers));
         engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
-        engine.addSystem(new WallSystem());
+        engine.addSystem(new CoinGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
+        engine.addSystem(new InitSystem(mappers));
         engine.addSystem(physicsSystem);
-        engine.addSystem(renderSystem = new RenderSystem(gameSettings, new Runnable() {
+        engine.addSystem(renderSystem = new RenderSystem(mappers, gameSettings, new Runnable() {
             @Override
             public void run() {
                 if (physicsSystem.isDrawDebugBox2d()) {
@@ -41,17 +44,6 @@ public class Level0Screen extends AbstractGameScreen {
 
         Entity badLogicLogo = gameEntityFactory.createBadLogicLogo(engine);
         engine.addEntity(badLogicLogo);
-
-        // FIXME убрать после, пока для теста
-        Entity wall = gameEntityFactory.createWall(
-                engine,
-                gameSettings.getVirtualScreenWidth() - 200,
-                0,
-                64,
-                256,
-                0
-        );
-        engine.addEntity(wall);
     }
 
     @Override

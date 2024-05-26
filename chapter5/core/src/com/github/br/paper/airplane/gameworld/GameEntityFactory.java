@@ -10,7 +10,10 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
-import com.github.br.paper.airplane.ecs.component.WallComponent;
+import com.github.br.paper.airplane.ecs.component.InitComponent;
+import com.github.br.paper.airplane.ecs.component.Script;
+import com.github.br.paper.airplane.ecs.component.ScriptComponent;
+import com.github.br.paper.airplane.ecs.script.CoinScript;
 import com.github.br.paper.airplane.level.GameComponentFactory;
 
 public class GameEntityFactory {
@@ -57,8 +60,7 @@ public class GameEntityFactory {
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,
                 bodyDef,
-                fixtureDef,
-                null
+                fixtureDef
         ));
 
         entity.add(new HeroComponent());
@@ -66,7 +68,7 @@ public class GameEntityFactory {
         return entity;
     }
 
-    public Entity createWall(Engine engine, int x, int y, int width, int height, int angle) {
+    public Entity createWall(Engine engine, int x, int y, int width, int height, int angle, Vector2 velocity) {
         Entity entity = engine.createEntity();
 
 //        TextureComponent textureComponent = componentFactory.createTextureComponent("badlogic.jpg");
@@ -89,11 +91,12 @@ public class GameEntityFactory {
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,
                 bodyDef,
-                fixtureDef,
-                null
+                fixtureDef
         ));
 
-        entity.add(new WallComponent());
+        InitComponent initComponent = new InitComponent();
+        initComponent.velocity = velocity;
+        entity.add(initComponent);
 
         return entity;
     }
@@ -116,9 +119,44 @@ public class GameEntityFactory {
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,
                 bodyDef,
-                fixtureDef,
-                null
+                fixtureDef
         ));
+
+        return entity;
+    }
+
+    public Entity createCoin(Engine engine, int x, int y, Vector2 velocity) {
+        Entity entity = engine.createEntity();
+        entity.add(componentFactory.createTransformComponent(
+                new Vector2(x, y),
+                new Vector2(1f, 1f),
+                0,
+                25,
+                25
+        ));
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.bullet = true;
+
+        FixtureDef fixtureDef = new FixtureDef();
+
+        entity.add(componentFactory.createBox2dComponent(
+                Shape.Type.Circle,
+                bodyDef,
+                fixtureDef
+        ));
+
+        InitComponent initComponent = new InitComponent();
+        initComponent.velocity = velocity;
+        entity.add(initComponent);
+
+        ScriptComponent scriptComponent = new ScriptComponent();
+        scriptComponent.scripts = new Script[] {
+            new CoinScript()
+        };
+
+        entity.add(scriptComponent);
 
         return entity;
     }

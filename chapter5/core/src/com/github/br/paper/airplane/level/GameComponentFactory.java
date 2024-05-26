@@ -28,6 +28,7 @@ public class GameComponentFactory {
 
         component.width = width;
         component.height = height;
+        component.radius = (width + height) / 2;
 
         return component;
     }
@@ -42,15 +43,13 @@ public class GameComponentFactory {
     public Box2dComponent createBox2dComponent(
             Shape.Type shapeType,
             BodyDef bodyDef,
-            FixtureDef fixtureDef,
-            Object userData
+            FixtureDef fixtureDef
     ) {
         Box2dComponent component = new Box2dComponent();
         component.shapeType = shapeType;
 
         component.fixtureDef = fixtureDef;
         component.bodyDef = bodyDef;
-        component.userData = userData;
 
         return component;
     }

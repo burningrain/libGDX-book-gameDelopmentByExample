@@ -7,13 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.gameworld.GameEntityFactory;
 
-public class WallGeneratorSystem extends IntervalSystem {
+public class CoinGeneratorSystem extends IntervalSystem {
 
     private final GameSettings gameSettings;
     private final GameEntityFactory gameEntityFactory;
 
-    public WallGeneratorSystem(GameSettings gameSettings, GameEntityFactory gameEntityFactory) {
-        super(2);
+    public CoinGeneratorSystem(GameSettings gameSettings, GameEntityFactory gameEntityFactory) {
+        super(1.5f);
         this.gameSettings = gameSettings;
         this.gameEntityFactory = gameEntityFactory;
     }
@@ -22,17 +22,12 @@ public class WallGeneratorSystem extends IntervalSystem {
     protected void updateInterval() {
         int virtualScreenWidth = gameSettings.getVirtualScreenWidth();
 
-        int width = MathUtils.random(300);
-        int height = MathUtils.random(300);
-
-        int angle = MathUtils.random(50) - 25; // [-25; 25] angles
-
         int x = virtualScreenWidth + 10;
-        int y = MathUtils.random(0, virtualScreenWidth - height);
-        int velocity = MathUtils.random(-5, -1);
+        int y = MathUtils.random(0, virtualScreenWidth - 50);
+        int velocity = MathUtils.random(-10, -1);
 
-        Entity wall = gameEntityFactory.createWall(getEngine(), x, y, width, height, angle, new Vector2(velocity, 0f));
-        getEngine().addEntity(wall);
+        Entity coin = gameEntityFactory.createCoin(getEngine(), x, y, new Vector2(velocity, 0f));
+        getEngine().addEntity(coin);
     }
 
 }

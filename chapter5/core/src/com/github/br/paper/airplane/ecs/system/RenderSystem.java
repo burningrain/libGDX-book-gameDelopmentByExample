@@ -1,6 +1,5 @@
 package com.github.br.paper.airplane.ecs.system;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
@@ -15,15 +14,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.paper.airplane.GameSettings;
+import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.component.TextureComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
 
 public class RenderSystem extends EntitySystem {
 
     private final Family family = Family.all(TransformComponent.class, TextureComponent.class).get();
-    private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
-    private final ComponentMapper<TextureComponent> textureMapper = ComponentMapper.getFor(TextureComponent.class);
-
+    private final Mappers mappers;
     private final SpriteBatch spriteBatch = new SpriteBatch();
 
     private Viewport viewport;
@@ -33,7 +31,8 @@ public class RenderSystem extends EntitySystem {
 
     private final GameSettings gameSettings;
 
-    public RenderSystem(GameSettings gameSettings, Runnable runnable) {
+    public RenderSystem(Mappers mappers, GameSettings gameSettings, Runnable runnable) {
+        this.mappers = mappers;
         this.gameSettings = gameSettings;
         this.runnable = runnable;
 
@@ -55,8 +54,8 @@ public class RenderSystem extends EntitySystem {
         applyCameraToBatch(spriteBatch, camera);
         spriteBatch.begin();
         for (Entity entity : entities) {
-            TransformComponent transformComponent = transformMapper.get(entity);
-            TextureComponent textureComponent = textureMapper.get(entity);
+            TransformComponent transformComponent = mappers.transformMapper.get(entity);
+            TextureComponent textureComponent = mappers.textureMapper.get(entity);
 
             spriteBatch.draw(
                     textureComponent.region,
