@@ -11,9 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
-import com.github.br.paper.airplane.ecs.component.Box2dComponent;
-import com.github.br.paper.airplane.ecs.component.DeleteComponent;
-import com.github.br.paper.airplane.ecs.component.TransformComponent;
+import com.github.br.paper.airplane.ecs.component.*;
 
 public class PhysicsSystem extends EntitySystem implements ContactListener {
 
@@ -25,6 +23,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     private final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
     private final ComponentMapper<Box2dComponent> box2dMapper = ComponentMapper.getFor(Box2dComponent.class);
     private final ComponentMapper<DeleteComponent> deleteMapper = ComponentMapper.getFor(DeleteComponent.class);
+    private final ComponentMapper<ScriptComponent> scriptMapper = ComponentMapper.getFor(ScriptComponent.class);
 
     private final World world;
     private final Utils utils;
@@ -77,7 +76,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
             TransformComponent transformComponent = transformMapper.get(entity);
             Box2dComponent box2dComponent = box2dMapper.get(entity);
             if (box2dComponent.body == null) {
-                box2dComponent.body = createBody(this.world, box2dComponent, transformComponent);
+                box2dComponent.body = createBody(this.world, entity, box2dComponent, transformComponent);
             }
 
             DeleteComponent deleteComponent = deleteMapper.get(entity);
@@ -97,7 +96,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     }
 
     //TODO обязательно вынести создание тела из системы в генератор сущностей, а то создает логическую кривоту и плодит ифы
-    private Body createBody(World world, Box2dComponent box2dComponent, TransformComponent transformComponent) {
+    private Body createBody(World world, Entity entity, Box2dComponent box2dComponent, TransformComponent transformComponent) {
         Body body = world.createBody(box2dComponent.bodyDef);
         // https://stackoverflow.com/questions/53987670/libgdx-box2d-body-is-being-place-at-the-wrong-y-coordinate
         // о конвертациях
@@ -114,7 +113,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
 
         box2dComponent.fixtureDef.shape = shape;
         Fixture fixture = body.createFixture(box2dComponent.fixtureDef);
-        body.setUserData(box2dComponent.userData);
+        body.setUserData(entity);
 
         shape.dispose();
         return body;
@@ -140,22 +139,87 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
 
     @Override
     public void beginContact(Contact contact) {
+        Script[] scriptsA = getScripts(contact.getFixtureA());
+        if (scriptsA != null) {
+            for (Script script : scriptsA) {
+                script.beginContact(contact);
+            }
+        }
 
+        Script[] scriptsB = getScripts(contact.getFixtureB());
+        if (scriptsB != null) {
+            for (Script script : scriptsB) {
+                script.beginContact(contact);
+            }
+        }
     }
 
     @Override
     public void endContact(Contact contact) {
+        Script[] scriptsA = getScripts(contact.getFixtureA());
+        if (scriptsA != null) {
+            for (Script script : scriptsA) {
+                script.endContact(contact);
+            }
+        }
 
+        Script[] scriptsB = getScripts(contact.getFixtureB());
+        if (scriptsB != null) {
+            for (Script script : scriptsB) {
+                script.endContact(contact);
+            }
+        }
     }
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
+        Script[] scriptsA = getScripts(contact.getFixtureA());
+        if (scriptsA != null) {
+            for (Script script : scriptsA) {
+                script.preSolve(contact, oldManifold);
+            }
+        }
 
+        Script[] scriptsB = getScripts(contact.getFixtureB());
+        if (scriptsB != null) {
+            for (Script script : scriptsB) {
+                script.preSolve(contact, oldManifold);
+            }
+        }
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
+        Script[] scriptsA = getScripts(contact.getFixtureA());
+        if (scriptsA != null) {
+            for (Script script : scriptsA) {
+                script.postSolve(contact, impulse);
+            }
+        }
 
+        Script[] scriptsB = getScripts(contact.getFixtureB());
+        if (scriptsB != null) {
+            for (Script script : scriptsB) {
+                script.postSolve(contact, impulse);
+            }
+        }
+    }
+
+    private Script[] getScripts(Fixture fixture) {
+        ScriptComponent scriptComponent = getScriptComponent(fixture);
+        if (scriptComponent == null) {
+            return null;
+        }
+        return scriptComponent.scripts;
+    }
+
+    private ScriptComponent getScriptComponent(Fixture fixture) {
+        Body body = fixture.getBody();
+        Entity entity = (Entity) body.getUserData();
+        if (entity == null) {
+            return null;
+        }
+        return scriptMapper.get(entity);
     }
 
 }

@@ -23,6 +23,7 @@ public class Level0Screen extends AbstractGameScreen {
         PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils).setDrawDebugBox2d(true);
         engine.addSystem(new DeleteSystem());
         engine.addSystem(new InputSystem());
+        engine.addSystem(new ScriptSystem());
         engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new WallSystem());
         engine.addSystem(physicsSystem);
@@ -35,10 +36,13 @@ public class Level0Screen extends AbstractGameScreen {
             }
         }));
 
-        // FIXME убрать после, пока для теста
+        Entity ceil = gameEntityFactory.createCeil(engine);
+        engine.addEntity(ceil);
+
         Entity badLogicLogo = gameEntityFactory.createBadLogicLogo(engine);
         engine.addEntity(badLogicLogo);
 
+        // FIXME убрать после, пока для теста
         Entity wall = gameEntityFactory.createWall(
                 engine,
                 gameSettings.getVirtualScreenWidth() - 200,

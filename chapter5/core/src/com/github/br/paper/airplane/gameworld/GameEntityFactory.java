@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
-import com.github.br.paper.airplane.ecs.component.TextureComponent;
 import com.github.br.paper.airplane.ecs.component.WallComponent;
 import com.github.br.paper.airplane.level.GameComponentFactory;
 
@@ -73,10 +72,7 @@ public class GameEntityFactory {
 //        TextureComponent textureComponent = componentFactory.createTextureComponent("badlogic.jpg");
 //        entity.add(textureComponent);
         entity.add(componentFactory.createTransformComponent(
-                new Vector2(
-                        x,
-                        y
-                ),
+                new Vector2(x, y),
                 new Vector2(1f, 1f),
                 angle,
                 width,
@@ -102,5 +98,29 @@ public class GameEntityFactory {
         return entity;
     }
 
+
+    public Entity createCeil(Engine engine) {
+        Entity entity = engine.createEntity();
+        entity.add(componentFactory.createTransformComponent(
+                new Vector2(0, gameSettings.getVirtualScreenHeight()),
+                new Vector2(1f, 1f),
+                0,
+                gameSettings.getVirtualScreenWidth(),
+                1
+        ));
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        FixtureDef fixtureDef = new FixtureDef();
+
+        entity.add(componentFactory.createBox2dComponent(
+                Shape.Type.Polygon,
+                bodyDef,
+                fixtureDef,
+                null
+        ));
+
+        return entity;
+    }
 
 }
