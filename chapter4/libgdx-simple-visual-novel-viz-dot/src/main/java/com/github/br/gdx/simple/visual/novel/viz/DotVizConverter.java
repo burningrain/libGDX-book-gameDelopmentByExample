@@ -43,6 +43,12 @@ public class DotVizConverter implements VizConverter {
         ElementId beginSceneId = pLotViz.getBeginSceneId();
         Set<String> nodePaths = convertToNodePaths(pLotViz.getPath());
         CurrentState currentNode = pLotViz.getCurrentNodeId();
+        if (currentNode == null) {
+            // если начальной ноды нет, значит берем начальную. Ибо просто вывод графа без пути и контекста
+            SceneViz<?> sceneViz = pLotViz.getScenes().get(beginSceneId);
+            ElementId beginNodeId = sceneViz.getBeginNodeId();
+            currentNode = CurrentState.of(beginSceneId, beginNodeId);
+        }
         boolean isHasException = pLotViz.getException() != null;
         String exceptionMessage = (pLotViz.getException() != null)? pLotViz.getException().getMessage() : null;
 
