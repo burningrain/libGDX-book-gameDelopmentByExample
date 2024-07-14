@@ -1,6 +1,5 @@
 package com.github.br.paper.airplane.ecs.system;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
@@ -16,8 +15,8 @@ import com.github.br.paper.airplane.ecs.component.*;
 public class PhysicsSystem extends EntitySystem implements ContactListener {
 
     private boolean isDrawDebugBox2d;
-    private Box2DDebugRenderer debugRenderer;
-    private OrthographicCamera box2dCam;
+    private final Box2DDebugRenderer debugRenderer;
+    private final OrthographicCamera box2dCam;
 
     private final Family family = Family.all(TransformComponent.class, Box2dComponent.class).get();
     private final Mappers mappers;
