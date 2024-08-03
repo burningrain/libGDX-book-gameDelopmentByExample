@@ -10,31 +10,33 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.ecs.component.Mappers;
-import com.github.br.paper.airplane.ecs.component.TextureComponent;
+import com.github.br.paper.airplane.ecs.component.RenderComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
 
 public class RenderSystem extends EntitySystem {
 
-    private final Family family = Family.all(TransformComponent.class, TextureComponent.class).get();
+    private final Family family = Family.all(TransformComponent.class, RenderComponent.class).get();
     private final Mappers mappers;
     private final SpriteBatch spriteBatch = new SpriteBatch();
 
-    private Viewport viewport;
-    private OrthographicCamera camera;
+    private final Viewport viewport;
+    private final OrthographicCamera camera;
 
-    private Runnable runnable;
+    private Runnable postDrawCallback;
 
     private final GameSettings gameSettings;
 
-    public RenderSystem(Mappers mappers, GameSettings gameSettings, Runnable runnable) {
+    public RenderSystem(Mappers mappers, GameSettings gameSettings, Runnable postDrawCallback) {
         this.mappers = mappers;
         this.gameSettings = gameSettings;
-        this.runnable = runnable;
+        this.postDrawCallback = postDrawCallback;
 
         camera = new OrthographicCamera();
         camera.update();
@@ -45,30 +47,37 @@ public class RenderSystem extends EntitySystem {
     @Override
     public void update(float deltaTime) {
         clearScreen();
-        drawEntities();
-        runnable.run();
+        drawEntities(deltaTime);
+        postDrawCallback.run();
     }
 
-    private void drawEntities() {
+    private void drawEntities(float deltaTime) {
         ImmutableArray<Entity> entities = getEngine().getEntitiesFor(family);
         applyCameraToBatch(spriteBatch, camera);
         spriteBatch.begin();
         for (Entity entity : entities) {
             TransformComponent transformComponent = mappers.transformMapper.get(entity);
-            TextureComponent textureComponent = mappers.textureMapper.get(entity);
+            RenderComponent renderComponent = mappers.renderMapper.get(entity);
 
-            spriteBatch.draw(
-                    textureComponent.region,
-                    transformComponent.position.x,
-                    transformComponent.position.y,
-                    transformComponent.origin.x,
-                    transformComponent.origin.y,
-                    textureComponent.region.getRegionWidth(),
-                    textureComponent.region.getRegionHeight(),
-                    transformComponent.scale.x,
-                    transformComponent.scale.y,
-                    transformComponent.angle
-            );
+            ParticleEffect particleEffect = renderComponent.particleEffect;
+            if (particleEffect != null) {
+                particleEffect.setPosition(transformComponent.position.x, transformComponent.position.y);
+                particleEffect.draw(spriteBatch, deltaTime);
+            } else {
+                TextureRegion region = renderComponent.region;
+                spriteBatch.draw(
+                        region,
+                        transformComponent.position.x,
+                        transformComponent.position.y,
+                        transformComponent.origin.x,
+                        transformComponent.origin.y,
+                        region.getRegionWidth(),
+                        region.getRegionHeight(),
+                        transformComponent.scale.x,
+                        transformComponent.scale.y,
+                        transformComponent.angle
+                );
+            }
         }
         spriteBatch.end();
     }

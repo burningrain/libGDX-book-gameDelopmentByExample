@@ -2,13 +2,14 @@ package com.github.br.paper.airplane.level;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
-import com.github.br.paper.airplane.ecs.component.TextureComponent;
+import com.github.br.paper.airplane.ecs.component.RenderComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
 
 public class GameComponentFactory {
@@ -33,9 +34,18 @@ public class GameComponentFactory {
         return component;
     }
 
-    public TextureComponent createTextureComponent(String path) {
-        TextureComponent component = new TextureComponent();
+    public RenderComponent createTextureComponent(String path) {
+        RenderComponent component = new RenderComponent();
         component.region = new TextureRegion(assetManager.get(path, Texture.class));
+
+        return component;
+    }
+
+    public RenderComponent createParticleEffectComponent(String path) {
+        RenderComponent component = new RenderComponent();
+        ParticleEffect particleEffect = assetManager.get(path, ParticleEffect.class);
+        particleEffect.start();
+        component.particleEffect = particleEffect;
 
         return component;
     }
