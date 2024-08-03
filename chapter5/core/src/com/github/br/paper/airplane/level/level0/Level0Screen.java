@@ -42,8 +42,9 @@ public class Level0Screen extends AbstractGameScreen {
         Entity ceil = gameEntityFactory.createCeil(engine);
         engine.addEntity(ceil);
 
-        Entity badLogicLogo = gameEntityFactory.createBadLogicLogo(engine);
+        Entity badLogicLogo = gameEntityFactory.createHero(engine);
         engine.addEntity(badLogicLogo);
+
     }
 
     @Override

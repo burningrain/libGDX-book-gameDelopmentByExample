@@ -3,7 +3,9 @@ package com.github.br.paper.airplane;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.ParticleEffectLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2D;
@@ -24,8 +26,10 @@ public class PaperAirplaneGame extends ApplicationAdapter {
         gameSettings = createGameSettings();
         utils = new Utils(gameSettings);
 
+        InternalFileHandleResolver fileHandleResolver = new InternalFileHandleResolver();
         assetManager = new AssetManager();
-        assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+        assetManager.setLoader(TiledMap.class, new TmxMapLoader(fileHandleResolver));
+        assetManager.setLoader(ParticleEffect.class, ".p", new ParticleEffectLoader(fileHandleResolver));
 
         Box2D.init();
 

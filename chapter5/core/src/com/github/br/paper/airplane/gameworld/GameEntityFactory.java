@@ -9,10 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
-import com.github.br.paper.airplane.ecs.component.HeroComponent;
-import com.github.br.paper.airplane.ecs.component.InitComponent;
-import com.github.br.paper.airplane.ecs.component.Script;
-import com.github.br.paper.airplane.ecs.component.ScriptComponent;
+import com.github.br.paper.airplane.ecs.component.*;
 import com.github.br.paper.airplane.ecs.script.CoinScript;
 import com.github.br.paper.airplane.level.GameComponentFactory;
 
@@ -31,14 +28,14 @@ public class GameEntityFactory {
         this.utils = utils;
     }
 
-    public Entity createBadLogicLogo(Engine engine) {
+    public Entity createHero(Engine engine) {
         Entity entity = engine.createEntity();
 
-//        TextureComponent textureComponent = componentFactory.createTextureComponent("badlogic.jpg");
-//        entity.add(textureComponent);
+        RenderComponent renderComponent = componentFactory.createTextureComponent(Res.AIR_HERO_PNG);
+        entity.add(renderComponent);
 
-        int width = 128;
-        int height = 128;
+        int width = renderComponent.region.getRegionWidth();
+        int height = renderComponent.region.getRegionHeight();
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(
                         gameSettings.getVirtualScreenWidth() / 2 - width,
@@ -131,8 +128,8 @@ public class GameEntityFactory {
                 new Vector2(x, y),
                 new Vector2(1f, 1f),
                 0,
-                25,
-                25
+                16,
+                16
         ));
 
         BodyDef bodyDef = new BodyDef();
@@ -147,13 +144,17 @@ public class GameEntityFactory {
                 fixtureDef
         ));
 
+        entity.add(
+                componentFactory.createParticleEffectComponent(Res.PARTICLE_COIN_COIN_P)
+        );
+
         InitComponent initComponent = new InitComponent();
         initComponent.velocity = velocity;
         entity.add(initComponent);
 
         ScriptComponent scriptComponent = new ScriptComponent();
-        scriptComponent.scripts = new Script[] {
-            new CoinScript()
+        scriptComponent.scripts = new Script[]{
+                new CoinScript()
         };
 
         entity.add(scriptComponent);
