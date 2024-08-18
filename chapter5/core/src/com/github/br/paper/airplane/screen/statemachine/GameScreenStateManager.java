@@ -111,6 +111,10 @@ public class GameScreenStateManager implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        if (isLoading) {
+            loadingScreen.resize(width, height);
+            return;
+        }
         currentState.screen.resize(width, height);
     }
 

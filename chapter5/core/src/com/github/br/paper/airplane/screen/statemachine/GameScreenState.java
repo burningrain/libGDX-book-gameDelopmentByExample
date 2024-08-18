@@ -1,6 +1,5 @@
 package com.github.br.paper.airplane.screen.statemachine;
 
-import com.badlogic.gdx.Screen;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 import com.github.br.paper.airplane.screen.loading.AssetsLoader;
 

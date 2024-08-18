@@ -16,6 +16,7 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
+        exclude 'com/ray3k/stripe.gwt.xml'
     }
     defaultConfig {
         applicationId "com.github.br.paper.airplane"

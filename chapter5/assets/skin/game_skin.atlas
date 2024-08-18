@@ -1,0 +1,27 @@
+
+game_skin.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+button
+  rotate: false
+  xy: 1, 776
+  size: 553, 93
+  orig: 553, 93
+  offset: 0, 0
+  index: -1
+button_down
+  rotate: false
+  xy: 1, 681
+  size: 553, 93
+  orig: 553, 93
+  offset: 0, 0
+  index: -1
+logo
+  rotate: false
+  xy: 1, 1
+  size: 532, 678
+  orig: 532, 678
+  offset: 0, 0
+  index: -1

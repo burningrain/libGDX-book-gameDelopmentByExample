@@ -3,15 +3,23 @@ package com.github.br.paper.airplane;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.ParticleEffectLoader;
+import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2D;
-import com.github.br.paper.airplane.level.GameLevels;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.github.br.paper.airplane.screen.GameScreens;
 import com.github.br.paper.airplane.screen.loading.SimpleProgressBarImpl;
 import com.github.br.paper.airplane.screen.loading.LoadingScreen;
+import com.ray3k.stripe.FreeTypeSkinLoader;
 
 
 public class PaperAirplaneGame extends ApplicationAdapter {
@@ -28,9 +36,7 @@ public class PaperAirplaneGame extends ApplicationAdapter {
 
         InternalFileHandleResolver fileHandleResolver = new InternalFileHandleResolver();
         assetManager = new AssetManager();
-        assetManager.setLoader(TiledMap.class, new TmxMapLoader(fileHandleResolver));
-        assetManager.setLoader(ParticleEffect.class, ".p", new ParticleEffectLoader(fileHandleResolver));
-
+        initLoaders(fileHandleResolver);
         Box2D.init();
 
         gameManager = new GameManager();
@@ -48,8 +54,28 @@ public class PaperAirplaneGame extends ApplicationAdapter {
                         gameSettings.getVirtualScreenWidth(),
                         gameSettings.getVirtualScreenHeight()
                 ),
-                GameLevels.LEVEL_0
+                GameScreens.MAIN_MENU
         );
+    }
+
+    private void initLoaders(InternalFileHandleResolver fileHandleResolver) {
+        // графика
+        assetManager.setLoader(Texture.class, new TextureLoader(fileHandleResolver));
+        assetManager.setLoader(TextureAtlas.class, new TextureAtlasLoader(fileHandleResolver));
+        assetManager.setLoader(Skin.class, new FreeTypeSkinLoader(fileHandleResolver));
+
+        // эффекты частиц
+        assetManager.setLoader(ParticleEffect.class, ".p", new ParticleEffectLoader(fileHandleResolver));
+
+        // звук
+        assetManager.setLoader(Sound.class, new SoundLoader(fileHandleResolver));
+        assetManager.setLoader(Music.class, new MusicLoader(fileHandleResolver));
+
+        // карты редакторов уровней
+        assetManager.setLoader(TiledMap.class, new TmxMapLoader(fileHandleResolver));
+
+        // шрифты
+        assetManager.setLoader(BitmapFont.class, new FreetypeFontLoader(fileHandleResolver));
     }
 
     private GameSettings createGameSettings() {
@@ -69,6 +95,21 @@ public class PaperAirplaneGame extends ApplicationAdapter {
     @Override
     public void render() {
         gameManager.screenStateManager.render(Gdx.graphics.getDeltaTime());
+    }
+
+    @Override
+    public void resize (int width, int height) {
+        gameManager.screenStateManager.resize(width, height);
+    }
+
+    @Override
+    public void pause () {
+        gameManager.screenStateManager.pause();
+    }
+
+    @Override
+    public void resume () {
+        gameManager.screenStateManager.resume();
     }
 
     @Override
