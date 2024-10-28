@@ -54,13 +54,16 @@ public class GameEntityFactory {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.density = 1.4f;
 
-        entity.add(componentFactory.createBox2dComponent(
+        Box2dComponent box2dComponent = componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,
                 bodyDef,
                 fixtureDef
-        ));
+        );
+        box2dComponent.isGravityOff = false;
+        entity.add(box2dComponent);
 
         entity.add(new HeroComponent());
+        entity.add(new HealthComponent(5));
 
         return entity;
     }
@@ -79,7 +82,7 @@ public class GameEntityFactory {
         ));
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.bullet = false;
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -95,9 +98,9 @@ public class GameEntityFactory {
         initComponent.velocity = velocity;
         entity.add(initComponent);
 
+        entity.add(new HealthComponent(3));
         return entity;
     }
-
 
     public Entity createCeil(Engine engine) {
         Entity entity = engine.createEntity();
@@ -144,9 +147,7 @@ public class GameEntityFactory {
                 fixtureDef
         ));
 
-        entity.add(
-                componentFactory.createParticleEffectComponent(Res.PARTICLE_COIN_COIN_P)
-        );
+        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_COIN_P));
 
         InitComponent initComponent = new InitComponent();
         initComponent.velocity = velocity;
@@ -158,6 +159,39 @@ public class GameEntityFactory {
         };
 
         entity.add(scriptComponent);
+
+        return entity;
+    }
+
+    public Entity createBullet(Engine engine, int x, int y) {
+        Entity entity = engine.createEntity();
+        entity.add(componentFactory.createTransformComponent(
+                new Vector2(x, y),
+                new Vector2(1f, 1f),
+                0,
+                10,
+                10
+        ));
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.bullet = true;
+
+        FixtureDef fixtureDef = new FixtureDef();
+
+        entity.add(componentFactory.createBox2dComponent(
+                Shape.Type.Circle,
+                bodyDef,
+                fixtureDef
+        ));
+
+        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_BULLET_P));
+
+        InitComponent initComponent = new InitComponent();
+        initComponent.velocity = new Vector2(5, 0);
+        entity.add(initComponent);
+
+        entity.add(new BulletComponent(1));
 
         return entity;
     }

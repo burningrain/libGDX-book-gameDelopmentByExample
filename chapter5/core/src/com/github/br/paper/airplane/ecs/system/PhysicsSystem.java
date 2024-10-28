@@ -18,6 +18,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
     private final Box2DDebugRenderer debugRenderer;
     private final OrthographicCamera box2dCam;
 
+    private final HealthSystem healthSystem;
     private final Family family = Family.all(TransformComponent.class, Box2dComponent.class).get();
     private final Mappers mappers;
 
@@ -43,6 +44,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
         this.world.setContactListener(this);
         this.utils = utils;
         this.mappers = mappers;
+        this.healthSystem = new HealthSystem(mappers);
 
         debugRenderer = new Box2DDebugRenderer();
         box2dCam = new OrthographicCamera(gameSettings.getUnitWidth(), gameSettings.getUnitHeight());
@@ -75,10 +77,13 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
             Box2dComponent box2dComponent = mappers.box2dMapper.get(entity);
             if (box2dComponent.body == null) {
                 box2dComponent.body = createBody(this.world, entity, box2dComponent, transformComponent);
+                if (box2dComponent.isGravityOff) {
+                    box2dComponent.body.setGravityScale(0);
+                }
             }
 
-            DeleteComponent deleteComponent = mappers.deleteMapper.get(entity);
-            if (deleteComponent != null) {
+            DestroyComponent destroyComponent = mappers.deleteMapper.get(entity);
+            if (destroyComponent != null) {
                 world.destroyBody(box2dComponent.body);
                 return;
             }
@@ -150,6 +155,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
                 script.beginContact(contact);
             }
         }
+
+        healthSystem.beginContact(contact);
     }
 
     @Override
@@ -167,6 +174,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
                 script.endContact(contact);
             }
         }
+
+        healthSystem.endContact(contact);
     }
 
     @Override
@@ -184,6 +193,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
                 script.preSolve(contact, oldManifold);
             }
         }
+
+        healthSystem.preSolve(contact, oldManifold);
     }
 
     @Override
@@ -201,6 +212,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
                 script.postSolve(contact, impulse);
             }
         }
+
+        healthSystem.postSolve(contact, impulse);
     }
 
     private Script[] getScripts(Fixture fixture) {

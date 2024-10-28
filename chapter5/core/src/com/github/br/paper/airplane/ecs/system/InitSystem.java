@@ -38,12 +38,6 @@ public class InitSystem extends IteratingSystem {
                 }
             }
         }
-
-        // удаляем компонент, если вышел за границу экрана
-        TransformComponent transformComponent = mappers.transformMapper.get(entity);
-        if (transformComponent.position.x + transformComponent.width < -5) {
-            entity.add(new DeleteComponent());
-        }
     }
 
 }

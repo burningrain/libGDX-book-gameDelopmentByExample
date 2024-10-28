@@ -16,4 +16,6 @@ public class Box2dComponent implements Component {
 
     public Body body;
 
+    public boolean isGravityOff = true; // хак
+
 }

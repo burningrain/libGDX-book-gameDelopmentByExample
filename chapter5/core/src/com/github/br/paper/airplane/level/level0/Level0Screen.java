@@ -23,12 +23,13 @@ public class Level0Screen extends AbstractGameScreen {
         Mappers mappers = new Mappers();
         engine = new Engine();
         PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils, mappers).setDrawDebugBox2d(true);
-        engine.addSystem(new DeleteSystem());
-        engine.addSystem(new InputSystem(mappers));
+        engine.addSystem(new DestroySystem());
+        engine.addSystem(new InputSystem(mappers, gameEntityFactory));
         engine.addSystem(new ScriptSystem(mappers));
         engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new CoinGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new InitSystem(mappers));
+        engine.addSystem(new DeleteSystem(mappers));
         engine.addSystem(physicsSystem);
         engine.addSystem(renderSystem = new RenderSystem(mappers, gameSettings, new Runnable() {
             @Override

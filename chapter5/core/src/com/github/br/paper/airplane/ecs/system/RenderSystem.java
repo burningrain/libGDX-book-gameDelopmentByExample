@@ -61,7 +61,10 @@ public class RenderSystem extends EntitySystem {
 
             ParticleEffect particleEffect = renderComponent.particleEffect;
             if (particleEffect != null) {
-                particleEffect.setPosition(transformComponent.position.x, transformComponent.position.y);
+                particleEffect.setPosition(
+                        transformComponent.position.x + transformComponent.width / 2,
+                        transformComponent.position.y + transformComponent.height / 2
+                );
                 particleEffect.draw(spriteBatch, deltaTime);
             } else {
                 TextureRegion region = renderComponent.region;

@@ -9,9 +9,10 @@ public class Mappers {
     public final ComponentMapper<Box2dComponent> box2dMapper = ComponentMapper.getFor(Box2dComponent.class);
     public final ComponentMapper<RenderComponent> renderMapper = ComponentMapper.getFor(RenderComponent.class);
 
-    public final ComponentMapper<DeleteComponent> deleteMapper = ComponentMapper.getFor(DeleteComponent.class);
+    public final ComponentMapper<DestroyComponent> deleteMapper = ComponentMapper.getFor(DestroyComponent.class);
     public final ComponentMapper<ScriptComponent> scriptMapper = ComponentMapper.getFor(ScriptComponent.class);
 
     public final ComponentMapper<HeroComponent> heroMapper = ComponentMapper.getFor(HeroComponent.class);
-
+    public final ComponentMapper<BulletComponent> bulletMapper = ComponentMapper.getFor(BulletComponent.class);
+    public final ComponentMapper<HealthComponent> healthMapper = ComponentMapper.getFor(HealthComponent.class);
 }
