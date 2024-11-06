@@ -15,12 +15,14 @@ public class DeleteSystem extends IteratingSystem {
     }
 
     @Override
-    protected void processEntity(Entity entity, float v) {
+    protected void processEntity(Entity entity, float delta) {
         // удаляем компонент, если вышел за границу экрана
         TransformComponent transformComponent = mappers.transformMapper.get(entity);
         if (transformComponent.position.x + transformComponent.width < -5) {
             entity.add(new DestroyComponent());
         }
+
+        //TODO здесь только левая граница, а остальные?!
     }
 
 }

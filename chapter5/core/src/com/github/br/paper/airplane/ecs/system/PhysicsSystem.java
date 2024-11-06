@@ -92,9 +92,8 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
             Vector2 position = transform.getPosition();
             transformComponent.position.x = utils.convertMetresToUnits(position.x) - transformComponent.width / 2f;
             transformComponent.position.y = utils.convertMetresToUnits(position.y) - transformComponent.height / 2f;
-            transformComponent.angle = MathUtils.radiansToDegrees * box2dComponent.body.getAngle();
+            transformComponent.degreeAngle = MathUtils.radiansToDegrees * box2dComponent.body.getAngle();
         }
-
 
     }
 
@@ -108,7 +107,7 @@ public class PhysicsSystem extends EntitySystem implements ContactListener {
                 utils.convertUnitsToMetres(transformComponent.position.x + transformComponent.width / 2f),
                 utils.convertUnitsToMetres(transformComponent.position.y + transformComponent.height / 2f)
         );
-        body.setTransform(position, MathUtils.degreesToRadians * transformComponent.angle);
+        body.setTransform(position, MathUtils.degreesToRadians * transformComponent.degreeAngle);
         Shape shape = createShape(
                 box2dComponent,
                 transformComponent

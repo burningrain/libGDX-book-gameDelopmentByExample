@@ -9,10 +9,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.paper.airplane.GameSettings;
@@ -65,6 +63,7 @@ public class RenderSystem extends EntitySystem {
                         transformComponent.position.x + transformComponent.width / 2,
                         transformComponent.position.y + transformComponent.height / 2
                 );
+                rotateBy(particleEffect, transformComponent.degreeAngle - 180); //TODO FIXME ?!
                 particleEffect.draw(spriteBatch, deltaTime);
             } else {
                 TextureRegion region = renderComponent.region;
@@ -78,7 +77,7 @@ public class RenderSystem extends EntitySystem {
                         region.getRegionHeight(),
                         transformComponent.scale.x,
                         transformComponent.scale.y,
-                        transformComponent.angle
+                        transformComponent.degreeAngle
                 );
             }
         }
@@ -107,4 +106,22 @@ public class RenderSystem extends EntitySystem {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
+    private void rotateBy(ParticleEffect particleEffect, float targetAngle) {
+        Array<ParticleEmitter> emitters = particleEffect.getEmitters();
+        for (int i = 0; i < emitters.size; i++) {
+            /* find angle property and adjust that by letting the min, max of low and high span their current size around your angle */
+            ParticleEmitter particleEmitter = emitters.get(i);
+            ParticleEmitter.ScaledNumericValue angle = particleEmitter.getAngle();
+
+            float angleHighMin = angle.getHighMin();
+            float angleHighMax = angle.getHighMax();
+            float spanHigh = angleHighMax - angleHighMin;
+            angle.setHigh(targetAngle, targetAngle);
+
+            float angleLowMin = angle.getLowMin();
+            float angleLowMax = angle.getLowMax();
+            float spanLow = angleLowMax - angleLowMin;
+            angle.setLow(0);
+        }
+    }
 }

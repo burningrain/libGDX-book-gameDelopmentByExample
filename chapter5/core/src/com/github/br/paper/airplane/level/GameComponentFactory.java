@@ -25,7 +25,7 @@ public class GameComponentFactory {
         component.position = position;
         component.scale = scale;
         component.origin = new Vector2(width / 2f, height / 2f);
-        component.angle = angle;
+        component.degreeAngle = angle;
 
         component.width = width;
         component.height = height;
@@ -43,7 +43,7 @@ public class GameComponentFactory {
 
     public RenderComponent createParticleEffectComponent(String path) {
         RenderComponent component = new RenderComponent();
-        ParticleEffect particleEffect = assetManager.get(path, ParticleEffect.class);
+        ParticleEffect particleEffect = new ParticleEffect(assetManager.get(path, ParticleEffect.class));
         particleEffect.start();
         component.particleEffect = particleEffect;
 

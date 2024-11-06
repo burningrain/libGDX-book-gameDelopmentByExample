@@ -7,6 +7,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
@@ -18,7 +19,7 @@ public class InputSystem extends EntitySystem {
 
     private final Family family = Family.all(HeroComponent.class).get();
     private final Mappers mappers;
-    private GameEntityFactory gameEntityFactory;
+    private final GameEntityFactory gameEntityFactory;
 
     private long lastTime;
     private boolean isFire;
@@ -96,10 +97,21 @@ public class InputSystem extends EntitySystem {
         // два быстрых тапа - выстрел. Один тап и удержание - подъем вверх
         if (isFire) {
             TransformComponent transformComponent = mappers.transformMapper.get(hero);
+
+            float sinT = MathUtils.sinDeg(transformComponent.degreeAngle);
+            float cosT = MathUtils.cosDeg(transformComponent.degreeAngle);
+            float deltaX = (transformComponent.width / 2 + 22);
+            float deltaY = -8;
+
+            int bulletX = (int) (transformComponent.position.x + transformComponent.width / 2 + (deltaX * cosT - deltaY * sinT));
+            int bulletY = (int) (transformComponent.position.y + transformComponent.height / 2 + (deltaX * sinT + deltaY * cosT));
+
             Entity bullet = gameEntityFactory.createBullet(
                     this.getEngine(),
-                    (int) (transformComponent.position.x + transformComponent.width + transformComponent.width / 2 + 1),
-                    (int) (transformComponent.position.y + transformComponent.height / 2)
+                    bulletX,
+                    bulletY,
+                    10,
+                    transformComponent.degreeAngle
             );
             getEngine().addEntity(bullet);
             isFire = false;

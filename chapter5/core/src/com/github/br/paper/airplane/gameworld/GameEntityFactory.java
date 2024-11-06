@@ -3,6 +3,7 @@ package com.github.br.paper.airplane.gameworld;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -38,8 +39,8 @@ public class GameEntityFactory {
         int height = renderComponent.region.getRegionHeight();
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(
-                        gameSettings.getVirtualScreenWidth() / 2 - width,
-                        gameSettings.getVirtualScreenHeight() / 2 - height / 2
+                        gameSettings.getVirtualScreenWidth() / 3 - width,
+                        gameSettings.getVirtualScreenHeight() / 3 - height / 2
                 ),
                 new Vector2(1f, 1f),
                 0f,
@@ -163,14 +164,14 @@ public class GameEntityFactory {
         return entity;
     }
 
-    public Entity createBullet(Engine engine, int x, int y) {
+    public Entity createBullet(Engine engine, int x, int y, int radius, float angle) {
         Entity entity = engine.createEntity();
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(x, y),
                 new Vector2(1f, 1f),
-                0,
-                10,
-                10
+                angle,
+                radius,
+                radius
         ));
 
         BodyDef bodyDef = new BodyDef();
@@ -185,10 +186,12 @@ public class GameEntityFactory {
                 fixtureDef
         ));
 
-        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_BULLET_P));
+        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_BULLET_P)); // TODO сделать пул
 
         InitComponent initComponent = new InitComponent();
-        initComponent.velocity = new Vector2(5, 0);
+        initComponent.velocity = new Vector2(
+                5 * MathUtils.cos(angle * MathUtils.degreesToRadians),
+                1 * MathUtils.sin(angle * MathUtils.degreesToRadians));
         entity.add(initComponent);
 
         entity.add(new BulletComponent(1));
