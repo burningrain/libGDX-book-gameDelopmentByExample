@@ -4,7 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.github.br.paper.airplane.ecs.component.DestroyComponent;
+import com.github.br.paper.airplane.ecs.component.DestroyedComponent;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
 import com.github.br.paper.airplane.ecs.component.Script;
 
@@ -37,9 +37,9 @@ public class CoinScript extends Script {
         Entity entityB = (Entity) contact.getFixtureB().getBody().getUserData();
 
         if (isHero(entityA)) {
-            entityB.add(new DestroyComponent());
+            entityB.add(new DestroyedComponent());
         } else if(isHero(entityB)) {
-            entityA.add(new DestroyComponent());
+            entityA.add(new DestroyedComponent());
         }
     }
 

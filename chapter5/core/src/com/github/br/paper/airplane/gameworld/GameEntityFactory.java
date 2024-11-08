@@ -64,7 +64,7 @@ public class GameEntityFactory {
         entity.add(box2dComponent);
 
         entity.add(new HeroComponent());
-        entity.add(new HealthComponent(5));
+        entity.add(new HealthComponent(5, 0));
 
         return entity;
     }
@@ -87,7 +87,7 @@ public class GameEntityFactory {
         bodyDef.bullet = false;
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.density = 0.1f;
+        fixtureDef.density = 3_000f;
 
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Polygon,
@@ -99,7 +99,7 @@ public class GameEntityFactory {
         initComponent.velocity = velocity;
         entity.add(initComponent);
 
-        entity.add(new HealthComponent(3));
+        entity.add(new HealthComponent(3, 1));
         return entity;
     }
 
@@ -175,10 +175,11 @@ public class GameEntityFactory {
         ));
 
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.bullet = true;
 
         FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = 1f;
 
         entity.add(componentFactory.createBox2dComponent(
                 Shape.Type.Circle,
@@ -193,8 +194,7 @@ public class GameEntityFactory {
                 5 * MathUtils.cos(angle * MathUtils.degreesToRadians),
                 1 * MathUtils.sin(angle * MathUtils.degreesToRadians));
         entity.add(initComponent);
-
-        entity.add(new BulletComponent(1));
+        entity.add(new HealthComponent(1, 1));
 
         return entity;
     }

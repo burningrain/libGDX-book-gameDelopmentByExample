@@ -19,7 +19,7 @@ public class DeleteSystem extends IteratingSystem {
         // удаляем компонент, если вышел за границу экрана
         TransformComponent transformComponent = mappers.transformMapper.get(entity);
         if (transformComponent.position.x + transformComponent.width < -5) {
-            entity.add(new DestroyComponent());
+            entity.add(new DestroyedComponent());
         }
 
         //TODO здесь только левая граница, а остальные?!

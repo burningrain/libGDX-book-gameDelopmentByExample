@@ -22,8 +22,8 @@ public class WallGeneratorSystem extends IntervalSystem {
     protected void updateInterval() {
         int virtualScreenWidth = gameSettings.getVirtualScreenWidth();
 
-        int width = MathUtils.random(300);
-        int height = MathUtils.random(300);
+        int width = MathUtils.random(10, 300);
+        int height = MathUtils.random(10, 300);
 
         int angle = MathUtils.random(50) - 25; // [-25; 25] angles
 

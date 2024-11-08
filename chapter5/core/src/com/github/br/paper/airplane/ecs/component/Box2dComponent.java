@@ -14,7 +14,7 @@ public class Box2dComponent implements Component {
     public BodyDef bodyDef;
     public FixtureDef fixtureDef;
 
-    public Body body;
+    public Body body; // lazy init at PhysicsSystem
 
     public boolean isGravityOff = true; // хак
 

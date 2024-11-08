@@ -6,6 +6,7 @@ import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.system.*;
+import com.github.br.paper.airplane.ecs.system.physics.PhysicsSystem;
 import com.github.br.paper.airplane.gameworld.GameEntityFactory;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 
@@ -24,8 +25,7 @@ public class Level0Screen extends AbstractGameScreen {
         engine = new Engine();
         PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils, mappers).setDrawDebugBox2d(true);
 
-        engine.addSystem(new HeroSystem(mappers));
-        engine.addSystem(new DestroySystem());
+        //engine.addSystem(new HeroSystem(mappers));
         engine.addSystem(new InputSystem(mappers, gameEntityFactory));
         engine.addSystem(new ScriptSystem(mappers));
         engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
@@ -41,6 +41,7 @@ public class Level0Screen extends AbstractGameScreen {
                 }
             }
         }));
+        engine.addSystem(new DestroySystem(mappers, physicsSystem.getPhysicsUtils()));
 
         Entity ceil = gameEntityFactory.createCeil(engine);
         engine.addEntity(ceil);
