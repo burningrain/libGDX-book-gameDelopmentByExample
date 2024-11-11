@@ -64,7 +64,7 @@ public class GameEntityFactory {
         entity.add(box2dComponent);
 
         entity.add(new HeroComponent());
-        entity.add(new HealthComponent(5, 0));
+        entity.add(new HealthComponent((short) 5, (short) 0));
 
         return entity;
     }
@@ -99,7 +99,7 @@ public class GameEntityFactory {
         initComponent.velocity = velocity;
         entity.add(initComponent);
 
-        entity.add(new HealthComponent(3, 1));
+        entity.add(new HealthComponent(gameSettings.getGamePlaySettings().getWallLife(), (short) 1));
         return entity;
     }
 
@@ -156,7 +156,7 @@ public class GameEntityFactory {
 
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = new Script[]{
-                new CoinScript()
+                new CoinScript(gameSettings)
         };
 
         entity.add(scriptComponent);
@@ -194,7 +194,7 @@ public class GameEntityFactory {
                 5 * MathUtils.cos(angle * MathUtils.degreesToRadians),
                 1 * MathUtils.sin(angle * MathUtils.degreesToRadians));
         entity.add(initComponent);
-        entity.add(new HealthComponent(1, 1));
+        entity.add(new HealthComponent((short) 1, gameSettings.getGamePlaySettings().getBulletDamage()));
 
         return entity;
     }

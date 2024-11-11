@@ -4,10 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.Array;
@@ -27,7 +24,7 @@ public class RenderSystem extends EntitySystem {
     private final Viewport viewport;
     private final OrthographicCamera camera;
 
-    private Runnable postDrawCallback;
+    private final Runnable postDrawCallback;
 
     private final GameSettings gameSettings;
 
@@ -44,7 +41,6 @@ public class RenderSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        clearScreen();
         drawEntities(deltaTime);
         postDrawCallback.run();
     }
@@ -99,11 +95,6 @@ public class RenderSystem extends EntitySystem {
     public void applyCameraToBatch(Batch batch, Camera camera) {
         batch.setProjectionMatrix(camera.projection);
         batch.setTransformMatrix(camera.view);
-    }
-
-    private void clearScreen() {
-        Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, Color.BLACK.a);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
     private void rotateBy(ParticleEffect particleEffect, float targetAngle) {

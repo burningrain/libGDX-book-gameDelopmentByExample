@@ -4,10 +4,10 @@ import com.badlogic.ashley.core.Component;
 
 public class HealthComponent implements Component {
 
-    public int health;
-    public int damage;
+    public short health;
+    public short damage;
 
-    public HealthComponent(int health, int damage) {
+    public HealthComponent(short health, short damage) {
         this.health = health;
         this.damage = damage;
     }

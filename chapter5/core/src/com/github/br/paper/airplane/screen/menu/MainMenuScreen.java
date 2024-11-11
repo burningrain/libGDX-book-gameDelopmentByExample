@@ -1,6 +1,7 @@
 package com.github.br.paper.airplane.screen.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -9,8 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.gameworld.Res;
+import com.github.br.paper.airplane.gameworld.ResMusic;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 import com.github.br.paper.airplane.screen.GameScreens;
 import com.ray3k.stripe.scenecomposer.SceneComposerStageBuilder;
@@ -20,12 +23,19 @@ public class MainMenuScreen extends AbstractGameScreen {
     private Skin skin;
     private Stage stage;
 
+    private Music music;
+
     @Override
     public void show() {
-        GameSettings gameSettings = getGameManager().gameSettings;
+        GameManager gameManager = getGameManager();
+        music = gameManager.assetManager.get(ResMusic.STONE_14, Music.class);
+        music.setLooping(true);
+        music.play();
+
+        GameSettings gameSettings = gameManager.gameSettings;
         Viewport fitViewport = new FitViewport(gameSettings.getVirtualScreenWidth(), gameSettings.getVirtualScreenHeight());
         stage = new Stage(fitViewport);
-        skin = getGameManager().assetManager.get(Res.SKIN);
+        skin = gameManager.assetManager.get(Res.SKIN);
         SceneComposerStageBuilder builder = new SceneComposerStageBuilder();
         builder.build(stage, skin, Gdx.files.internal(Res.MAIN_MENU_SCENE));
         Gdx.input.setInputProcessor(stage);
@@ -34,7 +44,8 @@ public class MainMenuScreen extends AbstractGameScreen {
         textButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                getGameManager().screenStateManager.changeCurrentState(GameScreens.LEVEL_0);
+                music.stop();
+                gameManager.screenStateManager.changeCurrentState(GameScreens.LEVEL_0);
             }
         });
     }
@@ -54,21 +65,23 @@ public class MainMenuScreen extends AbstractGameScreen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
+
+        music.stop();
     }
 
     @Override
     public void pause() {
-
+        music.pause();
     }
 
     @Override
     public void resume() {
-
+        music.play();
     }
 
     @Override
     public void hide() {
-
+        music.pause();
     }
 
 }

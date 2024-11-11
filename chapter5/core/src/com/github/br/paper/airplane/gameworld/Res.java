@@ -4,6 +4,9 @@ public interface Res {
 
     String AIR_HERO_PNG = "air_hero.png";
 
+    String HERO_LIFE_COUNT_PNG = "hero_life_count.png";
+    String BULLETS_COUNT_PNG = "bullets_count.png";
+
     String PARTICLE_COIN_PNG = "particles/coin/particle.png";
     String PARTICLE_COIN_P = "particles/coin/coin.p";
 

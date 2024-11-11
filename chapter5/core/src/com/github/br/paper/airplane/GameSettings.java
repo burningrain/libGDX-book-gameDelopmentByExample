@@ -18,6 +18,8 @@ public class GameSettings {
     private final int velocityIterations;
     private final int positionIterations;
 
+    private final GamePlaySettings gamePlaySettings;
+
 
     private GameSettings(Builder builder) {
         this.progressBarWidth = builder.progressBarWidth;
@@ -34,6 +36,8 @@ public class GameSettings {
         this.timeStep = builder.timeStep;
         this.velocityIterations = builder.velocityIterations;
         this.positionIterations = builder.positionIterations;
+
+        this.gamePlaySettings = builder.gamePlaySettings;
     }
 
     public static Builder builder() {
@@ -80,6 +84,10 @@ public class GameSettings {
         return positionIterations;
     }
 
+    public GamePlaySettings getGamePlaySettings() {
+        return gamePlaySettings;
+    }
+
     public static class Builder {
 
         private int progressBarWidth = 100;
@@ -93,6 +101,8 @@ public class GameSettings {
         private float timeStep = 1/60f;
         private int velocityIterations = 6;
         private int positionIterations = 2;
+
+        private GamePlaySettings gamePlaySettings = new GamePlaySettings(); //TODO задел под разные уровни сложности игры
 
         public Builder setProgressBarWidth(int progressBarWidth) {
             this.progressBarWidth = progressBarWidth;
@@ -131,6 +141,11 @@ public class GameSettings {
 
         public Builder setPositionIterations(int positionIterations) {
             this.positionIterations = positionIterations;
+            return this;
+        }
+
+        public Builder setGamePlaySettings(GamePlaySettings gamePlaySettings) {
+            this.gamePlaySettings = gamePlaySettings;
             return this;
         }
 

@@ -22,7 +22,7 @@ public class InputSystem extends EntitySystem {
     private final GameEntityFactory gameEntityFactory;
 
     private long lastTime;
-    private boolean isFire;
+    private boolean isFire = false;
     private boolean isPressed = false;
     private final Vector2 force = new Vector2(0, 4);
     private Entity hero = null;
@@ -96,23 +96,16 @@ public class InputSystem extends EntitySystem {
         // либо стреляем, либо просто поднимаем вверх. Два действия повешены на тапы, поэтому так.
         // два быстрых тапа - выстрел. Один тап и удержание - подъем вверх
         if (isFire) {
-            TransformComponent transformComponent = mappers.transformMapper.get(hero);
+            HeroComponent heroComponent = mappers.heroMapper.get(hero);
+            short bulletCount = heroComponent.getBulletCount();
+            if (bulletCount == 0 || !isBulletsEnough(bulletCount)) {
+                // нечем стрелять
+                return;
+            }
 
-            float sinT = MathUtils.sinDeg(transformComponent.degreeAngle);
-            float cosT = MathUtils.cosDeg(transformComponent.degreeAngle);
-            float deltaX = (transformComponent.width / 2 + 22);
-            float deltaY = -8;
-
-            int bulletX = (int) (transformComponent.position.x + transformComponent.width / 2 + (deltaX * cosT - deltaY * sinT));
-            int bulletY = (int) (transformComponent.position.y + transformComponent.height / 2 + (deltaX * sinT + deltaY * cosT));
-
-            Entity bullet = gameEntityFactory.createBullet(
-                    this.getEngine(),
-                    bulletX,
-                    bulletY,
-                    10,
-                    transformComponent.degreeAngle
-            );
+            heroComponent.setBulletCount(reduceBullets(heroComponent.getBulletCount()));
+            TransformComponent heroTransformComponent = mappers.transformMapper.get(hero);
+            Entity bullet = createBullet(heroTransformComponent);
             getEngine().addEntity(bullet);
             isFire = false;
         } else {
@@ -123,6 +116,35 @@ public class InputSystem extends EntitySystem {
             }
         }
 
+    }
+
+    //todo убрать в стратегию, так как будут разные виды пулек
+    private short reduceBullets(short bulletCount) {
+        return (short) (bulletCount - 1);
+    }
+
+    //todo убрать в стратегию, так как будут разные виды пулек
+    private boolean isBulletsEnough(short bulletCount) {
+        return bulletCount > 0;
+    }
+
+    //todo убрать в стратегию, так как будут разные виды пулек
+    private Entity createBullet(TransformComponent heroTransformComponent) {
+        float sinT = MathUtils.sinDeg(heroTransformComponent.degreeAngle);
+        float cosT = MathUtils.cosDeg(heroTransformComponent.degreeAngle);
+        float deltaX = (heroTransformComponent.width / 2 + 22);
+        float deltaY = -8;
+
+        int bulletX = (int) (heroTransformComponent.position.x + heroTransformComponent.width / 2 + (deltaX * cosT - deltaY * sinT));
+        int bulletY = (int) (heroTransformComponent.position.y + heroTransformComponent.height / 2 + (deltaX * sinT + deltaY * cosT));
+
+        return gameEntityFactory.createBullet(
+                this.getEngine(),
+                bulletX,
+                bulletY,
+                10,
+                heroTransformComponent.degreeAngle
+        );
     }
 
 }
