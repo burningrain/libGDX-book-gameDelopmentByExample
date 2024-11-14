@@ -1,6 +1,7 @@
 package com.github.br.paper.airplane.ecs.component;
 
 import com.badlogic.ashley.core.Component;
+import com.github.br.paper.airplane.bullet.BulletType;
 
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ public class HeroComponent implements Component {
 
     private byte lifeCount;
     private short bulletCount;
+    private BulletType bulletType;
 
     private final ArrayList<ComponentListener<HeroComponent>> listeners = new ArrayList<>(4);
 
@@ -32,6 +34,11 @@ public class HeroComponent implements Component {
         notifyListeners();
     }
 
+    public void setBulletType(BulletType bulletType) {
+        this.bulletType = bulletType;
+        notifyListeners();
+    }
+
     public void addListener(ComponentListener<HeroComponent> listener) {
         listeners.add(listener);
     }
@@ -48,6 +55,10 @@ public class HeroComponent implements Component {
         for (ComponentListener<HeroComponent> listener : listeners) {
             listener.update(this);
         }
+    }
+
+    public BulletType getBulletType() {
+        return bulletType;
     }
 
 }

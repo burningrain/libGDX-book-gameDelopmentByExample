@@ -164,7 +164,16 @@ public class GameEntityFactory {
         return entity;
     }
 
-    public Entity createBullet(Engine engine, int x, int y, int radius, float angle) {
+    public Entity createBullet(
+            Engine engine,
+            int x,
+            int y,
+            int radius,
+            float angle,
+            float velocity,
+            short damage,
+            String pathToParticleEffect
+    ) {
         Entity entity = engine.createEntity();
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(x, y),
@@ -187,14 +196,14 @@ public class GameEntityFactory {
                 fixtureDef
         ));
 
-        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_BULLET_P)); // TODO сделать пул
+        entity.add(componentFactory.createParticleEffectComponent(pathToParticleEffect)); // TODO сделать пул
 
         InitComponent initComponent = new InitComponent();
         initComponent.velocity = new Vector2(
-                5 * MathUtils.cos(angle * MathUtils.degreesToRadians),
+                velocity * MathUtils.cos(angle * MathUtils.degreesToRadians),
                 1 * MathUtils.sin(angle * MathUtils.degreesToRadians));
         entity.add(initComponent);
-        entity.add(new HealthComponent((short) 1, gameSettings.getGamePlaySettings().getBulletDamage()));
+        entity.add(new HealthComponent((short) 1, damage));
 
         return entity;
     }

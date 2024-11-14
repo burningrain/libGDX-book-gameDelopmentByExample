@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.GameSettings;
+import com.github.br.paper.airplane.bullet.BulletType;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
 import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.system.*;
@@ -37,7 +38,7 @@ public class Level0Screen extends AbstractGameScreen {
         PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils, mappers).setDrawDebugBox2d(true);
 
         //engine.addSystem(new HeroSystem(mappers));
-        engine.addSystem(new InputSystem(mappers, gameEntityFactory));
+        engine.addSystem(new InputSystem(mappers, gameManager));
         engine.addSystem(new ScriptSystem(mappers));
         engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new CoinGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
@@ -71,6 +72,7 @@ public class Level0Screen extends AbstractGameScreen {
         HeroComponent component = hero.getComponent(HeroComponent.class);
         component.setLifeCount(gameSettings.getGamePlaySettings().getHeroLifeCountMax());
         component.setBulletCount(gameSettings.getGamePlaySettings().getBulletInitCount());
+        component.setBulletType(BulletType.ELECTRICITY);
 
         component.addListener(hud);
         component.notifyListeners();

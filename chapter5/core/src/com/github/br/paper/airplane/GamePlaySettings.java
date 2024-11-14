@@ -6,9 +6,17 @@ public class GamePlaySettings {
 
     private final byte bulletInitCount = 10;
     private final byte bulletAddingByCoinCount = 5;
-    private final byte bulletDamage = 1;
+
+    private final byte fireBulletDamage = 1;
+    private final byte fireBulletCost = 1;
+    private float fireBulletVelocity = 4;
+
+    private final byte electricalBulletDamage = 2;
+    private final byte electricalBulletCost = 2;
+    private float electricalBulletVelocity = 5;
 
     private final byte wallLife = 3;
+
 
     public byte getHeroLifeCountMax() {
         return heroLifeCountMax;
@@ -22,12 +30,32 @@ public class GamePlaySettings {
         return bulletAddingByCoinCount;
     }
 
-    public byte getBulletDamage() {
-        return bulletDamage;
+    public byte getFireBulletDamage() {
+        return fireBulletDamage;
+    }
+
+    public byte getFireBulletCost() {
+        return fireBulletCost;
+    }
+
+    public byte getElectricalBulletDamage() {
+        return electricalBulletDamage;
+    }
+
+    public byte getElectricalBulletCost() {
+        return electricalBulletCost;
+    }
+
+    public float getElectricalBulletVelocity() {
+        return electricalBulletVelocity;
     }
 
     public byte getWallLife() {
         return wallLife;
+    }
+
+    public float getFireBulletVelocity() {
+        return fireBulletVelocity;
     }
 
 }

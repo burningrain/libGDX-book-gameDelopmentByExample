@@ -7,19 +7,19 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.github.br.paper.airplane.GameManager;
+import com.github.br.paper.airplane.bullet.BulletStrategy;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
 import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
-import com.github.br.paper.airplane.gameworld.GameEntityFactory;
 
 public class InputSystem extends EntitySystem {
 
     private final Family family = Family.all(HeroComponent.class).get();
     private final Mappers mappers;
-    private final GameEntityFactory gameEntityFactory;
+    private final GameManager gameManager;
 
     private long lastTime;
     private boolean isFire = false;
@@ -51,9 +51,9 @@ public class InputSystem extends EntitySystem {
 
     };
 
-    public InputSystem(Mappers mappers, GameEntityFactory gameEntityFactory) {
+    public InputSystem(Mappers mappers, GameManager gameManager) {
         this.mappers = mappers;
-        this.gameEntityFactory = gameEntityFactory;
+        this.gameManager = gameManager;
     }
 
     private boolean pressUp() {
@@ -98,15 +98,20 @@ public class InputSystem extends EntitySystem {
         if (isFire) {
             HeroComponent heroComponent = mappers.heroMapper.get(hero);
             short bulletCount = heroComponent.getBulletCount();
-            if (bulletCount == 0 || !isBulletsEnough(bulletCount)) {
+
+            BulletStrategy bulletStrategy = gameManager.bulletFactory.getBulletStrategy(heroComponent.getBulletType());
+            if (bulletCount == 0 || !bulletStrategy.isBulletsEnough(bulletCount)) {
                 // нечем стрелять
                 return;
             }
 
-            heroComponent.setBulletCount(reduceBullets(heroComponent.getBulletCount()));
+            heroComponent.setBulletCount(bulletStrategy.reduceBullets(heroComponent.getBulletCount()));
             TransformComponent heroTransformComponent = mappers.transformMapper.get(hero);
-            Entity bullet = createBullet(heroTransformComponent);
-            getEngine().addEntity(bullet);
+            Entity[] bullets = bulletStrategy.createBullet(this.getEngine(), heroTransformComponent);
+            for (Entity bullet : bullets) {
+                getEngine().addEntity(bullet);
+            }
+
             isFire = false;
         } else {
             // если не стреляем, значит поднимаем самолетик вверх
@@ -116,35 +121,6 @@ public class InputSystem extends EntitySystem {
             }
         }
 
-    }
-
-    //todo убрать в стратегию, так как будут разные виды пулек
-    private short reduceBullets(short bulletCount) {
-        return (short) (bulletCount - 1);
-    }
-
-    //todo убрать в стратегию, так как будут разные виды пулек
-    private boolean isBulletsEnough(short bulletCount) {
-        return bulletCount > 0;
-    }
-
-    //todo убрать в стратегию, так как будут разные виды пулек
-    private Entity createBullet(TransformComponent heroTransformComponent) {
-        float sinT = MathUtils.sinDeg(heroTransformComponent.degreeAngle);
-        float cosT = MathUtils.cosDeg(heroTransformComponent.degreeAngle);
-        float deltaX = (heroTransformComponent.width / 2 + 22);
-        float deltaY = -8;
-
-        int bulletX = (int) (heroTransformComponent.position.x + heroTransformComponent.width / 2 + (deltaX * cosT - deltaY * sinT));
-        int bulletY = (int) (heroTransformComponent.position.y + heroTransformComponent.height / 2 + (deltaX * sinT + deltaY * cosT));
-
-        return gameEntityFactory.createBullet(
-                this.getEngine(),
-                bulletX,
-                bulletY,
-                10,
-                heroTransformComponent.degreeAngle
-        );
     }
 
 }
