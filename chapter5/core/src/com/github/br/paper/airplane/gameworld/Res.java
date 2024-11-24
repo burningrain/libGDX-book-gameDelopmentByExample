@@ -14,6 +14,8 @@ public interface Res {
     String PARTICLE_FIRE_BULLET_P = "particles/bullet/bullet.p";
     String PARTICLE_ELECTRO_BULLET_PNG = "particles/bullet/flash.png";
     String PARTICLE_ELECTRO_BULLET_P = "particles/bullet/electrical_bullet.p";
+    String PARTICLE_VENOM_BULLET_PNG = "particles/bullet/particle.png";
+    String PARTICLE_VENOM_BULLET_P = "particles/bullet/venom_bullet.p";
 
     String SKIN = "skin/game_skin.json";
 

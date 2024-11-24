@@ -24,9 +24,10 @@ public class Level0AssetsLoader implements AssetsLoader {
 
         assetManager.load(Res.PARTICLE_FIRE_BULLET_PNG, Texture.class);
         assetManager.load(Res.PARTICLE_FIRE_BULLET_P, ParticleEffect.class);
-
         assetManager.load(Res.PARTICLE_ELECTRO_BULLET_PNG, Texture.class);
         assetManager.load(Res.PARTICLE_ELECTRO_BULLET_P, ParticleEffect.class);
+        assetManager.load(Res.PARTICLE_VENOM_BULLET_PNG, Texture.class);
+        assetManager.load(Res.PARTICLE_VENOM_BULLET_P, ParticleEffect.class);
 
         assetManager.load(ResMusic.STONE_INSTRUMENTS, Music.class);
     }
@@ -44,9 +45,10 @@ public class Level0AssetsLoader implements AssetsLoader {
 
         assetManager.unload(Res.PARTICLE_FIRE_BULLET_PNG);
         assetManager.unload(Res.PARTICLE_FIRE_BULLET_P);
-
         assetManager.unload(Res.PARTICLE_ELECTRO_BULLET_PNG);
         assetManager.unload(Res.PARTICLE_ELECTRO_BULLET_P);
+        assetManager.unload(Res.PARTICLE_VENOM_BULLET_PNG);
+        assetManager.unload(Res.PARTICLE_VENOM_BULLET_P);
 
         assetManager.unload(ResMusic.STONE_INSTRUMENTS);
     }

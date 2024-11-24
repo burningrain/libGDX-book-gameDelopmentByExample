@@ -72,7 +72,7 @@ public class Level0Screen extends AbstractGameScreen {
         HeroComponent component = hero.getComponent(HeroComponent.class);
         component.setLifeCount(gameSettings.getGamePlaySettings().getHeroLifeCountMax());
         component.setBulletCount(gameSettings.getGamePlaySettings().getBulletInitCount());
-        component.setBulletType(BulletType.ELECTRICITY);
+        component.setBulletType(BulletType.VENOM);
 
         component.addListener(hud);
         component.notifyListeners();

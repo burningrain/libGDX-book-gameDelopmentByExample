@@ -8,11 +8,13 @@ public class BulletFactory {
 
     private final FireBullet fireBullet;
     private final ElectricalBullet electricalBullet;
+    private final VenomBullet venomBullet;
 
     public BulletFactory(GameManager gameManager) {
         this.gameManager = gameManager;
         this.fireBullet = new FireBullet(gameManager);
         this.electricalBullet = new ElectricalBullet(gameManager);
+        this.venomBullet = new VenomBullet(gameManager);
     }
 
     public BulletStrategy getBulletStrategy(BulletType bulletType) {
@@ -21,6 +23,8 @@ public class BulletFactory {
                 return fireBullet;
             case ELECTRICITY:
                 return electricalBullet;
+            case VENOM:
+                return venomBullet;
 
             default:
                 throw new IllegalArgumentException();

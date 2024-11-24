@@ -15,6 +15,10 @@ public class GamePlaySettings {
     private final byte electricalBulletCost = 2;
     private final float electricalBulletVelocity = 5;
 
+    private final byte venomBulletDamage = 3;
+    private final byte venomBulletCost = 3;
+    private final float venomBulletVelocity = 8;
+
     private final byte wallLife = 3;
 
 
@@ -57,5 +61,18 @@ public class GamePlaySettings {
     public float getFireBulletVelocity() {
         return fireBulletVelocity;
     }
+
+    public byte getVenomBulletCost() {
+        return venomBulletCost;
+    }
+
+    public float getVenomBulletVelocity() {
+        return venomBulletVelocity;
+    }
+
+    public byte getVenomBulletDamage() {
+        return venomBulletDamage;
+    }
+
 
 }

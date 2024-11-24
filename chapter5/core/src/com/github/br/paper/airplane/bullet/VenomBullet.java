@@ -8,22 +8,20 @@ import com.github.br.paper.airplane.GamePlaySettings;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
 import com.github.br.paper.airplane.gameworld.Res;
 
-public class ElectricalBullet extends BulletStrategy {
+public class VenomBullet extends BulletStrategy {
 
-    private final Vector2 anchor = new Vector2(30, 0);
-
-    public ElectricalBullet(GameManager gameManager) {
+    public VenomBullet(GameManager gameManager) {
         super(gameManager);
     }
 
     @Override
     public boolean isBulletsEnough(short bulletCount) {
-        return bulletCount - getGameManager().gameSettings.getGamePlaySettings().getElectricalBulletCost() >= 0;
+        return bulletCount - getGameManager().gameSettings.getGamePlaySettings().getVenomBulletCost() >= 0;
     }
 
     @Override
     public short reduceBullets(short bulletCount) {
-        return (short) (bulletCount - getGameManager().gameSettings.getGamePlaySettings().getElectricalBulletCost());
+        return (short) (bulletCount - getGameManager().gameSettings.getGamePlaySettings().getVenomBulletCost());
     }
 
     @Override
@@ -38,30 +36,36 @@ public class ElectricalBullet extends BulletStrategy {
 
         GamePlaySettings gamePlaySettings = getGameManager().gameSettings.getGamePlaySettings();
         return new Entity[]{
-                getGameManager().gameEntityFactory.createRectangleBullet(
+                getGameManager().gameEntityFactory.createCircleBullet(
                         engine,
                         bulletX,
-                        bulletY + 37,
-                        60,
-                        5,
-                        heroTransformComponent.degreeAngle + 55,
-                        gamePlaySettings.getElectricalBulletVelocity(),
-                        gamePlaySettings.getElectricalBulletDamage(),
-                        Res.PARTICLE_ELECTRO_BULLET_P,
-                        anchor
-                ),
-                getGameManager().gameEntityFactory.createRectangleBullet(
-                        engine,
-                        bulletX,
-                        bulletY - 37,
-                        70,
+                        bulletY,
                         10,
-                        heroTransformComponent.degreeAngle - 55,
-                        gamePlaySettings.getElectricalBulletVelocity(),
-                        gamePlaySettings.getElectricalBulletDamage(),
-                        Res.PARTICLE_ELECTRO_BULLET_P,
-                        anchor
+                        heroTransformComponent.degreeAngle,
+                        gamePlaySettings.getVenomBulletVelocity(),
+                        gamePlaySettings.getVenomBulletDamage(),
+                        Res.PARTICLE_VENOM_BULLET_P
                 ),
+                getGameManager().gameEntityFactory.createCircleBullet(
+                        engine,
+                        bulletX,
+                        bulletY + 21,
+                        10,
+                        heroTransformComponent.degreeAngle + 90,
+                        gamePlaySettings.getVenomBulletVelocity(),
+                        gamePlaySettings.getVenomBulletDamage(),
+                        Res.PARTICLE_VENOM_BULLET_P
+                ),
+                getGameManager().gameEntityFactory.createCircleBullet(
+                        engine,
+                        bulletX,
+                        bulletY - 21,
+                        10,
+                        heroTransformComponent.degreeAngle - 90,
+                        gamePlaySettings.getVenomBulletVelocity(),
+                        gamePlaySettings.getVenomBulletDamage(),
+                        Res.PARTICLE_VENOM_BULLET_P
+                )
         };
     }
 
