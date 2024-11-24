@@ -17,4 +17,8 @@ public abstract class Script implements ContactListener {
         return mappers;
     }
 
+    public boolean isHero(Entity entity) {
+        return getMappers().heroMapper.get(entity) != null;
+    }
+
 }

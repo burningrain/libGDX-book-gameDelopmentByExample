@@ -42,6 +42,7 @@ public class Level0Screen extends AbstractGameScreen {
         engine.addSystem(new ScriptSystem(mappers));
         engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new CoinGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
+        engine.addSystem(new BulletTypeGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new InitSystem(mappers));
         engine.addSystem(new DeleteSystem(mappers));
         engine.addSystem(physicsSystem);

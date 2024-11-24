@@ -21,6 +21,7 @@ public class Level0AssetsLoader implements AssetsLoader {
 
         assetManager.load(Res.PARTICLE_COIN_PNG, Texture.class);
         assetManager.load(Res.PARTICLE_COIN_P, ParticleEffect.class);
+        assetManager.load(Res.PARTICLE_BULLET_TYPE_P, ParticleEffect.class);
 
         assetManager.load(Res.PARTICLE_FIRE_BULLET_PNG, Texture.class);
         assetManager.load(Res.PARTICLE_FIRE_BULLET_P, ParticleEffect.class);
@@ -42,6 +43,7 @@ public class Level0AssetsLoader implements AssetsLoader {
 
         assetManager.unload(Res.PARTICLE_COIN_PNG);
         assetManager.unload(Res.PARTICLE_COIN_P);
+        assetManager.unload(Res.PARTICLE_BULLET_TYPE_P);
 
         assetManager.unload(Res.PARTICLE_FIRE_BULLET_PNG);
         assetManager.unload(Res.PARTICLE_FIRE_BULLET_P);

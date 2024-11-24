@@ -14,4 +14,6 @@ public class Mappers {
 
     public final ComponentMapper<HeroComponent> heroMapper = ComponentMapper.getFor(HeroComponent.class);
     public final ComponentMapper<HealthComponent> healthMapper = ComponentMapper.getFor(HealthComponent.class);
+
+    public final ComponentMapper<BulletTypeComponent> bulletTypeMapper = ComponentMapper.getFor(BulletTypeComponent.class);
 }

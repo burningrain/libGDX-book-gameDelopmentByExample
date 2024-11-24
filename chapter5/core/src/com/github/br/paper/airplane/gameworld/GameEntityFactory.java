@@ -3,6 +3,7 @@ package com.github.br.paper.airplane.gameworld;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -10,7 +11,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
+import com.github.br.paper.airplane.bullet.BulletType;
 import com.github.br.paper.airplane.ecs.component.*;
+import com.github.br.paper.airplane.ecs.script.BulletTypeScript;
 import com.github.br.paper.airplane.ecs.script.CoinScript;
 import com.github.br.paper.airplane.level.GameComponentFactory;
 
@@ -126,7 +129,7 @@ public class GameEntityFactory {
         return entity;
     }
 
-    public Entity createCoin(Engine engine, int x, int y, Vector2 velocity) {
+    public Entity createItemBulletsAmount(Engine engine, int x, int y, Vector2 velocity) {
         Entity entity = engine.createEntity();
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(x, y),
@@ -157,6 +160,69 @@ public class GameEntityFactory {
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = new Script[]{
                 new CoinScript(gameSettings)
+        };
+
+        entity.add(scriptComponent);
+
+        return entity;
+    }
+
+    public Entity createItemBulletType(Engine engine, int x, int y, Vector2 velocity, BulletType bulletType) {
+        Entity entity = engine.createEntity();
+        entity.add(componentFactory.createTransformComponent(
+                new Vector2(x, y),
+                new Vector2(1f, 1f),
+                0,
+                16,
+                16
+        ));
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.bullet = true;
+
+        FixtureDef fixtureDef = new FixtureDef();
+
+        entity.add(componentFactory.createBox2dComponent(
+                Shape.Type.Circle,
+                bodyDef,
+                fixtureDef
+        ));
+
+        RenderComponent peComponent = componentFactory.createParticleEffectComponent(Res.PARTICLE_BULLET_TYPE_P, Vector2.Zero);
+        for (ParticleEmitter emitter : peComponent.particleEffect.getEmitters()) {
+            ParticleEmitter.GradientColorValue tint = emitter.getTint();
+            float[] colors = tint.getColors();
+            // смотри https://corecoding.com/utilities/rgb-or-hex-to-float.php
+            switch (bulletType) {
+                case FIRE:
+                    colors[0] = 1;
+                    colors[1] = 0;
+                    colors[2] = 0;
+                    break;
+                case ELECTRICITY:
+                    colors[0] = 0;
+                    colors[1] = 0;
+                    colors[2] = 1;
+                    break;
+                case VENOM:
+                    colors[0] = 0;
+                    colors[1] = 1;
+                    colors[2] = 0;
+                    break;
+            }
+        }
+        entity.add(peComponent);
+
+        entity.add(new BulletTypeComponent(bulletType));
+
+        InitComponent initComponent = new InitComponent();
+        initComponent.velocity = velocity;
+        entity.add(initComponent);
+
+        ScriptComponent scriptComponent = new ScriptComponent();
+        scriptComponent.scripts = new Script[]{
+                new BulletTypeScript(gameSettings)
         };
 
         entity.add(scriptComponent);

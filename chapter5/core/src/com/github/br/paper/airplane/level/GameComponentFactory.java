@@ -44,7 +44,7 @@ public class GameComponentFactory {
     public RenderComponent createParticleEffectComponent(String path, Vector2 anchor) {
         RenderComponent component = new RenderComponent();
         ParticleEffect particleEffect = new ParticleEffect(assetManager.get(path, ParticleEffect.class));
-        particleEffect.start();
+        particleEffect.start(); //TODO а нужно ли здесь сразу стартовать?! Может быть и нет.
         component.particleEffect = particleEffect;
         component.anchorDelta = anchor;
 

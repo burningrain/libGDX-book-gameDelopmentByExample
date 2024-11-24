@@ -9,6 +9,7 @@ public interface Res {
 
     String PARTICLE_COIN_PNG = "particles/coin/particle.png";
     String PARTICLE_COIN_P = "particles/coin/coin.p";
+    String PARTICLE_BULLET_TYPE_P = "particles/coin/bullet_type.p";
 
     String PARTICLE_FIRE_BULLET_PNG = "particles/bullet/particle-fire.png";
     String PARTICLE_FIRE_BULLET_P = "particles/bullet/bullet.p";
