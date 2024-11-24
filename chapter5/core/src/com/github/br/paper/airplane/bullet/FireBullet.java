@@ -37,7 +37,7 @@ public class FireBullet extends BulletStrategy {
 
         GamePlaySettings gamePlaySettings = getGameManager().gameSettings.getGamePlaySettings();
         return new Entity[]{
-                getGameManager().gameEntityFactory.createBullet(
+                getGameManager().gameEntityFactory.createCircleBullet(
                         engine,
                         bulletX,
                         bulletY,

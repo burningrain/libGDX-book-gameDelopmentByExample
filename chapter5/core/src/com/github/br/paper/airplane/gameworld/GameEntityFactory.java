@@ -148,7 +148,7 @@ public class GameEntityFactory {
                 fixtureDef
         ));
 
-        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_COIN_P));
+        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_COIN_P, Vector2.Zero));
 
         InitComponent initComponent = new InitComponent();
         initComponent.velocity = velocity;
@@ -164,7 +164,51 @@ public class GameEntityFactory {
         return entity;
     }
 
-    public Entity createBullet(
+    public Entity createRectangleBullet(
+            Engine engine,
+            int x,
+            int y,
+            int width,
+            int height,
+            float angle,
+            float velocity,
+            short damage,
+            String pathToParticleEffect,
+            Vector2 anchor
+    ) {
+        TransformComponent transformComponent = componentFactory.createTransformComponent(
+                new Vector2(x, y),
+                new Vector2(1f, 1f),
+                angle,
+                width,
+                height
+        );
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.bullet = true;
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = 1f;
+        Box2dComponent box2dComponent = componentFactory.createBox2dComponent(
+                Shape.Type.Polygon,
+                bodyDef,
+                fixtureDef
+        );
+        return createBullet(
+                engine,
+                transformComponent,
+                box2dComponent,
+                angle,
+                velocity,
+                (short) 1,
+                damage,
+                pathToParticleEffect,
+                anchor
+        );
+    }
+
+    public Entity createCircleBullet(
             Engine engine,
             int x,
             int y,
@@ -174,36 +218,60 @@ public class GameEntityFactory {
             short damage,
             String pathToParticleEffect
     ) {
-        Entity entity = engine.createEntity();
-        entity.add(componentFactory.createTransformComponent(
+        TransformComponent transformComponent = componentFactory.createTransformComponent(
                 new Vector2(x, y),
                 new Vector2(1f, 1f),
                 angle,
                 radius,
                 radius
-        ));
-
+        );
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.bullet = true;
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.density = 1f;
-
-        entity.add(componentFactory.createBox2dComponent(
+        Box2dComponent box2dComponent = componentFactory.createBox2dComponent(
                 Shape.Type.Circle,
                 bodyDef,
                 fixtureDef
-        ));
+        );
+        return createBullet(
+                engine,
+                transformComponent,
+                box2dComponent,
+                angle,
+                velocity,
+                (short) 1,
+                damage,
+                pathToParticleEffect,
+                Vector2.Zero
+        );
+    }
 
-        entity.add(componentFactory.createParticleEffectComponent(pathToParticleEffect)); // TODO сделать пул
-
+    public Entity createBullet(
+            Engine engine,
+            TransformComponent transformComponent,
+            Box2dComponent box2dComponent,
+            float angle,
+            float velocity,
+            short health,
+            short damage,
+            String pathToParticleEffect,
+            Vector2 anchor
+    ) {
+        Entity entity = engine.createEntity();
+        entity.add(transformComponent);
+        entity.add(box2dComponent);
+        entity.add(componentFactory.createParticleEffectComponent(pathToParticleEffect, anchor)); // TODO сделать пул
         InitComponent initComponent = new InitComponent();
         initComponent.velocity = new Vector2(
+                // переводим полярные координаты в декартовые
                 velocity * MathUtils.cos(angle * MathUtils.degreesToRadians),
-                1 * MathUtils.sin(angle * MathUtils.degreesToRadians));
+                velocity * MathUtils.sin(angle * MathUtils.degreesToRadians)
+        );
         entity.add(initComponent);
-        entity.add(new HealthComponent((short) 1, damage));
+        entity.add(new HealthComponent(health, damage));
 
         return entity;
     }

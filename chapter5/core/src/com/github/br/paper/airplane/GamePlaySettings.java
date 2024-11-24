@@ -9,11 +9,11 @@ public class GamePlaySettings {
 
     private final byte fireBulletDamage = 1;
     private final byte fireBulletCost = 1;
-    private float fireBulletVelocity = 4;
+    private final float fireBulletVelocity = 3;
 
     private final byte electricalBulletDamage = 2;
     private final byte electricalBulletCost = 2;
-    private float electricalBulletVelocity = 5;
+    private final float electricalBulletVelocity = 5;
 
     private final byte wallLife = 3;
 

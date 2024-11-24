@@ -10,6 +10,8 @@ import com.github.br.paper.airplane.gameworld.Res;
 
 public class ElectricalBullet extends BulletStrategy {
 
+    private final Vector2 anchor = new Vector2(30, 0);
+
     public ElectricalBullet(GameManager gameManager) {
         super(gameManager);
     }
@@ -28,7 +30,6 @@ public class ElectricalBullet extends BulletStrategy {
     public Entity[] createBullet(Engine engine, TransformComponent heroTransformComponent) {
         float deltaX = (heroTransformComponent.width / 2 + 22);
         float deltaY = -8;
-
         // heroTransformComponent.position.x + heroTransformComponent.width / 2 - это центр самолетика
         //todo а может можно просто через нормаль к вектору все это дело посчитать, без синусов и косинусов?
         Vector2 newPosition = getGameManager().utils.rotatePointToAngle(deltaX, deltaY, heroTransformComponent.degreeAngle);
@@ -37,25 +38,29 @@ public class ElectricalBullet extends BulletStrategy {
 
         GamePlaySettings gamePlaySettings = getGameManager().gameSettings.getGamePlaySettings();
         return new Entity[]{
-                getGameManager().gameEntityFactory.createBullet(
+                getGameManager().gameEntityFactory.createRectangleBullet(
                         engine,
                         bulletX,
-                        bulletY + 11,
-                        10,
-                        heroTransformComponent.degreeAngle + 45,
+                        bulletY + 37,
+                        60,
+                        5,
+                        heroTransformComponent.degreeAngle + 55,
                         gamePlaySettings.getElectricalBulletVelocity(),
                         gamePlaySettings.getElectricalBulletDamage(),
-                        Res.PARTICLE_ELECTRO_BULLET_P
+                        Res.PARTICLE_ELECTRO_BULLET_P,
+                        anchor
                 ),
-                getGameManager().gameEntityFactory.createBullet(
+                getGameManager().gameEntityFactory.createRectangleBullet(
                         engine,
                         bulletX,
-                        bulletY - 11,
+                        bulletY - 37,
+                        70,
                         10,
-                        heroTransformComponent.degreeAngle - 45,
+                        heroTransformComponent.degreeAngle - 55,
                         gamePlaySettings.getElectricalBulletVelocity(),
                         getGameManager().gameSettings.getGamePlaySettings().getElectricalBulletDamage(),
-                        Res.PARTICLE_ELECTRO_BULLET_P
+                        Res.PARTICLE_ELECTRO_BULLET_P,
+                        anchor
                 ),
         };
     }

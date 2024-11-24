@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.*;
-import com.github.br.paper.airplane.ecs.system.physics.collision.PhysicsUtils;
 
 public class PhysicsSystem extends EntitySystem {
 

@@ -45,7 +45,7 @@ public class Level0Screen extends AbstractGameScreen {
         engine.addSystem(new InitSystem(mappers));
         engine.addSystem(new DeleteSystem(mappers));
         engine.addSystem(physicsSystem);
-        engine.addSystem(renderSystem = new RenderSystem(mappers, gameSettings, new Runnable() {
+        engine.addSystem(renderSystem = new RenderSystem(gameManager.utils, mappers, gameSettings, new Runnable() {
             @Override
             public void run() {
                 if (physicsSystem.isDrawDebugBox2d()) {

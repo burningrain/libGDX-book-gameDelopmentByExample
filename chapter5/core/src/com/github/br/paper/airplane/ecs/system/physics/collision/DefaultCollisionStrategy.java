@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.github.br.paper.airplane.ecs.component.DestroyedComponent;
 import com.github.br.paper.airplane.ecs.component.HealthComponent;
 import com.github.br.paper.airplane.ecs.component.Mappers;
+import com.github.br.paper.airplane.ecs.system.physics.PhysicsUtils;
 
 public class DefaultCollisionStrategy implements ContactListener {
 

@@ -41,11 +41,12 @@ public class GameComponentFactory {
         return component;
     }
 
-    public RenderComponent createParticleEffectComponent(String path) {
+    public RenderComponent createParticleEffectComponent(String path, Vector2 anchor) {
         RenderComponent component = new RenderComponent();
         ParticleEffect particleEffect = new ParticleEffect(assetManager.get(path, ParticleEffect.class));
         particleEffect.start();
         component.particleEffect = particleEffect;
+        component.anchorDelta = anchor;
 
         return component;
     }

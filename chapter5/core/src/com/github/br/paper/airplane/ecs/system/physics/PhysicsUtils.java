@@ -1,4 +1,4 @@
-package com.github.br.paper.airplane.ecs.system.physics.collision;
+package com.github.br.paper.airplane.ecs.system.physics;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.MathUtils;

@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.github.br.paper.airplane.ecs.component.DestroyedComponent;
 import com.github.br.paper.airplane.ecs.component.Mappers;
-import com.github.br.paper.airplane.ecs.system.physics.collision.PhysicsUtils;
+import com.github.br.paper.airplane.ecs.system.physics.PhysicsUtils;
 
 public class DestroySystem extends IteratingSystem {
 

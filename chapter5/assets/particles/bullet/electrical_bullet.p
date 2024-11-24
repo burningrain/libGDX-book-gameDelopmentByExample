@@ -2,8 +2,8 @@ Thruster
 - Delay -
 active: false
 - Duration - 
-lowMin: 1000.0
-lowMax: 1000.0
+lowMin: 100.0
+lowMax: 100.0
 - Count - 
 min: 0
 max: 30
@@ -150,7 +150,7 @@ timeline3: 1.0
 - Options - 
 attached: true
 continuous: true
-aligned: false
+aligned: true
 additive: true
 behind: false
 premultipliedAlpha: false

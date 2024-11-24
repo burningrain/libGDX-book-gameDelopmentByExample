@@ -7,10 +7,12 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.paper.airplane.GameSettings;
+import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.component.RenderComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
@@ -28,10 +30,13 @@ public class RenderSystem extends EntitySystem {
 
     private final GameSettings gameSettings;
 
-    public RenderSystem(Mappers mappers, GameSettings gameSettings, Runnable postDrawCallback) {
+    private final Utils utils;
+
+    public RenderSystem(Utils utils, Mappers mappers, GameSettings gameSettings, Runnable postDrawCallback) {
         this.mappers = mappers;
         this.gameSettings = gameSettings;
         this.postDrawCallback = postDrawCallback;
+        this.utils = utils;
 
         camera = new OrthographicCamera();
         camera.update();
@@ -53,11 +58,13 @@ public class RenderSystem extends EntitySystem {
             TransformComponent transformComponent = mappers.transformMapper.get(entity);
             RenderComponent renderComponent = mappers.renderMapper.get(entity);
 
+            Vector2 anchor = renderComponent.anchorDelta;
             ParticleEffect particleEffect = renderComponent.particleEffect;
+            Vector2 newPosition = utils.rotatePointToAngle(anchor.x, anchor.y, transformComponent.degreeAngle);
             if (particleEffect != null) {
                 particleEffect.setPosition(
-                        transformComponent.position.x + transformComponent.width / 2,
-                        transformComponent.position.y + transformComponent.height / 2
+                        transformComponent.position.x + transformComponent.width / 2 + newPosition.x,
+                        transformComponent.position.y + transformComponent.height / 2 + newPosition.y
                 );
                 rotateBy(particleEffect, transformComponent.degreeAngle - 180); //TODO FIXME ?!
                 particleEffect.draw(spriteBatch, deltaTime);
@@ -65,8 +72,8 @@ public class RenderSystem extends EntitySystem {
                 TextureRegion region = renderComponent.region;
                 spriteBatch.draw(
                         region,
-                        transformComponent.position.x,
-                        transformComponent.position.y,
+                        transformComponent.position.x + newPosition.x,
+                        transformComponent.position.y + newPosition.y,
                         transformComponent.origin.x,
                         transformComponent.origin.y,
                         region.getRegionWidth(),
