@@ -112,10 +112,16 @@ lowMax: 0.0
 highMin: 1.0
 highMax: 1.0
 relative: false
-scalingCount: 1
-scaling0: 0.15254289
-timelineCount: 1
+scalingCount: 4
+scaling0: 0.45762712
+scaling1: 0.0
+scaling2: 0.0
+scaling3: 0.44067848
+timelineCount: 4
 timeline0: 0.0
+timeline1: 0.1875
+timeline2: 0.7430556
+timeline3: 0.9930556
 - Options - 
 attached: true
 continuous: true
