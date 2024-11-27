@@ -190,6 +190,29 @@ public class GameEntityFactory {
         ));
 
         RenderComponent peComponent = componentFactory.createParticleEffectComponent(Res.PARTICLE_BULLET_TYPE_P, Vector2.Zero);
+
+        ParticleEmitter emitter1 = peComponent.particleEffect.getEmitters().get(0);
+        ParticleEmitter.GradientColorValue tint1 = emitter1.getTint();
+        float[] colors1 = tint1.getColors();
+        // смотри https://corecoding.com/utilities/rgb-or-hex-to-float.php
+        switch (bulletType) {
+            case FIRE:
+                colors1[0] = 0.765f;
+                colors1[1] = 0.773f;
+                colors1[2] = 0.396f;
+                break;
+            case ELECTRICITY:
+                colors1[0] = 0.243f;
+                colors1[1] = 0.824f;
+                colors1[2] = 0.906f;
+                break;
+            case VENOM:
+                colors1[0] = 0.396f;
+                colors1[1] = 0.843f;
+                colors1[2] = 0.341f;
+                break;
+        }
+
         ParticleEmitter emitter = peComponent.particleEffect.getEmitters().get(1);
         ParticleEmitter.GradientColorValue tint = emitter.getTint();
         float[] colors = tint.getColors();
@@ -213,7 +236,6 @@ public class GameEntityFactory {
         }
 
         entity.add(peComponent);
-
         entity.add(new BulletTypeComponent(bulletType));
 
         InitComponent initComponent = new InitComponent();
