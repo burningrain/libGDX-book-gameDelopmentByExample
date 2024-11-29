@@ -1,4 +1,4 @@
-package com.github.br.paper.airplane.ecs.system;
+package com.github.br.paper.airplane.ecs.system.render;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
@@ -7,6 +7,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -21,7 +22,8 @@ public class RenderSystem extends EntitySystem {
 
     private final Family family = Family.all(TransformComponent.class, RenderComponent.class).get();
     private final Mappers mappers;
-    private final SpriteBatch spriteBatch = new SpriteBatch();
+    private final SpriteBatch[] spriteBatchArray;
+    private final ShaderUpdater[] shaderUpdaters;
 
     private final Viewport viewport;
     private final OrthographicCamera camera;
@@ -32,7 +34,12 @@ public class RenderSystem extends EntitySystem {
 
     private final Utils utils;
 
-    public RenderSystem(Utils utils, Mappers mappers, GameSettings gameSettings, Runnable postDrawCallback) {
+    private final Vector2 resolution = new Vector2();
+
+    public RenderSystem(int layersSize, Utils utils, Mappers mappers, GameSettings gameSettings, Runnable postDrawCallback) {
+        this.spriteBatchArray = createSpriteBatchArray(layersSize);
+        this.shaderUpdaters = new ShaderUpdater[layersSize];
+
         this.mappers = mappers;
         this.gameSettings = gameSettings;
         this.postDrawCallback = postDrawCallback;
@@ -44,16 +51,52 @@ public class RenderSystem extends EntitySystem {
         viewport.apply(true);
     }
 
+    private SpriteBatch[] createSpriteBatchArray(int layersSize) {
+        SpriteBatch[] result = new SpriteBatch[layersSize];
+        for (int i = 0; i < layersSize; i++) {
+            result[i] = new SpriteBatch();
+        }
+        return result;
+    }
+
+    public void setShader(byte layer, ShaderProgram shaderProgram, ShaderUpdater shaderUpdater) {
+        if (!shaderProgram.isCompiled()) {
+            throw new IllegalArgumentException("Error compiling shader: " + shaderProgram.getLog());
+        }
+        this.shaderUpdaters[layer] = shaderUpdater;
+        this.spriteBatchArray[layer].setShader(shaderProgram);
+    }
+
     @Override
     public void update(float deltaTime) {
-        drawEntities(deltaTime);
+        ImmutableArray<Entity> entities = getEngine().getEntitiesFor(family);
+
+        int length = spriteBatchArray.length;
+        Array<Entity>[] ents = new Array[length];
+        for (int i = 0; i < length; i++) {
+            ents[i] = new Array<>();
+        }
+        for (Entity entity : entities) {
+            RenderComponent renderComponent = mappers.renderMapper.get(entity);
+            ents[renderComponent.layer].add(entity);
+        }
+
+        for (int i = 0; i < length; i++) {
+            SpriteBatch spriteBatch = this.spriteBatchArray[i];
+            ShaderUpdater shaderUpdater = shaderUpdaters[i];
+            drawEntities(spriteBatch, shaderUpdater, ents[i], deltaTime);
+        }
+
         postDrawCallback.run();
     }
 
-    private void drawEntities(float deltaTime) {
-        ImmutableArray<Entity> entities = getEngine().getEntitiesFor(family);
+    private void drawEntities(SpriteBatch spriteBatch, ShaderUpdater shaderUpdater, Array<Entity> entities, float deltaTime) {
         applyCameraToBatch(spriteBatch, camera);
+
         spriteBatch.begin();
+        if (shaderUpdater != null) {
+            shaderUpdater.update(deltaTime, resolution, spriteBatch.getShader());
+        }
         for (Entity entity : entities) {
             TransformComponent transformComponent = mappers.transformMapper.get(entity);
             RenderComponent renderComponent = mappers.renderMapper.get(entity);
@@ -88,15 +131,17 @@ public class RenderSystem extends EntitySystem {
     }
 
     public void resize(int width, int height) {
+        this.resolution.set(width, height);
         viewport.update(width, height);
     }
 
     public void hide() {
-
     }
 
     public void dispose() {
-        spriteBatch.dispose();
+        for (SpriteBatch spriteBatch : spriteBatchArray) {
+            spriteBatch.dispose();
+        }
     }
 
     public void applyCameraToBatch(Batch batch, Camera camera) {

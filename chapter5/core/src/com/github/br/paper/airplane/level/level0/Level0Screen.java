@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
 import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.bullet.BulletType;
@@ -13,7 +15,11 @@ import com.github.br.paper.airplane.ecs.component.HeroComponent;
 import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.system.*;
 import com.github.br.paper.airplane.ecs.system.physics.PhysicsSystem;
+import com.github.br.paper.airplane.ecs.system.render.RenderSystem;
+import com.github.br.paper.airplane.ecs.system.render.ShaderUpdater;
 import com.github.br.paper.airplane.gameworld.GameEntityFactory;
+import com.github.br.paper.airplane.gameworld.RenderLayers;
+import com.github.br.paper.airplane.gameworld.Res;
 import com.github.br.paper.airplane.gameworld.ResMusic;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 import com.github.br.paper.airplane.screen.HUD;
@@ -46,7 +52,8 @@ public class Level0Screen extends AbstractGameScreen {
         engine.addSystem(new InitSystem(mappers));
         engine.addSystem(new DeleteSystem(mappers));
         engine.addSystem(physicsSystem);
-        engine.addSystem(renderSystem = new RenderSystem(gameManager.utils, mappers, gameSettings, new Runnable() {
+
+        engine.addSystem(renderSystem = new RenderSystem(RenderLayers.values().length, gameManager.utils, mappers, gameSettings, new Runnable() {
             @Override
             public void run() {
                 if (physicsSystem.isDrawDebugBox2d()) {
@@ -54,7 +61,26 @@ public class Level0Screen extends AbstractGameScreen {
                 }
             }
         }));
+        ShaderProgram backgroundShader = gameManager.assetManager.get(Res.SHADER_COSMOS_BACKGROUND, ShaderProgram.class);
+        renderSystem.setShader(RenderLayers.BACKGROUND.getLayer(), backgroundShader, new ShaderUpdater() {
+
+            private float time;
+
+            @Override
+            public void update(float delta, Vector2 resolution, ShaderProgram shaderProgram) {
+                time += delta;
+                int uTime = shaderProgram.getUniformLocation("u_time");
+                shaderProgram.setUniformf(uTime, time);
+
+                int uResolution = shaderProgram.getUniformLocation("u_resolution");
+                shaderProgram.setUniformf(uResolution, resolution);
+            }
+        });
+
         engine.addSystem(new DestroySystem(mappers, physicsSystem.getPhysicsUtils()));
+
+        Entity background = gameEntityFactory.createBackground(engine);
+        engine.addEntity(background);
 
         Entity ceil = gameEntityFactory.createCeil(engine);
         engine.addEntity(ceil);

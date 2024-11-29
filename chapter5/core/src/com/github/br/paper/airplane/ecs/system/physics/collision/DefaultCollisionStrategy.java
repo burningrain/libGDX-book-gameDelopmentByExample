@@ -38,7 +38,7 @@ public class DefaultCollisionStrategy implements ContactListener {
 
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
-        if(!contact.isTouching()) {
+        if (!contact.isTouching()) {
             return;
         }
 
@@ -54,7 +54,7 @@ public class DefaultCollisionStrategy implements ContactListener {
         }
         HealthComponent healthA = mappers.healthMapper.get(entityA);
         HealthComponent healthB = mappers.healthMapper.get(entityB);
-        if(healthA == null || healthB == null) {
+        if (healthA == null || healthB == null) {
             return;
         }
 

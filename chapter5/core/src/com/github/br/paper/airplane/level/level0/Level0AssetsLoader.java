@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.github.br.paper.airplane.gameworld.Res;
 import com.github.br.paper.airplane.gameworld.ResMusic;
@@ -15,6 +16,7 @@ public class Level0AssetsLoader implements AssetsLoader {
     public void loadAssets(AssetManager assetManager) {
         assetManager.load(Res.SKIN, Skin.class);
 
+        assetManager.load(Res.BACKGROUND_PNG, Texture.class);
         assetManager.load(Res.AIR_HERO_PNG, Texture.class);
         assetManager.load(Res.HERO_LIFE_COUNT_PNG, Texture.class);
         assetManager.load(Res.BULLETS_COUNT_PNG, Texture.class);
@@ -30,6 +32,8 @@ public class Level0AssetsLoader implements AssetsLoader {
         assetManager.load(Res.PARTICLE_VENOM_BULLET_PNG, Texture.class);
         assetManager.load(Res.PARTICLE_VENOM_BULLET_P, ParticleEffect.class);
 
+        assetManager.load(Res.SHADER_COSMOS_BACKGROUND, ShaderProgram.class);
+
         assetManager.load(ResMusic.STONE_INSTRUMENTS, Music.class);
     }
 
@@ -37,6 +41,7 @@ public class Level0AssetsLoader implements AssetsLoader {
     public void unloadAssets(AssetManager assetManager) {
         assetManager.unload(Res.SKIN);
 
+        assetManager.unload(Res.BACKGROUND_PNG);
         assetManager.unload(Res.AIR_HERO_PNG);
         assetManager.unload(Res.HERO_LIFE_COUNT_PNG);
         assetManager.unload(Res.BULLETS_COUNT_PNG);
@@ -51,6 +56,8 @@ public class Level0AssetsLoader implements AssetsLoader {
         assetManager.unload(Res.PARTICLE_ELECTRO_BULLET_P);
         assetManager.unload(Res.PARTICLE_VENOM_BULLET_PNG);
         assetManager.unload(Res.PARTICLE_VENOM_BULLET_P);
+
+        assetManager.unload(Res.SHADER_COSMOS_BACKGROUND);
 
         assetManager.unload(ResMusic.STONE_INSTRUMENTS);
     }

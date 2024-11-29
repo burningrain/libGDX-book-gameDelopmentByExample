@@ -32,6 +32,33 @@ public class GameEntityFactory {
         this.utils = utils;
     }
 
+    public Entity createBackground(Engine engine) {
+        Entity entity = engine.createEntity();
+        RenderComponent renderComponent = componentFactory.createTextureComponent(Res.BACKGROUND_PNG);
+        renderComponent.layer = RenderLayers.BACKGROUND.getLayer();
+        entity.add(renderComponent);
+
+        int width = renderComponent.region.getRegionWidth();
+        int height = renderComponent.region.getRegionHeight();
+        TransformComponent transformComponent = componentFactory.createTransformComponent(
+                // позиция у меня считается от центра, не забывать
+                new Vector2(
+                        gameSettings.getVirtualScreenWidth() / 2f - width / 2f,
+                        gameSettings.getVirtualScreenHeight() / 2f - height / 2f
+                ),
+                new Vector2(
+                        ((float) gameSettings.getVirtualScreenWidth()) / width,
+                        ((float) gameSettings.getVirtualScreenHeight()) / height
+                ),
+                0f,
+                width,
+                height
+        );
+        entity.add(transformComponent);
+
+        return entity;
+    }
+
     public Entity createHero(Engine engine) {
         Entity entity = engine.createEntity();
 

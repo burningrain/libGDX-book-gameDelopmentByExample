@@ -3,7 +3,7 @@ package com.github.br.paper.airplane;
 public class GameSettings {
 
     private final int progressBarWidth;
-    private  final int progressBarHeight;
+    private final int progressBarHeight;
 
     // virtual
     private final int virtualScreenWidth;
@@ -98,7 +98,7 @@ public class GameSettings {
 
         private float unitsPerMeter = 128f;
 
-        private float timeStep = 1/60f;
+        private float timeStep = 1 / 60f;
         private int velocityIterations = 6;
         private int positionIterations = 2;
 

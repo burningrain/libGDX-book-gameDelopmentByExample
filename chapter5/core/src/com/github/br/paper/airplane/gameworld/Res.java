@@ -19,7 +19,10 @@ public interface Res {
     String PARTICLE_VENOM_BULLET_P = "particles/bullet/venom_bullet.p";
 
     String SKIN = "skin/game_skin.json";
-
     String MAIN_MENU_SCENE = "scene/main_menu.json";
 
+    String SHADER_DEFAULT_VERT = "shaders/default.vert";
+    String SHADER_COSMOS_BACKGROUND = "shaders/cosmos_background.vert";
+
+    String BACKGROUND_PNG = "background.png";
 }
