@@ -69,8 +69,8 @@ public class GameEntityFactory {
         int height = renderComponent.region.getRegionHeight();
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(
-                        gameSettings.getVirtualScreenWidth() / 3 - width,
-                        gameSettings.getVirtualScreenHeight() / 3 - height / 2
+                        gameSettings.getVirtualScreenWidth() / 3f - width,
+                        gameSettings.getVirtualScreenHeight() / 3f - height / 2f
                 ),
                 new Vector2(1f, 1f),
                 0f,

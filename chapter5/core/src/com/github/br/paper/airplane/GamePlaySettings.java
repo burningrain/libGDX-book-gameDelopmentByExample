@@ -21,6 +21,9 @@ public class GamePlaySettings {
 
     private final byte wallLife = 3;
 
+    private final float pitchDelta = 0.010f;
+    private float pitchMinForce = -0.06f;
+    private float pitchMaxForce = 0.08f;
 
     public byte getHeroLifeCountMax() {
         return heroLifeCountMax;
@@ -74,5 +77,17 @@ public class GamePlaySettings {
         return venomBulletDamage;
     }
 
+
+    public float getPitchDeltaProgress() {
+        return pitchDelta;
+    }
+
+    public float getPitchMinForce() {
+        return pitchMinForce;
+    }
+
+    public float getPitchMaxForce() {
+        return pitchMaxForce;
+    }
 
 }

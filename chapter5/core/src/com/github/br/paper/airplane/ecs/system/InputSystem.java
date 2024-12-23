@@ -7,6 +7,8 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.bullet.BulletStrategy;
@@ -82,6 +84,13 @@ public class InputSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
+        HeroComponent heroComponent = null;
+        if (hero != null) {
+            heroComponent = mappers.heroMapper.get(hero);
+            heroComponent.setUp(isPressed);
+            heroComponent.setFire(isFire);
+        }
+
         if (!isPressed) {
             return;
         }
@@ -96,9 +105,7 @@ public class InputSystem extends EntitySystem {
         // либо стреляем, либо просто поднимаем вверх. Два действия повешены на тапы, поэтому так.
         // два быстрых тапа - выстрел. Один тап и удержание - подъем вверх
         if (isFire) {
-            HeroComponent heroComponent = mappers.heroMapper.get(hero);
             short bulletCount = heroComponent.getBulletCount();
-
             BulletStrategy bulletStrategy = gameManager.bulletFactory.getBulletStrategy(heroComponent.getBulletType());
             if (bulletCount == 0 || !bulletStrategy.isBulletsEnough(bulletCount)) {
                 // нечем стрелять
@@ -120,7 +127,6 @@ public class InputSystem extends EntitySystem {
                 box2dComponent.body.applyForce(force, box2dComponent.body.getWorldCenter(), true);
             }
         }
-
     }
 
 }

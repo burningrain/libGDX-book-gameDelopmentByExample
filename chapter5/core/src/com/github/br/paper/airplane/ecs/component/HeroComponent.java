@@ -13,6 +13,10 @@ public class HeroComponent implements Component {
     private byte lifeCount;
     private short bulletCount;
     private BulletType bulletType;
+    private boolean isUp;
+    private boolean isFire;
+
+    private float pitchForce = 0;
 
     private final ArrayList<ComponentListener<HeroComponent>> listeners = new ArrayList<>(4);
 
@@ -59,6 +63,30 @@ public class HeroComponent implements Component {
 
     public BulletType getBulletType() {
         return bulletType;
+    }
+
+    public boolean isUp() {
+        return isUp;
+    }
+
+    public void setUp(boolean up) {
+        isUp = up;
+    }
+
+    public boolean isFire() {
+        return isFire;
+    }
+
+    public void setFire(boolean fire) {
+        isFire = fire;
+    }
+
+    public float getPitchForce() {
+        return pitchForce;
+    }
+
+    public void setPitchForce(float upForce) {
+        this.pitchForce = upForce;
     }
 
 }

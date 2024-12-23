@@ -16,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.github.br.paper.airplane.audio.AudioAssetManager;
 import com.github.br.paper.airplane.screen.GameScreens;
 import com.github.br.paper.airplane.screen.loading.SimpleProgressBarImpl;
 import com.github.br.paper.airplane.screen.loading.LoadingScreen;
@@ -25,25 +26,31 @@ import com.ray3k.stripe.FreeTypeSkinLoader;
 public class PaperAirplaneGame extends ApplicationAdapter {
 
     private GameSettings gameSettings;
+    private AudioSettings audioSettings;
     private Utils utils;
     private AssetManager assetManager;
+    private AudioAssetManager audioAssetManager;
     private GameManager gameManager;
 
     @Override
     public void create() {
         gameSettings = createGameSettings();
+        audioSettings = createAudioSettings();
         utils = new Utils(gameSettings);
 
         InternalFileHandleResolver fileHandleResolver = new InternalFileHandleResolver();
         assetManager = new AssetManager();
+        audioAssetManager = new AudioAssetManager(assetManager, audioSettings);
         initLoaders(fileHandleResolver);
         Box2D.init();
 
         gameManager = new GameManager();
         gameManager.init(
                 gameSettings,
+                audioSettings,
                 utils,
                 assetManager,
+                audioAssetManager,
                 new LoadingScreen(
                         new SimpleProgressBarImpl(
                                 gameSettings.getProgressBarWidth(),
@@ -80,7 +87,6 @@ public class PaperAirplaneGame extends ApplicationAdapter {
 
     private GameSettings createGameSettings() {
         return GameSettings.builder()
-
                 .setProgressBarWidth(100)
                 .setProgressBarHeight(25)
 
@@ -92,23 +98,27 @@ public class PaperAirplaneGame extends ApplicationAdapter {
                 .build();
     }
 
+    private AudioSettings createAudioSettings() {
+        return new AudioSettings();
+    }
+
     @Override
     public void render() {
         gameManager.screenStateManager.render(Gdx.graphics.getDeltaTime());
     }
 
     @Override
-    public void resize (int width, int height) {
+    public void resize(int width, int height) {
         gameManager.screenStateManager.resize(width, height);
     }
 
     @Override
-    public void pause () {
+    public void pause() {
         gameManager.screenStateManager.pause();
     }
 
     @Override
-    public void resume () {
+    public void resume() {
         gameManager.screenStateManager.resume();
     }
 
