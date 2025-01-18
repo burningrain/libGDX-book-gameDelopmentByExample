@@ -45,7 +45,7 @@ public class FireBullet extends BulletStrategy {
                         heroTransformComponent.degreeAngle,
                         gamePlaySettings.getFireBulletVelocity(),
                         gamePlaySettings.getFireBulletDamage(),
-                        Res.PARTICLE_FIRE_BULLET_P
+                        Res.Particles.PARTICLE_FIRE_BULLET_P
                 )};
     }
 

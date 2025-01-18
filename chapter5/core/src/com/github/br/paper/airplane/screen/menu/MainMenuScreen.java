@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.paper.airplane.GameManager;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.gameworld.Res;
-import com.github.br.paper.airplane.gameworld.ResMusic;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 import com.github.br.paper.airplane.screen.GameScreens;
 import com.ray3k.stripe.scenecomposer.SceneComposerStageBuilder;
@@ -28,16 +27,16 @@ public class MainMenuScreen extends AbstractGameScreen {
     @Override
     public void show() {
         GameManager gameManager = getGameManager();
-        music = gameManager.assetManager.get(ResMusic.STONE_14, Music.class);
+        music = gameManager.assetManager.get(Res.Music.STONE_14, Music.class);
         music.setLooping(true);
         music.play();
 
         GameSettings gameSettings = gameManager.gameSettings;
         Viewport fitViewport = new FitViewport(gameSettings.getVirtualScreenWidth(), gameSettings.getVirtualScreenHeight());
         stage = new Stage(fitViewport);
-        skin = gameManager.assetManager.get(Res.SKIN);
+        skin = gameManager.assetManager.get(Res.Skins.SKIN);
         SceneComposerStageBuilder builder = new SceneComposerStageBuilder();
-        builder.build(stage, skin, Gdx.files.internal(Res.MAIN_MENU_SCENE));
+        builder.build(stage, skin, Gdx.files.internal(Res.Skins.MAIN_MENU_SCENE));
         Gdx.input.setInputProcessor(stage);
 
         TextButton textButton = stage.getRoot().findActor("start_button");

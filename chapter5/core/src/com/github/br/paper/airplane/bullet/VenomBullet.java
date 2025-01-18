@@ -44,7 +44,7 @@ public class VenomBullet extends BulletStrategy {
                         heroTransformComponent.degreeAngle,
                         gamePlaySettings.getVenomBulletVelocity(),
                         gamePlaySettings.getVenomBulletDamage(),
-                        Res.PARTICLE_VENOM_BULLET_P
+                        Res.Particles.PARTICLE_VENOM_BULLET_P
                 ),
                 getGameManager().gameEntityFactory.createCircleBullet(
                         engine,
@@ -54,7 +54,7 @@ public class VenomBullet extends BulletStrategy {
                         heroTransformComponent.degreeAngle + 90,
                         gamePlaySettings.getVenomBulletVelocity(),
                         gamePlaySettings.getVenomBulletDamage(),
-                        Res.PARTICLE_VENOM_BULLET_P
+                        Res.Particles.PARTICLE_VENOM_BULLET_P
                 ),
                 getGameManager().gameEntityFactory.createCircleBullet(
                         engine,
@@ -64,7 +64,7 @@ public class VenomBullet extends BulletStrategy {
                         heroTransformComponent.degreeAngle - 90,
                         gamePlaySettings.getVenomBulletVelocity(),
                         gamePlaySettings.getVenomBulletDamage(),
-                        Res.PARTICLE_VENOM_BULLET_P
+                        Res.Particles.PARTICLE_VENOM_BULLET_P
                 )
         };
     }

@@ -25,7 +25,7 @@ public class HUD extends AbstractGameScreen implements ComponentListener<HeroCom
 
     @Override
     public void show() {
-        skin = getGameManager().assetManager.get(Res.SKIN);
+        skin = getGameManager().assetManager.get(Res.Skins.SKIN);
 
         GameSettings gameSettings = getGameManager().gameSettings;
         stage = new Stage(new ExtendViewport(gameSettings.getVirtualScreenWidth(), gameSettings.getVirtualScreenHeight()));
@@ -49,8 +49,8 @@ public class HUD extends AbstractGameScreen implements ComponentListener<HeroCom
     }
 
     private Table createTable() {
-        Image heroLifeCountImage = new Image((Texture) getGameManager().assetManager.get(Res.HERO_LIFE_COUNT_PNG));
-        Image bulletsCountImage = new Image((Texture) getGameManager().assetManager.get(Res.BULLETS_COUNT_PNG));
+        Image heroLifeCountImage = new Image((Texture) getGameManager().assetManager.get(Res.HUD.HERO_LIFE_COUNT_PNG));
+        Image bulletsCountImage = new Image((Texture) getGameManager().assetManager.get(Res.HUD.BULLETS_COUNT_PNG));
 
         heroLifeCountLabel = new Label(0 + "", skin);
         bulletsCountLabel = new Label(0 + "", skin);

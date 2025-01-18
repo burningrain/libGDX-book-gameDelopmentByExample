@@ -15,8 +15,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.ecs.component.Mappers;
-import com.github.br.paper.airplane.ecs.component.RenderComponent;
+import com.github.br.paper.airplane.ecs.component.render.ParticleEffectData;
+import com.github.br.paper.airplane.ecs.component.render.RenderComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
+import com.github.br.paper.airplane.ecs.component.render.TextureData;
 
 public class RenderSystem extends EntitySystem {
 
@@ -67,52 +69,80 @@ public class RenderSystem extends EntitySystem {
         this.spriteBatchArray[layer].setShader(shaderProgram);
     }
 
+    private static class EntityRenderData {
+        public Entity entity;
+        public RenderData renderData;
+
+        public EntityRenderData(Entity entity, RenderData renderData) {
+            this.entity = entity;
+            this.renderData = renderData;
+        }
+    }
+
     @Override
     public void update(float deltaTime) {
         ImmutableArray<Entity> entities = getEngine().getEntitiesFor(family);
 
+        // раскладываем сущности по слоям
         int length = spriteBatchArray.length;
-        Array<Entity>[] ents = new Array[length];
+        Array<EntityRenderData>[] ents = new Array[length];
         for (int i = 0; i < length; i++) {
             ents[i] = new Array<>();
         }
         for (Entity entity : entities) {
             RenderComponent renderComponent = mappers.renderMapper.get(entity);
-            ents[renderComponent.layer].add(entity);
+            // textures
+            TextureData[] textureData = renderComponent.textureData;
+            if (textureData != null) {
+                for (TextureData textureDatum : textureData) {
+                    if (textureDatum != null) {
+                        ents[textureDatum.renderPosition.layer].add(new EntityRenderData(entity, textureDatum));
+                    }
+                }
+            }
+            // particles
+            ParticleEffectData[] effectData = renderComponent.effectData;
+            if (effectData != null) {
+                for (ParticleEffectData effectDatum : effectData) {
+                    if (effectDatum != null) {
+                        ents[effectDatum.renderPosition.layer].add(new EntityRenderData(entity, effectDatum));
+                    }
+                }
+            }
         }
 
+        // рисуем по слоям
         for (int i = 0; i < length; i++) {
             SpriteBatch spriteBatch = this.spriteBatchArray[i];
             ShaderUpdater shaderUpdater = shaderUpdaters[i];
             drawEntities(spriteBatch, shaderUpdater, ents[i], deltaTime);
         }
 
+        // костыль для отрисовки дебага box2d
         postDrawCallback.run();
     }
 
-    private void drawEntities(SpriteBatch spriteBatch, ShaderUpdater shaderUpdater, Array<Entity> entities, float deltaTime) {
+    private void drawEntities(
+            SpriteBatch spriteBatch,
+            ShaderUpdater shaderUpdater,
+            Array<EntityRenderData> renderData,
+            float deltaTime
+    ) {
         applyCameraToBatch(spriteBatch, camera);
 
         spriteBatch.begin();
         if (shaderUpdater != null) {
             shaderUpdater.update(deltaTime, resolution, spriteBatch.getShader());
         }
-        for (Entity entity : entities) {
-            TransformComponent transformComponent = mappers.transformMapper.get(entity);
-            RenderComponent renderComponent = mappers.renderMapper.get(entity);
 
-            Vector2 anchor = renderComponent.anchorDelta;
-            ParticleEffect particleEffect = renderComponent.particleEffect;
-            Vector2 newPosition = utils.rotatePointToAngle(anchor.x, anchor.y, transformComponent.degreeAngle);
-            if (particleEffect != null) {
-                particleEffect.setPosition(
-                        transformComponent.position.x + transformComponent.width / 2 + newPosition.x,
-                        transformComponent.position.y + transformComponent.height / 2 + newPosition.y
-                );
-                rotateBy(particleEffect, transformComponent.degreeAngle - 180); //TODO FIXME ?!
-                particleEffect.draw(spriteBatch, deltaTime);
-            } else {
-                TextureRegion region = renderComponent.region;
+        for (EntityRenderData renderDatum : renderData) {
+            TransformComponent transformComponent = mappers.transformMapper.get(renderDatum.entity);
+
+            if (renderDatum.renderData instanceof TextureData) {
+                TextureData textureData = (TextureData) renderDatum.renderData;
+                Vector2 anchor = textureData.renderPosition.anchorDelta;
+                TextureRegion region = textureData.region;
+                Vector2 newPosition = utils.rotatePointToAngle(anchor.x, anchor.y, transformComponent.degreeAngle);
                 spriteBatch.draw(
                         region,
                         transformComponent.position.x + newPosition.x,
@@ -125,6 +155,18 @@ public class RenderSystem extends EntitySystem {
                         transformComponent.scale.y,
                         transformComponent.degreeAngle
                 );
+            } else if (renderDatum.renderData instanceof ParticleEffectData) {
+                ParticleEffectData effectData = (ParticleEffectData) renderDatum.renderData;
+                Vector2 anchor = effectData.renderPosition.anchorDelta;
+                ParticleEffect particleEffect = effectData.particleEffect;
+
+                Vector2 newPosition = utils.rotatePointToAngle(anchor.x, anchor.y, transformComponent.degreeAngle);
+                particleEffect.setPosition(
+                        transformComponent.position.x + transformComponent.width / 2 + newPosition.x,
+                        transformComponent.position.y + transformComponent.height / 2 + newPosition.y
+                );
+                rotateBy(particleEffect, transformComponent.degreeAngle - 180); //TODO FIXME ?!
+                particleEffect.draw(spriteBatch, deltaTime);
             }
         }
         spriteBatch.end();
@@ -167,4 +209,5 @@ public class RenderSystem extends EntitySystem {
             angle.setLow(0);
         }
     }
+
 }

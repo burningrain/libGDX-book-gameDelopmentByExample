@@ -14,13 +14,13 @@ import com.github.br.paper.airplane.bullet.BulletType;
 import com.github.br.paper.airplane.ecs.component.HeroComponent;
 import com.github.br.paper.airplane.ecs.component.Mappers;
 import com.github.br.paper.airplane.ecs.system.*;
+import com.github.br.paper.airplane.ecs.system.hero.HeroSystem;
 import com.github.br.paper.airplane.ecs.system.physics.PhysicsSystem;
 import com.github.br.paper.airplane.ecs.system.render.RenderSystem;
 import com.github.br.paper.airplane.ecs.system.render.ShaderUpdater;
 import com.github.br.paper.airplane.gameworld.GameEntityFactory;
 import com.github.br.paper.airplane.gameworld.RenderLayers;
 import com.github.br.paper.airplane.gameworld.Res;
-import com.github.br.paper.airplane.gameworld.ResMusic;
 import com.github.br.paper.airplane.screen.AbstractGameScreen;
 import com.github.br.paper.airplane.screen.HUD;
 
@@ -43,13 +43,15 @@ public class Level0Screen extends AbstractGameScreen {
         engine = new Engine();
         PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils, mappers).setDrawDebugBox2d(true);
 
-        engine.addSystem(new InputSystem(mappers, gameManager));
+        InputSystem inputSystem = new InputSystem();
+        engine.addSystem(inputSystem);
         engine.addSystem(new HeroSystem(gameManager, mappers));
         engine.addSystem(new ScriptSystem(mappers));
         engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new CoinGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new BulletTypeGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
         engine.addSystem(new InitSystem(mappers));
+        engine.addSystem(new DelaySystem(mappers));
         engine.addSystem(new DeleteSystem(mappers));
         engine.addSystem(physicsSystem);
 
@@ -61,7 +63,7 @@ public class Level0Screen extends AbstractGameScreen {
                 }
             }
         }));
-        ShaderProgram backgroundShader = gameManager.assetManager.get(Res.SHADER_COSMOS_BACKGROUND, ShaderProgram.class);
+        ShaderProgram backgroundShader = gameManager.assetManager.get(Res.Shaders.SHADER_COSMOS_BACKGROUND, ShaderProgram.class);
         renderSystem.setShader(RenderLayers.BACKGROUND.getLayer(), backgroundShader, new ShaderUpdater() {
 
             private float time;
@@ -85,10 +87,10 @@ public class Level0Screen extends AbstractGameScreen {
         Entity ceil = gameEntityFactory.createCeil(engine);
         engine.addEntity(ceil);
 
-        Entity hero = gameEntityFactory.createHero(engine);
+        Entity hero = gameEntityFactory.createHero(engine, inputSystem.getInputComponent());
         engine.addEntity(hero);
 
-        music = gameManager.assetManager.get(ResMusic.STONE_INSTRUMENTS, Music.class);
+        music = gameManager.assetManager.get(Res.Music.STONE_INSTRUMENTS, Music.class);
         music.setLooping(true);
         music.play();
 

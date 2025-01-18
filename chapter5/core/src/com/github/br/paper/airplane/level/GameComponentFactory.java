@@ -9,8 +9,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
-import com.github.br.paper.airplane.ecs.component.RenderComponent;
+import com.github.br.paper.airplane.ecs.component.render.ParticleEffectData;
+import com.github.br.paper.airplane.ecs.component.render.RenderComponent;
 import com.github.br.paper.airplane.ecs.component.TransformComponent;
+import com.github.br.paper.airplane.ecs.component.render.RenderPosition;
+import com.github.br.paper.airplane.ecs.component.render.TextureData;
+import com.github.br.paper.airplane.gameworld.RenderLayers;
 
 public class GameComponentFactory {
 
@@ -34,19 +38,34 @@ public class GameComponentFactory {
         return component;
     }
 
-    public RenderComponent createTextureComponent(String path) {
+    public RenderComponent createTextureComponent(String path, RenderPosition renderPosition) {
         RenderComponent component = new RenderComponent();
-        component.region = new TextureRegion(assetManager.get(path, Texture.class));
+        TextureData textureData = new TextureData();
+        textureData.renderPosition = renderPosition;
+
+        textureData.region = new TextureRegion(assetManager.get(path, Texture.class));
+        component.textureData = new TextureData[] {
+                textureData
+        };
 
         return component;
     }
 
-    public RenderComponent createParticleEffectComponent(String path, Vector2 anchor) {
-        RenderComponent component = new RenderComponent();
+    public ParticleEffect createParticleEffect(String path) {
         ParticleEffect particleEffect = new ParticleEffect(assetManager.get(path, ParticleEffect.class));
         particleEffect.start(); //TODO а нужно ли здесь сразу стартовать?! Может быть и нет.
-        component.particleEffect = particleEffect;
-        component.anchorDelta = anchor;
+
+        return particleEffect;
+    }
+
+    public RenderComponent createParticleEffectComponent(String path, RenderPosition renderPosition) {
+        RenderComponent component = new RenderComponent();
+        ParticleEffectData effectData = new ParticleEffectData();
+        effectData.renderPosition = renderPosition;
+        effectData.particleEffect = createParticleEffect(path);
+        component.effectData = new ParticleEffectData[] {
+                effectData
+        };
 
         return component;
     }

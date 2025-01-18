@@ -1,5 +1,7 @@
 package com.github.br.paper.airplane;
 
+import com.badlogic.gdx.math.Vector2;
+
 public class GamePlaySettings {
 
     private final byte heroLifeCountMax = 4;
@@ -21,9 +23,13 @@ public class GamePlaySettings {
 
     private final byte wallLife = 3;
 
-    private final float pitchDelta = 0.010f;
-    private float pitchMinForce = -0.06f;
-    private float pitchMaxForce = 0.08f;
+    private final Vector2 upForce = new Vector2(0, 4);;
+
+    // angular
+    private final float angularImpulse = 0.02f;
+    private final float defaultTorque = 0.02f;
+    private final float endAngle = 95f;
+
 
     public byte getHeroLifeCountMax() {
         return heroLifeCountMax;
@@ -78,16 +84,20 @@ public class GamePlaySettings {
     }
 
 
-    public float getPitchDeltaProgress() {
-        return pitchDelta;
+    public float getAngularImpulse() {
+        return angularImpulse;
     }
 
-    public float getPitchMinForce() {
-        return pitchMinForce;
+    public float getDefaultTorque() {
+        return defaultTorque;
     }
 
-    public float getPitchMaxForce() {
-        return pitchMaxForce;
+    public Vector2 getUpForce() {
+        return upForce;
+    }
+
+    public float getEndAngle() {
+        return endAngle;
     }
 
 }

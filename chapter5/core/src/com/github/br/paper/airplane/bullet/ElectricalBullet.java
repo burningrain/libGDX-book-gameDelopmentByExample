@@ -47,7 +47,7 @@ public class ElectricalBullet extends BulletStrategy {
                         heroTransformComponent.degreeAngle + 55,
                         gamePlaySettings.getElectricalBulletVelocity(),
                         gamePlaySettings.getElectricalBulletDamage(),
-                        Res.PARTICLE_ELECTRO_BULLET_P,
+                        Res.Particles.PARTICLE_ELECTRO_BULLET_P,
                         anchor
                 ),
                 getGameManager().gameEntityFactory.createRectangleBullet(
@@ -59,7 +59,7 @@ public class ElectricalBullet extends BulletStrategy {
                         heroTransformComponent.degreeAngle - 55,
                         gamePlaySettings.getElectricalBulletVelocity(),
                         gamePlaySettings.getElectricalBulletDamage(),
-                        Res.PARTICLE_ELECTRO_BULLET_P,
+                        Res.Particles.PARTICLE_ELECTRO_BULLET_P,
                         anchor
                 ),
         };

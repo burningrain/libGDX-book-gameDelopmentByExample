@@ -1,8 +1,11 @@
 package com.github.br.paper.airplane.ecs.component;
 
 import com.badlogic.ashley.core.ComponentMapper;
+import com.github.br.paper.airplane.ecs.component.render.RenderComponent;
 
 public class Mappers {
+
+    public final ComponentMapper<InputComponent> inputMapper = ComponentMapper.getFor(InputComponent.class);
 
     public final ComponentMapper<InitComponent> initMapper = ComponentMapper.getFor(InitComponent.class);
     public final ComponentMapper<TransformComponent> transformMapper = ComponentMapper.getFor(TransformComponent.class);
@@ -16,4 +19,5 @@ public class Mappers {
     public final ComponentMapper<HealthComponent> healthMapper = ComponentMapper.getFor(HealthComponent.class);
 
     public final ComponentMapper<BulletTypeComponent> bulletTypeMapper = ComponentMapper.getFor(BulletTypeComponent.class);
+    public final ComponentMapper<DelayComponent> delayMapper = ComponentMapper.getFor(DelayComponent.class);
 }

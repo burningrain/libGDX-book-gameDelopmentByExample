@@ -3,6 +3,7 @@ package com.github.br.paper.airplane.gameworld;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +14,10 @@ import com.github.br.paper.airplane.GameSettings;
 import com.github.br.paper.airplane.Utils;
 import com.github.br.paper.airplane.bullet.BulletType;
 import com.github.br.paper.airplane.ecs.component.*;
+import com.github.br.paper.airplane.ecs.component.render.ParticleEffectData;
+import com.github.br.paper.airplane.ecs.component.render.RenderComponent;
+import com.github.br.paper.airplane.ecs.component.render.RenderPosition;
+import com.github.br.paper.airplane.ecs.component.render.TextureData;
 import com.github.br.paper.airplane.ecs.script.BulletTypeScript;
 import com.github.br.paper.airplane.ecs.script.CoinScript;
 import com.github.br.paper.airplane.level.GameComponentFactory;
@@ -34,12 +39,17 @@ public class GameEntityFactory {
 
     public Entity createBackground(Engine engine) {
         Entity entity = engine.createEntity();
-        RenderComponent renderComponent = componentFactory.createTextureComponent(Res.BACKGROUND_PNG);
-        renderComponent.layer = RenderLayers.BACKGROUND.getLayer();
+        RenderPosition renderPosition = new RenderPosition();
+        renderPosition.layer = RenderLayers.BACKGROUND.getLayer();
+        RenderComponent renderComponent = componentFactory.createTextureComponent(
+                Res.Pictures.BACKGROUND_PNG,
+                renderPosition
+        );
         entity.add(renderComponent);
 
-        int width = renderComponent.region.getRegionWidth();
-        int height = renderComponent.region.getRegionHeight();
+        TextureData textureDatum = renderComponent.textureData[0];
+        int width = textureDatum.region.getRegionWidth();
+        int height = textureDatum.region.getRegionHeight();
         TransformComponent transformComponent = componentFactory.createTransformComponent(
                 // позиция у меня считается от центра, не забывать
                 new Vector2(
@@ -59,14 +69,18 @@ public class GameEntityFactory {
         return entity;
     }
 
-    public Entity createHero(Engine engine) {
+    public Entity createHero(Engine engine, InputComponent inputComponent) {
         Entity entity = engine.createEntity();
 
-        RenderComponent renderComponent = componentFactory.createTextureComponent(Res.AIR_HERO_PNG);
+        RenderPosition position = new RenderPosition();
+        RenderComponent renderComponent = componentFactory.createTextureComponent(Res.Pictures.AIR_HERO_PNG, position);
+        renderComponent.effectData = new ParticleEffectData[2];
+
         entity.add(renderComponent);
 
-        int width = renderComponent.region.getRegionWidth();
-        int height = renderComponent.region.getRegionHeight();
+        TextureData textureDatum = renderComponent.textureData[0];
+        int width = textureDatum.region.getRegionWidth();
+        int height = textureDatum.region.getRegionHeight();
         entity.add(componentFactory.createTransformComponent(
                 new Vector2(
                         gameSettings.getVirtualScreenWidth() / 3f - width,
@@ -95,6 +109,7 @@ public class GameEntityFactory {
 
         entity.add(new HeroComponent());
         entity.add(new HealthComponent((short) 5, (short) 0));
+        entity.add(inputComponent);
 
         return entity;
     }
@@ -178,7 +193,8 @@ public class GameEntityFactory {
                 fixtureDef
         ));
 
-        entity.add(componentFactory.createParticleEffectComponent(Res.PARTICLE_COIN_P, Vector2.Zero));
+        RenderPosition renderPosition = new RenderPosition();
+        entity.add(componentFactory.createParticleEffectComponent(Res.Particles.PARTICLE_COIN_P, renderPosition));
 
         InitComponent initComponent = new InitComponent();
         initComponent.velocity = velocity;
@@ -216,9 +232,11 @@ public class GameEntityFactory {
                 fixtureDef
         ));
 
-        RenderComponent peComponent = componentFactory.createParticleEffectComponent(Res.PARTICLE_BULLET_TYPE_P, Vector2.Zero);
+        RenderPosition renderPosition = new RenderPosition();
+        RenderComponent peComponent = componentFactory.createParticleEffectComponent(Res.Particles.PARTICLE_BULLET_TYPE_P, renderPosition);
+        ParticleEffectData effectDatum = peComponent.effectData[0];
 
-        ParticleEmitter emitter1 = peComponent.particleEffect.getEmitters().get(0);
+        ParticleEmitter emitter1 = effectDatum.particleEffect.getEmitters().get(0);
         ParticleEmitter.GradientColorValue tint1 = emitter1.getTint();
         float[] colors1 = tint1.getColors();
         // смотри https://corecoding.com/utilities/rgb-or-hex-to-float.php
@@ -240,7 +258,7 @@ public class GameEntityFactory {
                 break;
         }
 
-        ParticleEmitter emitter = peComponent.particleEffect.getEmitters().get(1);
+        ParticleEmitter emitter = effectDatum.particleEffect.getEmitters().get(1);
         ParticleEmitter.GradientColorValue tint = emitter.getTint();
         float[] colors = tint.getColors();
         // смотри https://corecoding.com/utilities/rgb-or-hex-to-float.php
@@ -378,7 +396,7 @@ public class GameEntityFactory {
         Entity entity = engine.createEntity();
         entity.add(transformComponent);
         entity.add(box2dComponent);
-        entity.add(componentFactory.createParticleEffectComponent(pathToParticleEffect, anchor)); // TODO сделать пул
+        entity.add(componentFactory.createParticleEffectComponent(pathToParticleEffect, new RenderPosition())); // TODO сделать пул
         InitComponent initComponent = new InitComponent();
         initComponent.velocity = new Vector2(
                 // переводим полярные координаты в декартовые
@@ -389,6 +407,34 @@ public class GameEntityFactory {
         entity.add(new HealthComponent(health, damage));
 
         return entity;
+    }
+
+    public ParticleEffectData createHeroSmokeEffect(Vector2 anchor) {
+        RenderPosition renderPosition = new RenderPosition();
+        renderPosition.anchorDelta = anchor;
+        renderPosition.layer = RenderLayers.BACK.getLayer();
+
+        ParticleEffect particleEffect = componentFactory.createParticleEffect(Res.Particles.PARTICLE_SMOKE_P);
+
+        ParticleEffectData effectData = new ParticleEffectData();
+        effectData.renderPosition = renderPosition;
+        effectData.particleEffect = particleEffect;
+
+        return effectData;
+    }
+
+    public ParticleEffectData createHeroFireEffect(Vector2 anchor) {
+        RenderPosition renderPosition = new RenderPosition();
+        renderPosition.anchorDelta = anchor;
+        renderPosition.layer = RenderLayers.BACK.getLayer();
+
+        ParticleEffect particleEffect = componentFactory.createParticleEffect(Res.Particles.PARTICLE_FIRE_P);
+
+        ParticleEffectData effectData = new ParticleEffectData();
+        effectData.renderPosition = renderPosition;
+        effectData.particleEffect = particleEffect;
+
+        return effectData;
     }
 
 }
