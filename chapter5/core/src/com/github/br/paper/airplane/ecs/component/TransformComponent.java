@@ -14,4 +14,18 @@ public class TransformComponent implements Component {
     public float height;
     public float radius;
 
+    //TODO вынести в пул
+    public TransformComponent copy() {
+        TransformComponent result = new TransformComponent();
+        result.position = this.position.cpy();
+        result.scale = this.scale.cpy();
+        result.origin = this.origin.cpy();
+        result.degreeAngle = this.degreeAngle;
+        result.width = this.width;
+        result.height = this.height;
+        result.radius = this.radius;
+
+        return result;
+    }
+
 }

@@ -1,4 +1,4 @@
-Smoke
+Smoke_Fade_Out
 - Delay -
 active: false
 - Duration - 
@@ -20,8 +20,8 @@ timeline0: 0.0
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 6000.0
-highMax: 6000.0
+highMin: 3000.0
+highMax: 3000.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -58,10 +58,10 @@ scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
 - X Scale - 
-lowMin: 40.0
-lowMax: 40.0
-highMin: 80.0
-highMax: 80.0
+lowMin: 47.0
+lowMax: 47.0
+highMin: 10.0
+highMax: 10.0
 relative: true
 scalingCount: 2
 scaling0: 0.0
@@ -75,8 +75,8 @@ active: false
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 50.0
-highMax: 50.0
+highMin: 80.0
+highMax: 80.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -86,8 +86,8 @@ timeline0: 0.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 75.0
-highMax: 105.0
+highMin: 80.0
+highMax: 100.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -123,22 +123,20 @@ lowMax: 0.0
 highMin: 1.0
 highMax: 1.0
 relative: false
-scalingCount: 4
-scaling0: 0.0
-scaling1: 1.0
-scaling2: 1.0
-scaling3: 0.0
-timelineCount: 4
+scalingCount: 3
+scaling0: 0.30167606
+scaling1: 0.16201152
+scaling2: 0.0
+timelineCount: 3
 timeline0: 0.0
-timeline1: 0.21527798
-timeline2: 0.805556
-timeline3: 1.0
+timeline1: 0.3690773
+timeline2: 1.0
 - Options - 
 attached: true
 continuous: true
 aligned: false
 additive: false
-behind: false
+behind: true
 premultipliedAlpha: false
 spriteMode: single
 - Image Paths -

@@ -61,12 +61,8 @@ public final class PhysicsUtils {
         throw new IllegalArgumentException();
     }
 
-    public void destroyObject(Entity entity) {
-        Box2dComponent box2dComponent = mappers.box2dMapper.get(entity);
-        DestroyedComponent destroyedComponent = mappers.destroyMapper.get(entity);
-        if (destroyedComponent != null) {
-            world.destroyBody(box2dComponent.body);
-        }
+    public void destroyObject(Box2dComponent box2dComponent) {
+        world.destroyBody(box2dComponent.body);
     }
 
     public Script[] getScripts(Fixture fixture) {

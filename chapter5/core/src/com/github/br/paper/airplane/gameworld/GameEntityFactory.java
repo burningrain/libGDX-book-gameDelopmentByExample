@@ -139,10 +139,7 @@ public class GameEntityFactory {
                 bodyDef,
                 fixtureDef
         ));
-
-        InitComponent initComponent = new InitComponent();
-        initComponent.velocity = velocity;
-        entity.add(initComponent);
+        entity.add(new InitComponent(velocity));
 
         entity.add(new HealthComponent(gameSettings.getGamePlaySettings().getWallLife(), (short) 1));
         return entity;
@@ -195,10 +192,7 @@ public class GameEntityFactory {
 
         RenderPosition renderPosition = new RenderPosition();
         entity.add(componentFactory.createParticleEffectComponent(Res.Particles.PARTICLE_COIN_P, renderPosition));
-
-        InitComponent initComponent = new InitComponent();
-        initComponent.velocity = velocity;
-        entity.add(initComponent);
+        entity.add(new InitComponent(velocity));
 
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = new Script[]{
@@ -282,10 +276,7 @@ public class GameEntityFactory {
 
         entity.add(peComponent);
         entity.add(new BulletTypeComponent(bulletType));
-
-        InitComponent initComponent = new InitComponent();
-        initComponent.velocity = velocity;
-        entity.add(initComponent);
+        entity.add(new InitComponent(velocity));
 
         ScriptComponent scriptComponent = new ScriptComponent();
         scriptComponent.scripts = new Script[]{
@@ -396,39 +387,54 @@ public class GameEntityFactory {
         Entity entity = engine.createEntity();
         entity.add(transformComponent);
         entity.add(box2dComponent);
-        entity.add(componentFactory.createParticleEffectComponent(pathToParticleEffect, new RenderPosition())); // TODO сделать пул
-        InitComponent initComponent = new InitComponent();
-        initComponent.velocity = new Vector2(
+
+        RenderPosition renderPosition = new RenderPosition();
+        renderPosition.anchorDelta = anchor;
+        entity.add(componentFactory.createParticleEffectComponent(pathToParticleEffect, renderPosition)); // TODO сделать пул
+        entity.add(new InitComponent(new Vector2(
                 // переводим полярные координаты в декартовые
                 velocity * MathUtils.cos(angle * MathUtils.degreesToRadians),
                 velocity * MathUtils.sin(angle * MathUtils.degreesToRadians)
-        );
-        entity.add(initComponent);
+        )));
         entity.add(new HealthComponent(health, damage));
 
         return entity;
     }
 
-    public ParticleEffectData createHeroSmokeEffect(Vector2 anchor) {
-        RenderPosition renderPosition = new RenderPosition();
-        renderPosition.anchorDelta = anchor;
-        renderPosition.layer = RenderLayers.BACK.getLayer();
+    public Entity createFadeOutSmokeEntity(Engine engine, Vector2 anchor, TransformComponent transformComponent, ParticleEffectData heroSmokeEffect) {
+        RenderComponent renderComponent = new RenderComponent();
+        renderComponent.textureData = null;
+        renderComponent.effectData = new ParticleEffectData[] {heroSmokeEffect};
 
-        ParticleEffect particleEffect = componentFactory.createParticleEffect(Res.Particles.PARTICLE_SMOKE_P);
+        Entity entity = engine.createEntity();
+        entity.add(transformComponent);
+        entity.add(renderComponent);
+        // TODO вынести в пул!!!
+        entity.add(new DelayComponent(DelayComponentName.FADE_OUT_SMOKE_PARTICLE, 0.4f, new Runnable() {
+            @Override
+            public void run() {
+                entity.add(new DestroyedComponent());
+            }
+        }));
+        entity.add(new SimpleTweenComponent(new Vector2(-140, 0), Vector2.Zero)); //todo добавить направление, обратное углу наклона
 
-        ParticleEffectData effectData = new ParticleEffectData();
-        effectData.renderPosition = renderPosition;
-        effectData.particleEffect = particleEffect;
+        return entity;
+    }
 
-        return effectData;
+    public ParticleEffectData createHeroSmokeFastFadeOutEffect(Vector2 anchor) {
+        return createParticleEffect(RenderLayers.BACK, anchor, Res.Particles.PARTICLE_SMOKE_FAST_FADE_OUT_P);
     }
 
     public ParticleEffectData createHeroFireEffect(Vector2 anchor) {
+        return createParticleEffect(RenderLayers.BACK, anchor, Res.Particles.PARTICLE_FIRE_P);
+    }
+
+    public ParticleEffectData createParticleEffect(RenderLayers layers, Vector2 anchor, String path) {
         RenderPosition renderPosition = new RenderPosition();
         renderPosition.anchorDelta = anchor;
-        renderPosition.layer = RenderLayers.BACK.getLayer();
+        renderPosition.layer = layers.getLayer();
 
-        ParticleEffect particleEffect = componentFactory.createParticleEffect(Res.Particles.PARTICLE_FIRE_P);
+        ParticleEffect particleEffect = componentFactory.createParticleEffect(path);
 
         ParticleEffectData effectData = new ParticleEffectData();
         effectData.renderPosition = renderPosition;

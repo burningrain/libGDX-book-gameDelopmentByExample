@@ -20,4 +20,6 @@ public class Mappers {
 
     public final ComponentMapper<BulletTypeComponent> bulletTypeMapper = ComponentMapper.getFor(BulletTypeComponent.class);
     public final ComponentMapper<DelayComponent> delayMapper = ComponentMapper.getFor(DelayComponent.class);
+
+    public final ComponentMapper<SimpleTweenComponent> simpleTweenMapper = ComponentMapper.getFor(SimpleTweenComponent.class);
 }

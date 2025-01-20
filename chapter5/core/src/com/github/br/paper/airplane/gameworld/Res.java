@@ -37,7 +37,7 @@ public interface Res {
 
         // smoke
         String PARTICLE_SMOKE_PARTICLE_CLOUD_PNG = "particles/smoke/particle-cloud.png";
-        String PARTICLE_SMOKE_P = "particles/smoke/smoke.p";
+        String PARTICLE_SMOKE_FAST_FADE_OUT_P = "particles/smoke/smoke_fast_fade_out.p";
 
         // fire
         String PARTICLE_FIRE_PNG = "particles/fire/particle.png";

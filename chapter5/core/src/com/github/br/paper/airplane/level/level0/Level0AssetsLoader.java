@@ -32,7 +32,7 @@ public class Level0AssetsLoader implements AssetsLoader {
         assetManager.load(Res.Particles.PARTICLE_VENOM_BULLET_P, ParticleEffect.class);
 
         assetManager.load(Res.Particles.PARTICLE_SMOKE_PARTICLE_CLOUD_PNG, Texture.class);
-        assetManager.load(Res.Particles.PARTICLE_SMOKE_P, ParticleEffect.class);
+        assetManager.load(Res.Particles.PARTICLE_SMOKE_FAST_FADE_OUT_P, ParticleEffect.class);
 
         assetManager.load(Res.Particles.PARTICLE_FIRE_PNG, Texture.class);
         assetManager.load(Res.Particles.PARTICLE_FIRE_P, ParticleEffect.class);
@@ -63,7 +63,7 @@ public class Level0AssetsLoader implements AssetsLoader {
         assetManager.unload(Res.Particles.PARTICLE_VENOM_BULLET_P);
 
         assetManager.unload(Res.Particles.PARTICLE_SMOKE_PARTICLE_CLOUD_PNG);
-        assetManager.unload(Res.Particles.PARTICLE_SMOKE_P);
+        assetManager.unload(Res.Particles.PARTICLE_SMOKE_FAST_FADE_OUT_P);
 
         assetManager.unload(Res.Particles.PARTICLE_FIRE_PNG);
         assetManager.unload(Res.Particles.PARTICLE_FIRE_P);

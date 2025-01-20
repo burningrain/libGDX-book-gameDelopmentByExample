@@ -28,9 +28,9 @@ public class Level0Screen extends AbstractGameScreen {
 
     private Engine engine;
     private RenderSystem renderSystem;
+    private InputSystem inputSystem;
 
     private Music music;
-
     private HUD hud;
 
     @Override
@@ -40,46 +40,11 @@ public class Level0Screen extends AbstractGameScreen {
         GameEntityFactory gameEntityFactory = getGameManager().gameEntityFactory;
 
         Mappers mappers = new Mappers();
+        inputSystem = new InputSystem();
+        Gdx.input.setInputProcessor(inputSystem.inputAdapter);
+
         engine = new Engine();
-        PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils, mappers).setDrawDebugBox2d(true);
-
-        InputSystem inputSystem = new InputSystem();
-        engine.addSystem(inputSystem);
-        engine.addSystem(new HeroSystem(gameManager, mappers));
-        engine.addSystem(new ScriptSystem(mappers));
-        engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
-        engine.addSystem(new CoinGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
-        engine.addSystem(new BulletTypeGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
-        engine.addSystem(new InitSystem(mappers));
-        engine.addSystem(new DelaySystem(mappers));
-        engine.addSystem(new DeleteSystem(mappers));
-        engine.addSystem(physicsSystem);
-
-        engine.addSystem(renderSystem = new RenderSystem(RenderLayers.values().length, gameManager.utils, mappers, gameSettings, new Runnable() {
-            @Override
-            public void run() {
-                if (physicsSystem.isDrawDebugBox2d()) {
-                    physicsSystem.drawDebugBox2d();
-                }
-            }
-        }));
-        ShaderProgram backgroundShader = gameManager.assetManager.get(Res.Shaders.SHADER_COSMOS_BACKGROUND, ShaderProgram.class);
-        renderSystem.setShader(RenderLayers.BACKGROUND.getLayer(), backgroundShader, new ShaderUpdater() {
-
-            private float time;
-
-            @Override
-            public void update(float delta, Vector2 resolution, ShaderProgram shaderProgram) {
-                time += delta;
-                int uTime = shaderProgram.getUniformLocation("u_time");
-                shaderProgram.setUniformf(uTime, time);
-
-                int uResolution = shaderProgram.getUniformLocation("u_resolution");
-                shaderProgram.setUniformf(uResolution, resolution);
-            }
-        });
-
-        engine.addSystem(new DestroySystem(mappers, physicsSystem.getPhysicsUtils()));
+        initSystems(gameSettings, gameManager, mappers, gameEntityFactory);
 
         Entity background = gameEntityFactory.createBackground(engine);
         engine.addEntity(background);
@@ -107,10 +72,57 @@ public class Level0Screen extends AbstractGameScreen {
         component.notifyListeners();
     }
 
+    private void initSystems(
+            GameSettings gameSettings,
+            GameManager gameManager,
+            Mappers mappers,
+            GameEntityFactory gameEntityFactory
+    ) {
+        PhysicsSystem physicsSystem = new PhysicsSystem(gameSettings, gameManager.utils, mappers).setDrawDebugBox2d(true);
+        engine.addSystem(new HeroSystem(gameManager, mappers));
+        engine.addSystem(new ScriptSystem(mappers));
+        engine.addSystem(new WallGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
+        engine.addSystem(new CoinGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
+        engine.addSystem(new BulletTypeGeneratorSystem(gameManager.gameSettings, gameEntityFactory));
+        engine.addSystem(new InitSystem(mappers));
+        engine.addSystem(new DelaySystem(mappers));
+        engine.addSystem(new DeleteSystem(mappers));
+        engine.addSystem(new SimpleTweenSystem(mappers));
+        engine.addSystem(physicsSystem);
+        engine.addSystem(renderSystem = new RenderSystem(RenderLayers.values().length, gameManager.utils, mappers, gameSettings, new Runnable() {
+            @Override
+            public void run() {
+                if (physicsSystem.isDrawDebugBox2d()) {
+                    physicsSystem.drawDebugBox2d();
+                }
+            }
+        }));
+        ShaderProgram backgroundShader = gameManager.assetManager.get(Res.Shaders.SHADER_COSMOS_BACKGROUND, ShaderProgram.class);
+        renderSystem.setShader(RenderLayers.BACKGROUND.getLayer(), backgroundShader, new ShaderUpdater() {
+
+            private float time;
+
+            @Override
+            public void update(float delta, Vector2 resolution, ShaderProgram shaderProgram) {
+                time += delta;
+                int uTime = shaderProgram.getUniformLocation("u_time");
+                shaderProgram.setUniformf(uTime, time);
+
+                int uResolution = shaderProgram.getUniformLocation("u_resolution");
+                shaderProgram.setUniformf(uResolution, resolution);
+            }
+        });
+
+        engine.addSystem(new DestroySystem(mappers, physicsSystem.getPhysicsUtils()));
+    }
+
     @Override
     public void render(float delta) {
         clearScreen();
         engine.update(delta);
+        inputSystem.postInput();
+
+        //TODO может быть, как-то все-таки вынести сам рендеринг из ecs или не стоит?!
         hud.render(delta);
     }
 

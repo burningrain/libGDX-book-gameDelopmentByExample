@@ -52,10 +52,7 @@ public class GameComponentFactory {
     }
 
     public ParticleEffect createParticleEffect(String path) {
-        ParticleEffect particleEffect = new ParticleEffect(assetManager.get(path, ParticleEffect.class));
-        particleEffect.start(); //TODO а нужно ли здесь сразу стартовать?! Может быть и нет.
-
-        return particleEffect;
+        return new ParticleEffect(assetManager.get(path, ParticleEffect.class));
     }
 
     public RenderComponent createParticleEffectComponent(String path, RenderPosition renderPosition) {

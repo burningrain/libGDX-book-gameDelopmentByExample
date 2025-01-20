@@ -23,7 +23,7 @@ public class GamePlaySettings {
 
     private final byte wallLife = 3;
 
-    private final Vector2 upForce = new Vector2(0, 4);;
+    private final Vector2 upForce = new Vector2(0, 4);
 
     // angular
     private final float angularImpulse = 0.02f;

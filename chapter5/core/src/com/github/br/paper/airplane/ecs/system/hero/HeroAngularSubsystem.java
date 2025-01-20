@@ -11,6 +11,7 @@ import com.github.br.paper.airplane.ecs.component.render.ParticleEffectData;
 import com.github.br.paper.airplane.ecs.component.render.RenderComponent;
 import com.github.br.paper.airplane.ecs.component.render.RenderUtils;
 import com.github.br.paper.airplane.gameworld.DelayComponentName;
+import com.github.br.paper.airplane.gameworld.HeroEffects;
 
 public class HeroAngularSubsystem implements HeroSybSystem {
 
@@ -20,7 +21,7 @@ public class HeroAngularSubsystem implements HeroSybSystem {
     private DelayComponent delayComponent = new DelayComponent(DelayComponentName.DELETE_PARTICLE_FIRE, 0.2f, new Runnable() {
         @Override
         public void run() {
-            RenderUtils.unsetEffect(renderComponent, 1);
+            RenderUtils.unsetEffect(renderComponent, HeroEffects.FIRE);
         }
     });
     // TODO вынести отсюда этот код в кэш с пулами
@@ -50,7 +51,7 @@ public class HeroAngularSubsystem implements HeroSybSystem {
                 heroComponent.setApplyAngularImpulse(true);
 
                 box2dComponent.body.applyAngularImpulse(-gamePlaySettings.getAngularImpulse(), true);
-                RenderUtils.setEffect(renderComponent, heroFireEffect, 1);
+                RenderUtils.setEffect(renderComponent, heroFireEffect, HeroEffects.FIRE);
                 entity.add(delayComponent);
             }
         } else {
