@@ -8,24 +8,29 @@ public class InputComponent implements Component {
 
     public boolean isPressedUp;
     public boolean isPressedDown;
-    public boolean isFire;
+    public boolean isClick;
+
+    public boolean isDoubleClick;
 
     public void turnOn() {
         isInputTurnOn = true;
-        isPressedUp = false;
-        isPressedDown = false;
-        this.isFire = false;
+        reset();
     }
 
     public void turnOff() {
-        isPressedUp = false;
         isInputTurnOn = false;
-        isPressedDown = false;
-        this.isFire = false;
+        reset();
     }
 
     public boolean isInputTurnOn() {
         return isInputTurnOn;
+    }
+
+    private void reset() {
+        isPressedUp = false;
+        isPressedDown = false;
+        isClick = false;
+        isDoubleClick = false;
     }
 
 }

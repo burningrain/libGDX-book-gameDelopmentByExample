@@ -124,12 +124,12 @@ highMin: 1.0
 highMax: 1.0
 relative: false
 scalingCount: 3
-scaling0: 0.30167606
-scaling1: 0.16201152
+scaling0: 0.30
+scaling1: 0.16
 scaling2: 0.0
 timelineCount: 3
 timeline0: 0.0
-timeline1: 0.3690773
+timeline1: 0.36
 timeline2: 1.0
 - Options - 
 attached: true

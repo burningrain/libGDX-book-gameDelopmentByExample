@@ -14,8 +14,6 @@ public class HeroComponent implements Component {
     private short bulletCount;
     private BulletType bulletType;
 
-    private boolean isApplyAngularImpulse;
-
     private final ArrayList<ComponentListener<HeroComponent>> listeners = new ArrayList<>(4);
 
     public byte getLifeCount() {
@@ -61,14 +59,6 @@ public class HeroComponent implements Component {
 
     public BulletType getBulletType() {
         return bulletType;
-    }
-
-    public void setApplyAngularImpulse(boolean applyAngularImpulse) {
-        this.isApplyAngularImpulse = applyAngularImpulse;
-    }
-
-    public boolean isApplyAngularImpulse() {
-        return isApplyAngularImpulse;
     }
 
 }

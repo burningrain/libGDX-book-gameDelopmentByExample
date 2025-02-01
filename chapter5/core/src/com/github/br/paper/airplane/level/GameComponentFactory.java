@@ -9,12 +9,11 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.github.br.paper.airplane.ecs.component.Box2dComponent;
+import com.github.br.paper.airplane.ecs.component.TransformComponent;
 import com.github.br.paper.airplane.ecs.component.render.ParticleEffectData;
 import com.github.br.paper.airplane.ecs.component.render.RenderComponent;
-import com.github.br.paper.airplane.ecs.component.TransformComponent;
 import com.github.br.paper.airplane.ecs.component.render.RenderPosition;
 import com.github.br.paper.airplane.ecs.component.render.TextureData;
-import com.github.br.paper.airplane.gameworld.RenderLayers;
 
 public class GameComponentFactory {
 
@@ -57,9 +56,7 @@ public class GameComponentFactory {
 
     public RenderComponent createParticleEffectComponent(String path, RenderPosition renderPosition) {
         RenderComponent component = new RenderComponent();
-        ParticleEffectData effectData = new ParticleEffectData();
-        effectData.renderPosition = renderPosition;
-        effectData.particleEffect = createParticleEffect(path);
+        ParticleEffectData effectData = new ParticleEffectData(renderPosition, createParticleEffect(path));
         component.effectData = new ParticleEffectData[] {
                 effectData
         };

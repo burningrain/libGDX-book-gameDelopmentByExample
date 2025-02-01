@@ -22,6 +22,9 @@ import com.github.br.paper.airplane.ecs.component.render.TextureData;
 
 public class RenderSystem extends EntitySystem {
 
+    private final RenderTextureSubsystem textureSubsystem;
+    private final RenderParticleSubsystem particleSubsystem;
+
     private final Family family = Family.all(TransformComponent.class, RenderComponent.class).get();
     private final Mappers mappers;
     private final SpriteBatch[] spriteBatchArray;
@@ -51,6 +54,9 @@ public class RenderSystem extends EntitySystem {
         camera.update();
         viewport = new FitViewport(gameSettings.getVirtualScreenWidth(), gameSettings.getVirtualScreenHeight(), camera);
         viewport.apply(true);
+
+        particleSubsystem = new RenderParticleSubsystem(this.utils);
+        textureSubsystem = new RenderTextureSubsystem(this.utils);
     }
 
     private SpriteBatch[] createSpriteBatchArray(int layersSize) {
@@ -140,33 +146,10 @@ public class RenderSystem extends EntitySystem {
 
             if (renderDatum.renderData instanceof TextureData) {
                 TextureData textureData = (TextureData) renderDatum.renderData;
-                Vector2 anchor = textureData.renderPosition.anchorDelta;
-                TextureRegion region = textureData.region;
-                Vector2 newPosition = utils.rotatePointToAngle(anchor.x, anchor.y, transformComponent.degreeAngle);
-                spriteBatch.draw(
-                        region,
-                        transformComponent.position.x + newPosition.x,
-                        transformComponent.position.y + newPosition.y,
-                        transformComponent.origin.x,
-                        transformComponent.origin.y,
-                        region.getRegionWidth(),
-                        region.getRegionHeight(),
-                        transformComponent.scale.x,
-                        transformComponent.scale.y,
-                        transformComponent.degreeAngle
-                );
+                textureSubsystem.render(transformComponent, spriteBatch, deltaTime, textureData);
             } else if (renderDatum.renderData instanceof ParticleEffectData) {
                 ParticleEffectData effectData = (ParticleEffectData) renderDatum.renderData;
-                Vector2 anchor = effectData.renderPosition.anchorDelta;
-                ParticleEffect particleEffect = effectData.particleEffect;
-
-                Vector2 newPosition = utils.rotatePointToAngle(anchor.x, anchor.y, transformComponent.degreeAngle);
-                particleEffect.setPosition(
-                        transformComponent.position.x + transformComponent.width / 2 + newPosition.x,
-                        transformComponent.position.y + transformComponent.height / 2 + newPosition.y
-                );
-                rotateBy(particleEffect, transformComponent.degreeAngle - 180); //TODO FIXME ?!
-                particleEffect.draw(spriteBatch, deltaTime);
+                particleSubsystem.render(transformComponent, spriteBatch, deltaTime, effectData);
             }
         }
         spriteBatch.end();
@@ -189,25 +172,6 @@ public class RenderSystem extends EntitySystem {
     public void applyCameraToBatch(Batch batch, Camera camera) {
         batch.setProjectionMatrix(camera.projection);
         batch.setTransformMatrix(camera.view);
-    }
-
-    private void rotateBy(ParticleEffect particleEffect, float targetAngle) {
-        Array<ParticleEmitter> emitters = particleEffect.getEmitters();
-        for (int i = 0; i < emitters.size; i++) {
-            /* find angle property and adjust that by letting the min, max of low and high span their current size around your angle */
-            ParticleEmitter particleEmitter = emitters.get(i);
-            ParticleEmitter.ScaledNumericValue angle = particleEmitter.getAngle();
-
-            float angleHighMin = angle.getHighMin();
-            float angleHighMax = angle.getHighMax();
-            float spanHigh = angleHighMax - angleHighMin;
-            angle.setHigh(targetAngle, targetAngle);
-
-            float angleLowMin = angle.getLowMin();
-            float angleLowMax = angle.getLowMax();
-            float spanLow = angleLowMax - angleLowMin;
-            angle.setLow(0);
-        }
     }
 
 }

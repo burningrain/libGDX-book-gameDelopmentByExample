@@ -53,8 +53,9 @@ public class InputSystem {
         }
 
         inputComponent.isPressedDown = true;
+        inputComponent.isClick = true;
         long now = System.currentTimeMillis();
-        inputComponent.isFire = ((float) (now - lastTime)) < 200;
+        inputComponent.isDoubleClick = ((float) (now - lastTime)) < 200;
         lastTime = now;
 
         return true;
@@ -62,7 +63,9 @@ public class InputSystem {
 
     public void postInput() {
         inputComponent.isPressedUp = false;
-    }
 
+        inputComponent.isClick = false;
+        inputComponent.isDoubleClick = false;
+    }
 
 }

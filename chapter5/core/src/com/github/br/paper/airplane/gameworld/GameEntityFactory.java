@@ -435,12 +435,7 @@ public class GameEntityFactory {
         renderPosition.layer = layers.getLayer();
 
         ParticleEffect particleEffect = componentFactory.createParticleEffect(path);
-
-        ParticleEffectData effectData = new ParticleEffectData();
-        effectData.renderPosition = renderPosition;
-        effectData.particleEffect = particleEffect;
-
-        return effectData;
+        return new ParticleEffectData(renderPosition, particleEffect);
     }
 
 }
