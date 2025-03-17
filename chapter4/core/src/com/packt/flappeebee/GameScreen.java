@@ -19,8 +19,8 @@ public class GameScreen extends ScreenAdapter {
         System.out.println("isNpotSupported: " + npotSupported);
 
         GameWorldSettings gameWorldSettings = new GameWorldSettings();
-        gameWorldSettings.virtualWidth = 1024;
-        gameWorldSettings.virtualHeight = 768;
+        gameWorldSettings.virtualWidth = 640;
+        gameWorldSettings.virtualHeight = 480;
         gameWorld = new GameWorld(gameWorldSettings);
     }
 

@@ -1,9 +1,8 @@
 package com.packt.flappeebee.desktop;
 
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.packt.flappeebee.FlappeeBeeGame;
+import com.packt.flappeebee.HappyCrabGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -11,11 +10,10 @@ public class DesktopLauncher {
 		//config.setForegroundFPS(60);
 		config.setTitle("crab");
 
-		//config.width = 1024;
-		//config.height = 768;
+		config.setWindowedMode(1766, 1024);
 		//config.fullscreen = true;
 		//config.samples = 3;
 		//config.setFullscreenMode(Graphics.DisplayMode.);
-		new Lwjgl3Application(new FlappeeBeeGame(), config);
+		new Lwjgl3Application(new HappyCrabGame(), config);
 	}
 }

@@ -1,5 +1,6 @@
 package com.github.br.gdx.simple.animation.fsm;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
@@ -73,8 +74,7 @@ public class FSM {
     void changeState(String newState, FsmContext context) {
         FsmState currentState = states.get(context.getCurrentState());
         if (currentState.getName().equals(newState)) {
-            //todo писать в логгер, его прокинуть через обертку
-            System.out.printf("Вы пытаетесь изменить состояние <%s> на само себя%n", newState);
+            Gdx.app.debug("Вы пытаетесь изменить состояние <%s> на само себя%n", newState);
             return;
         }
         currentState.dispose();

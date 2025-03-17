@@ -38,7 +38,7 @@ public class GameWorld extends ScreenAdapter {
 
     public static final String CRAB_ANIM = "animation/crab/crab.afsm";
 
-    public static final String WAVE_SHADER = "shaders/wave_shader.vert";
+    public static final String BLINK_SHADER = "shaders/blink_shader.vert";
     public static final String BACKGROUND_PNG = "background.png";
 
     private final FileHandleResolver resolver = new InternalFileHandleResolver();
@@ -67,8 +67,8 @@ public class GameWorld extends ScreenAdapter {
         assetManager.load(CRAB_ANIM, SimpleAnimation.class);
 
         assetManager.load(BACKGROUND_PNG, Texture.class);
-        assetManager.load(WAVE_SHADER, ShaderProgram.class);
 
+        assetManager.load(BLINK_SHADER, ShaderProgram.class);
         assetManager.finishLoading();
     }
 
@@ -89,16 +89,16 @@ public class GameWorld extends ScreenAdapter {
 
     private void initEcsContainer() {
         ShaderData waveShader = new ShaderData();
-        waveShader.title = WAVE_SHADER;
+        waveShader.title = BLINK_SHADER;
         waveShader.shaderUpdater = new ShaderUpdater() {
 
             private float time;
 
             @Override
-            public void update(ShaderProgram shaderProgram) {
+            public void update(ShaderProgram shp) {
                 time += Gdx.graphics.getDeltaTime();
-                int uTime = shaderProgram.getUniformLocation("u_time");
-                shaderProgram.setUniformf(uTime, time);
+                int uTime = shp.getUniformLocation("u_time");
+                shp.setUniformf(uTime, time);
             }
 
         };
