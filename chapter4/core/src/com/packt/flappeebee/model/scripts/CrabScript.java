@@ -16,6 +16,7 @@ import com.packt.flappeebee.model.LayerEnum;
  */
 public class CrabScript extends EcsScript {
 
+    public static final int VELOCITY = 2;
     private TransformComponent transform;
     private PhysicsComponent physics;
 
@@ -41,12 +42,12 @@ public class CrabScript extends EcsScript {
         // TODO должен быть маппинг кнопок на действия, а в условиях проверять уже сами действия случились или нет, в не кнопки
         ControllerProxy controller = ControllerProxy.INSTANCE;
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || controller.getButton(controller.getMapping().buttonA)) {
-            flyUp();
+            flyUp(delta);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D) || controller.getAxis(controller.getMapping().axisLeftX) > 0) {
-            physics.movement.x = 50 * delta;
+            physics.movement.x = VELOCITY;
         } else if (Gdx.input.isKeyPressed(Input.Keys.A) || controller.getAxis(controller.getMapping().axisLeftX) < 0) {
-            physics.movement.x = -50 * delta;
+            physics.movement.x = -VELOCITY;
         } else {
             physics.movement.x = 0;
         }
@@ -68,8 +69,8 @@ public class CrabScript extends EcsScript {
         transform.position.y = MathUtils.clamp(transform.position.y, 0, height);
     }
 
-    public void flyUp() {
-        physics.movement.add(GameConstants.CRAB_DIVE_ACCEL_ACCEL);
+    public void flyUp(float delta) {
+        physics.movement.add(GameConstants.CRAB_DIVE_ACCEL_ACCEL.cpy().scl(delta * delta * 360f / 2f));
     }
 
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.br.gdx.simple.console.exception.ConsoleException;
 
 /**
  * Created by user on 03.01.2019.
@@ -92,6 +93,10 @@ public class Console extends ScreenAdapter {
 
     public void addCommands(Command[] commands) {
         consoleService.addCommands(commands);
+    }
+
+    public void interpretInput(String consoleText) throws ConsoleException {
+        consoleService.interpretInput(consoleText);
     }
 
 

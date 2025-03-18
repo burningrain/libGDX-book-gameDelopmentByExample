@@ -29,6 +29,7 @@ import com.github.br.gdx.simple.animation.SimpleAnimation;
 import com.github.br.gdx.simple.animation.SimpleAnimationSyncLoader;
 import com.github.br.gdx.simple.console.Console;
 import com.github.br.gdx.simple.console.ConsoleOffOnCallback;
+import com.github.br.gdx.simple.console.exception.ConsoleException;
 import com.packt.flappeebee.animation.AnimationFactory;
 
 import static com.packt.flappeebee.model.LayerEnum.*;
@@ -49,25 +50,33 @@ public class GameWorld extends ScreenAdapter {
     private EcsContainer container;
     private Console console;
 
+    private final PhysicsSystem physicsSystem;
+
     public GameWorld(GameWorldSettings gameWorldSettings) {
         this.gameWorldSettings = gameWorldSettings;
+
+        this.physicsSystem = new PhysicsSystem();
         //TODO
         loadAssets();
-        initEcsContainer();
+        initEcsContainer(physicsSystem);
         initConsole();
         setInputProcessor();
 
         container.createEntity("background", GameObjectFactory.createBackground(
                 new TextureRegion(assetManager.<Texture>get(BACKGROUND_PNG)))
         );
+
+        try {
+            console.interpretInput("crab");
+        } catch (ConsoleException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadAssets() {
         assetManager.setLoader(SimpleAnimation.class, new SimpleAnimationSyncLoader(resolver));
         assetManager.load(CRAB_ANIM, SimpleAnimation.class);
-
         assetManager.load(BACKGROUND_PNG, Texture.class);
-
         assetManager.load(BLINK_SHADER, ShaderProgram.class);
         assetManager.finishLoading();
     }
@@ -84,10 +93,10 @@ public class GameWorld extends ScreenAdapter {
                         container.setDebugMode(isActive);
                     }
                 });
-        console.addCommands(CommandsFactory.getCommands(container));
+        console.addCommands(CommandsFactory.getCommands(container, physicsSystem));
     }
 
-    private void initEcsContainer() {
+    private void initEcsContainer(PhysicsSystem physicsSystem) {
         ShaderData waveShader = new ShaderData();
         waveShader.title = BLINK_SHADER;
         waveShader.shaderUpdater = new ShaderUpdater() {
@@ -123,7 +132,7 @@ public class GameWorld extends ScreenAdapter {
         container = new EcsContainer(settings);
         // инициализация систем. Порядок очень важен!
         container.addSystem(ScriptSystem.class);
-        container.addSystem(PhysicsSystem.class);
+        container.addSystem(physicsSystem);
         container.addSystem(animationSystem);
         container.addSystem(
                 new RenderSystem(

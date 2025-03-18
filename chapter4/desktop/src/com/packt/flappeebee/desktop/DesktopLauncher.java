@@ -11,6 +11,8 @@ public class DesktopLauncher {
 		config.setTitle("crab");
 
 		config.setWindowedMode(1766, 1024);
+		config.setForegroundFPS(6);
+
 		//config.fullscreen = true;
 		//config.samples = 3;
 		//config.setFullscreenMode(Graphics.DisplayMode.);

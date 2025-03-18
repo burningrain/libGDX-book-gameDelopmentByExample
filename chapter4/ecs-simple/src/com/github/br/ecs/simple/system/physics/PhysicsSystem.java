@@ -1,6 +1,7 @@
 package com.github.br.ecs.simple.system.physics;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
@@ -18,7 +19,13 @@ import com.github.br.ecs.simple.system.transform.TransformComponent;
 
 public class PhysicsSystem extends DebugSystem {
 
+    private static final float MS_PER_UPDATE = 0.006f;
     private IdentityMap<Class, ShapePosUpdater> shapeUpdaters;
+
+    private static int variant = 1;
+
+    private float previous = 0;
+    private float lag = 0;
 
     public PhysicsSystem() {
         super(TransformComponent.class, PhysicsComponent.class);
@@ -35,7 +42,19 @@ public class PhysicsSystem extends DebugSystem {
             TransformComponent transform = entity.getComponent(TransformComponent.class);
             PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
 
-            moveNode(transform, physics);
+            switch (variant) {
+                case 1:
+                    moveNode1(transform, physics);
+                    break;
+                case 2:
+                    moveNode2(transform, physics);
+                    break;
+                case 3:
+                    moveNode3(transform, physics);
+                    break;
+            }
+            shapeUpdaters.get(physics.shape.getClass()).update(physics.shape, transform.position);
+
             if (isDebugMode()) {
                 //fillDebugData(debugDataContainer, physics.boundary.shape, transform); todo
             }
@@ -59,11 +78,38 @@ public class PhysicsSystem extends DebugSystem {
         debugDataContainer.put(pointData);
     }
 
-    private void moveNode(TransformComponent transform, PhysicsComponent physics) {
+    private void moveNode1(TransformComponent transform, PhysicsComponent physics) {
         //TODO где ротация???
         physics.movement.add(physics.acceleration);
         transform.position.add(physics.movement);
-        shapeUpdaters.get(physics.shape.getClass()).update(physics.shape, transform.position);
+    }
+
+    private void moveNode2(TransformComponent transform, PhysicsComponent physics) {
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        physics.movement.add(physics.acceleration.cpy().scl(deltaTime * deltaTime / 2f * 60f));
+        transform.position.add(physics.movement.cpy().scl(deltaTime * 60f));
+    }
+
+    private void moveNode3(TransformComponent transform, PhysicsComponent physics) {
+        float current = Gdx.graphics.getDeltaTime();
+        float elapsed = current - previous;
+        previous = current;
+        lag += elapsed;
+
+        while(lag >= MS_PER_UPDATE) {
+            float deltaTime = Gdx.graphics.getDeltaTime();
+            physics.movement.add(physics.acceleration.cpy().scl(deltaTime * deltaTime / 2 * 10));
+            transform.position.add(physics.movement.cpy().scl(deltaTime * 10));
+        }
+        lag -= MS_PER_UPDATE;
+    }
+
+    public void changeStrategy(int variant) {
+        this.variant = variant;
+    }
+
+    public static int getVariant() {
+        return variant;
     }
 
 }
