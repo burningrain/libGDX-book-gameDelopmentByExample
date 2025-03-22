@@ -30,17 +30,12 @@ import com.github.br.gdx.simple.animation.SimpleAnimationSyncLoader;
 import com.github.br.gdx.simple.console.Console;
 import com.github.br.gdx.simple.console.ConsoleOffOnCallback;
 import com.github.br.gdx.simple.console.exception.ConsoleException;
-import com.packt.flappeebee.animation.AnimationFactory;
+import com.packt.flappeebee.Resources;
 
 import static com.packt.flappeebee.model.LayerEnum.*;
 
 
 public class GameWorld extends ScreenAdapter {
-
-    public static final String CRAB_ANIM = "animation/crab/crab.afsm";
-
-    public static final String BLINK_SHADER = "shaders/blink_shader.vert";
-    public static final String BACKGROUND_PNG = "background.png";
 
     private final FileHandleResolver resolver = new InternalFileHandleResolver();
     private final AssetManager assetManager = new AssetManager(resolver);
@@ -56,14 +51,15 @@ public class GameWorld extends ScreenAdapter {
         this.gameWorldSettings = gameWorldSettings;
 
         this.physicsSystem = new PhysicsSystem();
-        //TODO
         loadAssets();
         initEcsContainer(physicsSystem);
         initConsole();
-        setInputProcessor();
+
+        //fixme криво, но зато контроль у клиента
+        Gdx.input.setInputProcessor(createInputProcessor());
 
         container.createEntity("background", GameObjectFactory.createBackground(
-                new TextureRegion(assetManager.<Texture>get(BACKGROUND_PNG)))
+                new TextureRegion(assetManager.<Texture>get(Resources.Backgrounds.BACKGROUND_PNG)))
         );
 
         try {
@@ -75,9 +71,9 @@ public class GameWorld extends ScreenAdapter {
 
     private void loadAssets() {
         assetManager.setLoader(SimpleAnimation.class, new SimpleAnimationSyncLoader(resolver));
-        assetManager.load(CRAB_ANIM, SimpleAnimation.class);
-        assetManager.load(BACKGROUND_PNG, Texture.class);
-        assetManager.load(BLINK_SHADER, ShaderProgram.class);
+        assetManager.load(Resources.Animations.CRAB_ANIM_FSM, SimpleAnimation.class);
+        assetManager.load(Resources.Backgrounds.BACKGROUND_PNG, Texture.class);
+        assetManager.load(Resources.Shaders.BLINK_SHADER, ShaderProgram.class);
         assetManager.finishLoading();
     }
 
@@ -98,7 +94,7 @@ public class GameWorld extends ScreenAdapter {
 
     private void initEcsContainer(PhysicsSystem physicsSystem) {
         ShaderData waveShader = new ShaderData();
-        waveShader.title = BLINK_SHADER;
+        waveShader.title = Resources.Shaders.BLINK_SHADER;
         waveShader.shaderUpdater = new ShaderUpdater() {
 
             private float time;
@@ -125,9 +121,7 @@ public class GameWorld extends ScreenAdapter {
 
         // загрузка анимаций
         AnimationSystem animationSystem = new AnimationSystem();
-        animationSystem.addAnimation(assetManager.<SimpleAnimation>get(CRAB_ANIM));
-        //animationSystem.addAnimation(AnimationFactory.createCrab());
-        animationSystem.addAnimation(AnimationFactory.createPlant());
+        animationSystem.addAnimation(assetManager.<SimpleAnimation>get(Resources.Animations.CRAB_ANIM_FSM));
 
         container = new EcsContainer(settings);
         // инициализация систем. Порядок очень важен!
@@ -144,11 +138,11 @@ public class GameWorld extends ScreenAdapter {
         container.init();
     }
 
-    private void setInputProcessor() {
+    private InputMultiplexer createInputProcessor() {
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(console.getInputProcessor());
         inputMultiplexer.addProcessor(container.getInputProcessor());
-        Gdx.input.setInputProcessor(inputMultiplexer); //fixme криво, но зато контроль у клиента
+        return inputMultiplexer;
     }
 
     @Override

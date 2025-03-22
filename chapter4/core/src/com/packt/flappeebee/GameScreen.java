@@ -16,11 +16,12 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         boolean npotSupported = Gdx.graphics.supportsExtension("GL_OES_texture_npot")
                 || Gdx.graphics.supportsExtension("GL_ARB_texture_non_power_of_two");
-        System.out.println("isNpotSupported: " + npotSupported);
+        Gdx.app.debug("App", "isNpotSupported: " + npotSupported);
 
         GameWorldSettings gameWorldSettings = new GameWorldSettings();
         gameWorldSettings.virtualWidth = 640;
         gameWorldSettings.virtualHeight = 480;
+
         gameWorld = new GameWorld(gameWorldSettings);
     }
 
@@ -34,8 +35,6 @@ public class GameScreen extends ScreenAdapter {
         clearScreen();                      // очищаем экран
         // обработка клавиш теперь размазана по коду
         gameWorld.render(delta);             // обновление игрового мира (состояние и рендеринг)
-
-        //TODO пробросить вывод runtime-ошибок на экран
     }
 
     private void clearScreen() {

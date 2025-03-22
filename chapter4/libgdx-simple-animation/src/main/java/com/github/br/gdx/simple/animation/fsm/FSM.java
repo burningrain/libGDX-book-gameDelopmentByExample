@@ -74,7 +74,7 @@ public class FSM {
     void changeState(String newState, FsmContext context) {
         FsmState currentState = states.get(context.getCurrentState());
         if (currentState.getName().equals(newState)) {
-            Gdx.app.debug("Вы пытаетесь изменить состояние <%s> на само себя%n", newState);
+            Gdx.app.debug("FSM", "Вы пытаетесь изменить состояние <" + newState + "> на само себя");
             return;
         }
         currentState.dispose();

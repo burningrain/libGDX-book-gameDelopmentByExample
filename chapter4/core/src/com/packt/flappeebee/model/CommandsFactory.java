@@ -15,9 +15,6 @@ public final class CommandsFactory {
 
     public static Command[] getCommands(EcsContainer container, PhysicsSystem physicsSystem) {
         return new Command[]{
-                createBee(container),
-                createPlant(container),
-                createCloud(container),
                 createCrab(container),
 
                 createChangeGameCycleStrategy(physicsSystem)
@@ -56,75 +53,6 @@ public final class CommandsFactory {
             @Override
             public String getTitle() {
                 return "crab";
-            }
-
-            @Override
-            public String help() {
-                return null;
-            }
-        };
-    }
-
-    private static Command createCloud(final EcsContainer container) {
-        return new Command() {
-            @Override
-            public String execute(String[] args) throws CommandExecutionException {
-                int count = Integer.parseInt(args[0]);
-                for (int i = 0; i < count; i++) {
-                    container.createEntity("cloud", GameObjectFactory.createCloud());
-                }
-                return "";
-            }
-
-            @Override
-            public String getTitle() {
-                return "cloud";
-            }
-
-            @Override
-            public String help() {
-                return null;
-            }
-        };
-    }
-
-    private static Command createPlant(final EcsContainer container) {
-        return new Command() {
-            @Override
-            public String execute(String[] args) throws CommandExecutionException {
-                int count = Integer.parseInt(args[0]);
-                for (int i = 0; i < count; i++) {
-                    container.createEntity("plant", GameObjectFactory.createPlant(i + 1));
-                }
-                return "";
-            }
-
-            @Override
-            public String getTitle() {
-                return "plant";
-            }
-
-            @Override
-            public String help() {
-                return null;
-            }
-        };
-    }
-
-    private static Command createBee(final EcsContainer container) {
-        return new Command() {
-            @Override
-            public String execute(String[] args) throws CommandExecutionException {
-                int count = Integer.parseInt(args[0]);
-                for (int i = 0; i < count; i++) {
-                    container.createEntity("bee", GameObjectFactory.createFlappee());
-                }
-                return "";
-            }
-
-            @Override
-            public String getTitle() {
-                return "bee";
             }
 
             @Override

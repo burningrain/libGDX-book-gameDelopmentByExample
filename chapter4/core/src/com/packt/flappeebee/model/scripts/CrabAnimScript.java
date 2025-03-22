@@ -2,7 +2,6 @@ package com.packt.flappeebee.model.scripts;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.controllers.Controllers;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
