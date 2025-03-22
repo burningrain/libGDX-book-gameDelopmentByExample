@@ -2,7 +2,7 @@ package com.packt.flappeebee.desktop;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.packt.flappeebee.HappyCrabGame;
+import com.packt.flappeebee.HappyCrabSimpleGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -16,6 +16,6 @@ public class DesktopLauncher {
 		//config.fullscreen = true;
 		//config.samples = 3;
 		//config.setFullscreenMode(Graphics.DisplayMode.);
-		new Lwjgl3Application(new HappyCrabGame(), config);
+		new Lwjgl3Application(new HappyCrabSimpleGame(), config);
 	}
 }

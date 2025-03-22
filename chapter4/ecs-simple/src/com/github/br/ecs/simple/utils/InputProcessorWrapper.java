@@ -56,6 +56,14 @@ public class InputProcessorWrapper implements InputProcessor {
     }
 
     @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        if(predicate.apply()) {
+            return false;
+        }
+        return inputProcessor.touchCancelled(screenX, screenY, pointer, button);
+    }
+
+    @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         if(predicate.apply()) {
             return false;

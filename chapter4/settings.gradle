@@ -3,4 +3,5 @@ include 'ecs-simple'
 include 'libgdx-simple-console'
 include 'libgdx-simple-animation'
 include 'libgdx-simple-common'
+include 'libgdx-simple-structure'
 
