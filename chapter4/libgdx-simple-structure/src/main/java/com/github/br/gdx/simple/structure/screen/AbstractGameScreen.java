@@ -1,5 +1,6 @@
 package com.github.br.gdx.simple.structure.screen;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.github.br.gdx.simple.structure.GameManager;
 
@@ -16,7 +17,11 @@ public abstract class AbstractGameScreen implements Screen {
     }
 
     @Override
-    public abstract void show() ;
+    public void show() {
+        boolean npotSupported = Gdx.graphics.supportsExtension("GL_OES_texture_npot")
+                || Gdx.graphics.supportsExtension("GL_ARB_texture_non_power_of_two");
+        Gdx.app.debug("App", "isNpotSupported: " + npotSupported);
+    }
 
     @Override
     public abstract void render(float delta);

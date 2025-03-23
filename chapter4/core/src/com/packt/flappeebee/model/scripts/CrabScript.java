@@ -7,7 +7,7 @@ import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
-import com.packt.flappeebee.model.ControllerProxy;
+import com.github.br.simple.input.controller.ControllerProxy;
 import com.packt.flappeebee.model.GameConstants;
 import com.packt.flappeebee.model.LayerEnum;
 

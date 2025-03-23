@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.github.br.gdx.simple.structure.GameManager;
 import com.github.br.gdx.simple.structure.screen.AbstractGameScreen;
+import com.github.br.simple.input.InputSystem;
+import com.packt.flappeebee.action.ActionMapperImpl;
 import com.packt.flappeebee.model.GameWorld;
 import com.packt.flappeebee.model.GameWorldSettings;
 
@@ -12,26 +14,33 @@ public class MainMenuScreen extends AbstractGameScreen {
 
     private GameWorld gameWorld;
 
+    private InputSystem inputSystem;
+
     @Override
     public void show() {
+        super.show();
+
         GameManager gameManager = getGameManager();
 
-        boolean npotSupported = Gdx.graphics.supportsExtension("GL_OES_texture_npot")
-                || Gdx.graphics.supportsExtension("GL_ARB_texture_non_power_of_two");
-        Gdx.app.debug("App", "isNpotSupported: " + npotSupported);
-
+        //TODO убрать старый код
         GameWorldSettings gameWorldSettings = new GameWorldSettings();
         gameWorldSettings.virtualWidth = 640;
         gameWorldSettings.virtualHeight = 480;
-
         gameWorld = new GameWorld(gameWorldSettings);
+        //TODO убрать старый код
+
+        inputSystem = new InputSystem(5, new ActionMapperImpl());
+        //TODO Gdx.input.setInputProcessor(inputSystem.getInputProcessor()); //TODO
     }
 
     @Override
     public void render(float delta) {
+        inputSystem.update(delta);
+
         clearScreen();                      // очищаем экран
-        // обработка клавиш теперь размазана по коду
-        gameWorld.render(delta);             // обновление игрового мира (состояние и рендеринг)
+        gameWorld.render(delta);            // обновление игрового кадра (состояние и рендеринг)
+
+        inputSystem.reset();
     }
 
     public void resize(int width, int height) {

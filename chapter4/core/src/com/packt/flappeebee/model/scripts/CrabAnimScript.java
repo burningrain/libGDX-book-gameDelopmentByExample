@@ -8,7 +8,7 @@ import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
-import com.packt.flappeebee.model.ControllerProxy;
+import com.github.br.simple.input.controller.ControllerProxy;
 
 /**
  * Created by user on 17.04.2017.

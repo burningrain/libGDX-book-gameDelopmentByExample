@@ -52,6 +52,7 @@ project(":core") {
         implementation project(":libgdx-simple-common")
         implementation project(":libgdx-simple-animation")
         implementation project(":libgdx-simple-structure")
+        implementation project(":libgdx-simple-input")
 
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         // scene composer

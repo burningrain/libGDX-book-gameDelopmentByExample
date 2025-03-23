@@ -1,17 +1,40 @@
-package com.packt.flappeebee.model;
+package com.github.br.simple.input.controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.*;
 
 public class ControllerProxy implements Controller {
 
+    public static final ControllerProxy INSTANCE = new ControllerProxy();
+
     private static class ControllerMappingImpl extends ControllerMapping {
-        public ControllerMappingImpl(int axisLeftX, int axisLeftY, int axisRightX, int axisRightY, int buttonA, int buttonB, int buttonX, int buttonY, int buttonBack, int buttonStart, int buttonL1, int buttonL2, int buttonR1, int buttonR2, int buttonLeftStick, int buttonRightStick, int buttonDpadUp, int buttonDpadDown, int buttonDpadLeft, int buttonDpadRight) {
-            super(axisLeftX, axisLeftY, axisRightX, axisRightY, buttonA, buttonB, buttonX, buttonY, buttonBack, buttonStart, buttonL1, buttonL2, buttonR1, buttonR2, buttonLeftStick, buttonRightStick, buttonDpadUp, buttonDpadDown, buttonDpadLeft, buttonDpadRight);
+        public ControllerMappingImpl(
+                int axisLeftX,
+                int axisLeftY,
+                int axisRightX,
+                int axisRightY,
+                int buttonA,
+                int buttonB,
+                int buttonX,
+                int buttonY,
+                int buttonBack,
+                int buttonStart,
+                int buttonL1,
+                int buttonL2,
+                int buttonR1,
+                int buttonR2,
+                int buttonLeftStick,
+                int buttonRightStick,
+                int buttonDpadUp,
+                int buttonDpadDown,
+                int buttonDpadLeft,
+                int buttonDpadRight
+        ) {
+            super(axisLeftX, axisLeftY, axisRightX, axisRightY, buttonA, buttonB, buttonX, buttonY, buttonBack,
+                    buttonStart, buttonL1, buttonL2, buttonR1, buttonR2, buttonLeftStick, buttonRightStick,
+                    buttonDpadUp, buttonDpadDown, buttonDpadLeft, buttonDpadRight);
         }
     }
-
-    public static final ControllerProxy INSTANCE = new ControllerProxy();
 
     private static final ControllerMappingImpl EMPTY_MAPPING = new ControllerMappingImpl(
             0,
@@ -73,7 +96,7 @@ public class ControllerProxy implements Controller {
         target.removeListener(listener);
     }
 
-    private ControllerProxy() {
+    public ControllerProxy() {
         this(Controllers.getCurrent());
     }
 
