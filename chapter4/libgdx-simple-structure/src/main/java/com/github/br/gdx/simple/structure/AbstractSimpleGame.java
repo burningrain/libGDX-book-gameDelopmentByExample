@@ -14,7 +14,7 @@ public abstract class AbstractSimpleGame<U extends UserFactory> extends Applicat
 
     private GameSettings gameSettings;
     private AudioSettings audioSettings;
-    private Utils utils;
+    private SimpleUtils simpleUtils;
     private AssetManager assetManager;
     private AudioAssetManager audioAssetManager;
     private GameManager<U> gameManager;
@@ -25,7 +25,7 @@ public abstract class AbstractSimpleGame<U extends UserFactory> extends Applicat
         fillGameSettings(builder);
         gameSettings = builder.build();
         audioSettings = createAudioSettings();
-        utils = new Utils(gameSettings);
+        simpleUtils = new SimpleUtils(gameSettings);
 
         InternalFileHandleResolver fileHandleResolver = new InternalFileHandleResolver();
         assetManager = new AssetManager();
@@ -36,7 +36,7 @@ public abstract class AbstractSimpleGame<U extends UserFactory> extends Applicat
         gameManager.init(
                 gameSettings,
                 audioSettings,
-                utils,
+                simpleUtils,
                 assetManager,
                 audioAssetManager,
                 createLoadingScreen(),

@@ -63,21 +63,22 @@ public final class GameObjectFactory {
         rendererComponent.layer = LayerEnum.MAIN_LAYER.name();
 
         // АНИМАЦИЯ
-        // динамика анимации
+        AnimationComponent animationComponent = new AnimationComponent();
+        animationComponent.simpleAnimationComponent = createAnimationComponentCrab();
+        // АНИМАЦИЯ
+
+        return new EcsComponent[]{transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent};
+    }
+
+    public static SimpleAnimationComponent createAnimationComponentCrab() {
         FsmContext fsmContext = new FsmContext();
         fsmContext.insert(CrabAnimScript.MOVEMENT, 0f);
         fsmContext.insert(CrabAnimScript.ATTACK, false);
         fsmContext.insert(CrabAnimScript.JUMP, false);
         fsmContext.insert(CrabAnimScript.FLY, false);
 
-        AnimationComponent animationComponent = new AnimationComponent();
         AnimatorDynamicPart animatorDynamicPart = new AnimatorDynamicPart(/*animatorIdle*/);
-        animationComponent.simpleAnimationComponent = new SimpleAnimationComponent(Resources.Animations.CRAB, fsmContext, animatorDynamicPart);
-        // динамика анимации
-
-        // АНИМАЦИЯ
-
-        return new EcsComponent[]{transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent};
+        return new SimpleAnimationComponent(Resources.Animations.CRAB, fsmContext, animatorDynamicPart);
     }
 
 

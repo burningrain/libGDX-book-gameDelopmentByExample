@@ -26,7 +26,8 @@ allprojects {
         ashleyVersion = '1.7.4'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.2.2'
-        box2DLightsVersion = '1.5'
+        h2dVersion = '0.1.5'
+        artemisVersion = '2.3.0'
     }
 
     repositories {
@@ -57,16 +58,17 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         // scene composer
         implementation 'com.github.raeleus.TenPatch:tenpatch:5.2.3'
-
         implementation 'com.github.raeleus.stripe:stripe:2.0.0'
         implementation 'com.github.raeleus.stripe:colorpicker:2.0.0'
         implementation 'com.github.raeleus.stripe:freetype:2.0.0'
-        // scene composer
-        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        // box2d
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+
+        //HyperLap2D Runtime
+        api "games.rednblack.hyperlap2d:runtime-libgdx:$h2dVersion"
+        api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     }
 }
 

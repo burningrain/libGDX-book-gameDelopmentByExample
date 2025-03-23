@@ -11,7 +11,7 @@ public class GameManager<U extends UserFactory> {
     public GameSettings gameSettings;
     public AudioSettings audioSettings;
     public AudioAssetManager audioAssetManager;
-    public Utils utils;
+    public SimpleUtils simpleUtils;
     public U userFactory;
     public AssetManager assetManager;
     public GameScreenStateManager screenStateManager;
@@ -20,7 +20,7 @@ public class GameManager<U extends UserFactory> {
     public void init(
             GameSettings gameSettings,
             AudioSettings audioSettings,
-            Utils utils,
+            SimpleUtils simpleUtils,
             AssetManager assetManager,
             AudioAssetManager audioAssetManager,
             LoadingScreen loadingScreen,
@@ -29,7 +29,7 @@ public class GameManager<U extends UserFactory> {
     ) {
         this.gameSettings = gameSettings;
         this.audioSettings = audioSettings;
-        this.utils = utils;
+        this.simpleUtils = simpleUtils;
         this.assetManager = assetManager;
         this.audioAssetManager = audioAssetManager;
         screenStateManager = new GameScreenStateManager(this, loadingScreen, startState);

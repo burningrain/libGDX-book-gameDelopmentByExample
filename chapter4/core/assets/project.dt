@@ -1,0 +1,1 @@
+{"pixelToWorld":64,"originalResolution":{"name":"orig","width":640,"height":448,"lastW":640,"lastH":448,"fullName":"orig (640x448)"},"scenes":[{"sceneName":"MainScene","physicsPropertiesVO":{},"lightsPropertiesVO":{},"shaderVO":{}}],"imagesPacks":{"main":{"name":"main","regions":["background","hero"]}},"animationsPacks":{"main":{"name":"main"}}}

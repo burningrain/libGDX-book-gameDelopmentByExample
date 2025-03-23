@@ -1,0 +1,7 @@
+pack.png
+	size: 2048, 1024
+	filter: Linear, Linear
+background
+	bounds: 1, 73, 1600, 900
+hero
+	bounds: 1, 1, 75, 70

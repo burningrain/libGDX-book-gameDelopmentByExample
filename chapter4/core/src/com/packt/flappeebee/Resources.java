@@ -2,6 +2,10 @@ package com.packt.flappeebee;
 
 public interface Resources {
 
+    interface HyperLap2D {
+        String PROJECT = "project.dt";
+    }
+
     interface Animations {
         String CRAB = "crab";
         String CRAB_ANIM_FSM = "animation/crab/crab.afsm";

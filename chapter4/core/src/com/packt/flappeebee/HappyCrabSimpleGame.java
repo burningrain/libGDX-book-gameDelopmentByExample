@@ -19,9 +19,13 @@ import com.github.br.gdx.simple.animation.SimpleAnimationSyncLoader;
 import com.github.br.gdx.simple.structure.AbstractSimpleGame;
 import com.github.br.gdx.simple.structure.GameSettings;
 import com.github.br.gdx.simple.structure.screen.statemachine.GameScreenState;
+import com.packt.flappeebee.screen.level.level1.Level1AssetLoader;
+import com.packt.flappeebee.screen.level.level1.Level1Screen;
 import com.packt.flappeebee.screen.level.menu.MainMenuAssetsLoader;
 import com.packt.flappeebee.screen.level.menu.MainMenuScreen;
 import com.ray3k.stripe.FreeTypeSkinLoader;
+import games.rednblack.editor.renderer.resources.AsyncResourceManager;
+import games.rednblack.editor.renderer.resources.ResourceManagerLoader;
 
 public class HappyCrabSimpleGame extends AbstractSimpleGame<UserFactoryImpl> {
 
@@ -38,7 +42,8 @@ public class HappyCrabSimpleGame extends AbstractSimpleGame<UserFactoryImpl> {
 
     @Override
     protected GameScreenState createStartState() {
-        return new GameScreenState(new MainMenuScreen(), new MainMenuAssetsLoader());
+        //return new GameScreenState(new MainMenuScreen(), new MainMenuAssetsLoader());
+        return new GameScreenState(new Level1Screen(), new Level1AssetLoader());
     }
 
     @Override
@@ -65,8 +70,11 @@ public class HappyCrabSimpleGame extends AbstractSimpleGame<UserFactoryImpl> {
 
         // шрифты
         assetManager.setLoader(BitmapFont.class, new FreetypeFontLoader(fileHandleResolver));
-
+        // анимация
         assetManager.setLoader(SimpleAnimation.class, new SimpleAnimationSyncLoader(fileHandleResolver));
+
+        // hyperlap2D
+        assetManager.setLoader(AsyncResourceManager.class, new ResourceManagerLoader(fileHandleResolver));
     }
 
 }

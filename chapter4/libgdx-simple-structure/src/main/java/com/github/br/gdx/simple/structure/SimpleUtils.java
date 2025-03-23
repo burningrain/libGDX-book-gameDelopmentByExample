@@ -3,11 +3,11 @@ package com.github.br.gdx.simple.structure;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public final class Utils {
+public final class SimpleUtils {
 
     private final GameSettings gameSettings;
 
-    public Utils(GameSettings gameSettings) {
+    public SimpleUtils(GameSettings gameSettings) {
         this.gameSettings = gameSettings;
     }
 
