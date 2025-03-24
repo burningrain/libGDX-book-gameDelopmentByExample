@@ -106,14 +106,14 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
 
         switch (direction) {
             case HeroActions.MOVE_LEFT:
-                impulse.set(-4, speed.y);
+                impulse.set(-2, speed.y);
                 break;
             case HeroActions.MOVE_RIGHT:
-                impulse.set(4, speed.y);
+                impulse.set(2, speed.y);
                 break;
             case HeroActions.JUMP:
                 TransformComponent transformComponent = transformMapper.get(entity);
-                impulse.set(speed.x, transformComponent.y < 4 ? 3 : speed.y);
+                impulse.set(speed.x, transformComponent.y < 3 ? 2 : speed.y);
                 break;
         }
 

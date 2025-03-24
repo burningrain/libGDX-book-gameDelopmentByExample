@@ -63,14 +63,14 @@
         "from": "IDLE",
         "to": "MOVEMENT",
         "fsmPredicates": [
-          "MOVEMENT > 0"
+          "MOVEMENT > 1"
         ]
       },
       {
         "from": "MOVEMENT",
         "to": "IDLE",
         "fsmPredicates": [
-          "MOVEMENT <= 0"
+          "MOVEMENT <= 1"
         ]
       },
       {
@@ -113,7 +113,7 @@
         "to": "IDLE",
         "fsmPredicates": [
           "FLY == false",
-          "MOVEMENT <= 0"
+          "MOVEMENT <= 1"
         ]
       },
       {
@@ -121,7 +121,7 @@
         "to": "MOVEMENT",
         "fsmPredicates": [
           "FLY == false",
-          "MOVEMENT > 0"
+          "MOVEMENT > 1"
         ]
       },
       {
@@ -136,7 +136,7 @@
         "to": "IDLE",
         "fsmPredicates": [
           "ATTACK == false",
-          "MOVEMENT <= 0"
+          "MOVEMENT <= 1"
         ]
       },
       {
@@ -144,7 +144,7 @@
         "to": "MOVEMENT",
         "fsmPredicates": [
           "ATTACK == false",
-          "MOVEMENT > 0"
+          "MOVEMENT > 1"
         ]
       },
       {

@@ -50,7 +50,7 @@ public class Level1Screen extends AbstractGameScreen {
         //config.setRendererSystem();
         config.setResourceRetriever(asyncResourceManager);
 
-        CameraSystem cameraSystem = new CameraSystem(7, 40, 4, 6);
+        CameraSystem cameraSystem = new CameraSystem(6.5f, 40, 4, 6);
 
         AnimationSystem animationSystem = new AnimationSystem();
         animationSystem.addAnimation(assetManager.<SimpleAnimation>get(Resources.Animations.CRAB_ANIM_FSM));
