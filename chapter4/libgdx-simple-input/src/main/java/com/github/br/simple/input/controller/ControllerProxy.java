@@ -96,7 +96,7 @@ public class ControllerProxy implements Controller {
         target.removeListener(listener);
     }
 
-    public ControllerProxy() {
+    private ControllerProxy() {
         this(Controllers.getCurrent());
     }
 

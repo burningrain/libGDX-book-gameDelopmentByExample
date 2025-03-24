@@ -31,7 +31,7 @@ public class HappyCrabSimpleGame extends AbstractSimpleGame<UserFactoryImpl> {
 
     @Override
     public void create() {
-        Box2D.init();
+        //Box2D.init();
         super.create();
     }
 

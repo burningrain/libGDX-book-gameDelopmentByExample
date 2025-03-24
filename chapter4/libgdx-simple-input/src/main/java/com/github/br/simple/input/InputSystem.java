@@ -16,8 +16,12 @@ public class InputSystem implements Disposable {
     public InputSystem(int actionsSize, ActionMapper actionMapper) {
         this.actionMapper = actionMapper;
         inputActions = new InputActions(actionsSize);
-        controllerProxy = new ControllerProxy();
+        controllerProxy = ControllerProxy.INSTANCE;
         inputProcessor = new InputProcessorImpl();
+    }
+
+    public InputActions getInputActions() {
+        return inputActions;
     }
 
     public InputProcessor getInputProcessor() {

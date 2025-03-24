@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.br.gdx.simple.animation.SimpleAnimation;
 import com.github.br.gdx.simple.animation.SimpleAnimationSystem;
+import com.packt.flappeebee.screen.level.level1.systems.components.AnimationComponent;
 import games.rednblack.editor.renderer.components.TextureRegionComponent;
 
 @All({AnimationComponent.class, TextureRegionComponent.class})
