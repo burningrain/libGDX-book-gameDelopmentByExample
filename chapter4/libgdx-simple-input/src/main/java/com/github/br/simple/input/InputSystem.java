@@ -32,6 +32,8 @@ public class InputSystem implements Disposable {
         int action = actionMapper.getAction(deltaTime, inputProcessor.getInputData(), controllerProxy);
         if (action >= 0) {
             inputActions.setAction(action);
+        } else if (action == ActionConst.EMPTY_ACTION) {
+            inputActions.clear();
         }
         inputProcessor.getInputData().reset();
     }

@@ -42,6 +42,9 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
     private final Vector2 impulse = new Vector2(0, 0);
     private final Vector2 speed = new Vector2(0, 0);
 
+    private boolean attack = false;
+    private boolean jump = false;
+
 
     @Override
     public void init(int item) {
@@ -57,28 +60,30 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
         Vector2 linearVelocity = physicsBodyComponent.body.getLinearVelocity();
         FsmContext animationContext = animationComponent.simpleAnimationComponent.fsmContext;
         InputActions inputActions = inputComponent.inputActions;
+
         if (inputActions.getAction(HeroActions.MOVE_LEFT)) {
             movePlayer(HeroActions.MOVE_LEFT);
-            animationContext.update(MOVEMENT, Math.abs(linearVelocity.x));
         }
 
         if (inputActions.getAction(HeroActions.MOVE_RIGHT)) {
             movePlayer(HeroActions.MOVE_RIGHT);
-            animationContext.update(MOVEMENT, Math.abs(linearVelocity.x));
         }
+        animationContext.update(MOVEMENT, Math.abs(linearVelocity.x));
 
-        if (inputActions.getAction(HeroActions.JUMP)) {
+        if (inputActions.getAction(HeroActions.JUMP) && !jump) {
+            jump = true;
             movePlayer(HeroActions.JUMP);
             animationContext.update(JUMP, true);
         }
 
         if (linearVelocity.y < -0.3) {
             animationContext.update(FLY, true);
-        } else if (linearVelocity.y == 0) {
+        } else if (linearVelocity.y >= 0 && linearVelocity.y <= 0.2f) {
             animationContext.update(FLY, false);
         }
 
-        if (inputActions.getAction(HeroActions.ATTACK)) {
+        if (inputActions.getAction(HeroActions.ATTACK) && !attack) {
+            attack = true;
             animationContext.update(ATTACK, true);
             //TODO
         }
@@ -86,13 +91,13 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
 
         if (ATTACK.equals(animationContext.getCurrentState())) {
             if (SimpleAnimatorUtils.isAnimationFinished(animationComponent.simpleAnimationComponent.animatorDynamicPart)) {
-                //attack = false;
+                attack = false;
                 animationContext.update(ATTACK, false);
             }
         }
         if (JUMP.equals(animationContext.getCurrentState())) {
             if (SimpleAnimatorUtils.isAnimationFinished(animationComponent.simpleAnimationComponent.animatorDynamicPart)) {
-                //jump = false;
+                jump = false;
                 animationContext.update(JUMP, false);
                 animationContext.update(FLY, true);
             }
@@ -106,14 +111,14 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
 
         switch (direction) {
             case HeroActions.MOVE_LEFT:
-                impulse.set(-2, speed.y);
+                impulse.set(-2f, speed.y);
                 break;
             case HeroActions.MOVE_RIGHT:
-                impulse.set(2, speed.y);
+                impulse.set(2f, speed.y);
                 break;
             case HeroActions.JUMP:
                 TransformComponent transformComponent = transformMapper.get(entity);
-                impulse.set(speed.x, transformComponent.y < 3 ? 2 : speed.y);
+                impulse.set(speed.x, transformComponent.y < 2 ? 1 : speed.y);
                 break;
         }
 
@@ -149,16 +154,16 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
 
     @Override
     public void preSolve(int contactEntity, Fixture contactFixture, Fixture ownFixture, Contact contact) {
-        TransformComponent transformComponent = transformMapper.get(this.entity);
-
-        TransformComponent colliderTransform = transformMapper.get(contactEntity);
-        DimensionsComponent colliderDimension = dimensionsMapper.get(contactEntity);
-
-        if (transformComponent.y < colliderTransform.y + colliderDimension.height) {
-            contact.setFriction(0);
-        } else {
-            contact.setFriction(1);
-        }
+//        TransformComponent transformComponent = transformMapper.get(this.entity);
+//
+//        TransformComponent colliderTransform = transformMapper.get(contactEntity);
+//        DimensionsComponent colliderDimension = dimensionsMapper.get(contactEntity);
+//
+//        if (transformComponent.y < colliderTransform.y + colliderDimension.height) {
+//            contact.setFriction(0);
+//        } else {
+//            contact.setFriction(1);
+//        }
     }
 
     @Override
