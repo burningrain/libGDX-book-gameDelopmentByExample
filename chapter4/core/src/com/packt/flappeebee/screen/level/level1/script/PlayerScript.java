@@ -9,22 +9,24 @@ import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
 import com.github.br.simple.input.InputActions;
 import com.packt.flappeebee.action.HeroActions;
+import com.packt.flappeebee.screen.CrabAnimationState;
+import com.packt.flappeebee.screen.level.Tags;
 import com.packt.flappeebee.screen.level.level1.systems.components.AnimationComponent;
+import com.packt.flappeebee.screen.level.level1.systems.components.HeroComponent;
 import com.packt.flappeebee.screen.level.level1.systems.components.InputComponent;
+import com.packt.flappeebee.screen.level.level1.systems.components.PearlComponent;
 import games.rednblack.editor.renderer.components.DimensionsComponent;
 import games.rednblack.editor.renderer.components.MainItemComponent;
 import games.rednblack.editor.renderer.components.TransformComponent;
 import games.rednblack.editor.renderer.components.physics.PhysicsBodyComponent;
 import games.rednblack.editor.renderer.physics.PhysicsContact;
 import games.rednblack.editor.renderer.scripts.BasicScript;
+import games.rednblack.editor.renderer.utils.ItemWrapper;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class PlayerScript extends BasicScript implements PhysicsContact {
-
-    public static final String IDLE = "IDLE";
-    public static final String JUMP = "JUMP";
-    public static final String MOVEMENT = "MOVEMENT";
-    public static final String ATTACK = "ATTACK";
-    public static final String FLY = "FLY";
 
     protected ComponentMapper<PhysicsBodyComponent> physicsMapper;
     protected ComponentMapper<TransformComponent> transformMapper;
@@ -33,6 +35,11 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
 
     protected ComponentMapper<InputComponent> inputMapper;
     protected ComponentMapper<AnimationComponent> animationMapper;
+
+    protected ComponentMapper<PearlComponent> pearlMapper;
+    protected ComponentMapper<HeroComponent> heroMapper;
+
+    protected com.artemis.World engine;
 
     private PhysicsBodyComponent physicsBodyComponent;
 
@@ -43,7 +50,11 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
     private final Vector2 speed = new Vector2(0, 0);
 
     private boolean attack = false;
-    private boolean jump = false;
+    private boolean animJump = false;
+
+    // jump
+    private int jumpTimeout = 0;
+    private final Set<Fixture> fixturesUnderfoot = new HashSet<>();
 
 
     @Override
@@ -68,39 +79,44 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
         if (inputActions.getAction(HeroActions.MOVE_RIGHT)) {
             movePlayer(HeroActions.MOVE_RIGHT);
         }
-        animationContext.update(MOVEMENT, Math.abs(linearVelocity.x));
+        animationContext.update(CrabAnimationState.MOVEMENT, Math.abs(linearVelocity.x));
 
-        if (inputActions.getAction(HeroActions.JUMP) && !jump) {
-            jump = true;
+        if (inputActions.getAction(HeroActions.JUMP) && !animJump && isCanJumpNow()) {
+            animJump = true;
+            jumpTimeout = 15; // 15 frames
             movePlayer(HeroActions.JUMP);
-            animationContext.update(JUMP, true);
+            animationContext.update(CrabAnimationState.JUMP, true);
         }
 
         if (linearVelocity.y < -0.3) {
-            animationContext.update(FLY, true);
+            animationContext.update(CrabAnimationState.FLY, true);
         } else if (linearVelocity.y >= 0 && linearVelocity.y <= 0.2f) {
-            animationContext.update(FLY, false);
+            animationContext.update(CrabAnimationState.FLY, false);
         }
 
         if (inputActions.getAction(HeroActions.ATTACK) && !attack) {
             attack = true;
-            animationContext.update(ATTACK, true);
+            animationContext.update(CrabAnimationState.ATTACK, true);
             //TODO
         }
 
 
-        if (ATTACK.equals(animationContext.getCurrentState())) {
+        if (CrabAnimationState.ATTACK.equals(animationContext.getCurrentState())) {
             if (SimpleAnimatorUtils.isAnimationFinished(animationComponent.simpleAnimationComponent.animatorDynamicPart)) {
                 attack = false;
-                animationContext.update(ATTACK, false);
+                animationContext.update(CrabAnimationState.ATTACK, false);
             }
         }
-        if (JUMP.equals(animationContext.getCurrentState())) {
+        if (CrabAnimationState.JUMP.equals(animationContext.getCurrentState())) {
             if (SimpleAnimatorUtils.isAnimationFinished(animationComponent.simpleAnimationComponent.animatorDynamicPart)) {
-                jump = false;
-                animationContext.update(JUMP, false);
-                animationContext.update(FLY, true);
+                animJump = false;
+                animationContext.update(CrabAnimationState.JUMP, false);
+                animationContext.update(CrabAnimationState.FLY, true);
             }
+        }
+
+        if (jumpTimeout > 0) {
+            jumpTimeout--;
         }
     }
 
@@ -117,8 +133,7 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
                 impulse.set(2f, speed.y);
                 break;
             case HeroActions.JUMP:
-                TransformComponent transformComponent = transformMapper.get(entity);
-                impulse.set(speed.x, transformComponent.y < 2 ? 1 : speed.y);
+                impulse.set(speed.x, 1.5f);
                 break;
         }
 
@@ -132,42 +147,49 @@ public class PlayerScript extends BasicScript implements PhysicsContact {
 
     @Override
     public void beginContact(int contactEntity, Fixture contactFixture, Fixture ownFixture, Contact contact) {
+        HeroComponent heroComponent = heroMapper.get(entity);
         MainItemComponent mainItemComponent = mainItemMapper.get(contactEntity);
 
-//        PlayerComponent playerComponent = playerMapper.get(animEntity);
-//        if (mainItemComponent.tags.contains("platform")) {
-//            playerComponent.touchedPlatforms++;
-//        }
+        if (mainItemComponent.tags.contains(Tags.PLATFORM)) {
+            fixturesUnderfoot.add(contactFixture);
+        }
 
-
+        PearlComponent pearlComponent = pearlMapper.get(contactEntity);
+        if (pearlComponent != null && pearlComponent.value > 0) {
+            ItemWrapper itemWrapper = new ItemWrapper(contactEntity, engine);
+            ItemWrapper child = itemWrapper.getChild(Tags.PEARL_ID);
+            if (child != null) {
+                heroComponent.setPearlsCount(heroComponent.getPearlsCount() + pearlComponent.value);
+                pearlComponent.value--;
+                engine.delete(child.getEntity());
+            }
+        }
     }
 
     @Override
     public void endContact(int contactEntity, Fixture contactFixture, Fixture ownFixture, Contact contact) {
         MainItemComponent mainItemComponent = mainItemMapper.get(contactEntity);
 
-//        PlayerComponent playerComponent = playerMapper.get(animEntity);
-//        if (mainItemComponent.tags.contains("platform")) {
-//            playerComponent.touchedPlatforms--;
-//        }
+        if (mainItemComponent.tags.contains(Tags.PLATFORM)) {
+            fixturesUnderfoot.remove(contactFixture);
+        }
     }
 
     @Override
     public void preSolve(int contactEntity, Fixture contactFixture, Fixture ownFixture, Contact contact) {
-//        TransformComponent transformComponent = transformMapper.get(this.entity);
-//
-//        TransformComponent colliderTransform = transformMapper.get(contactEntity);
-//        DimensionsComponent colliderDimension = dimensionsMapper.get(contactEntity);
-//
-//        if (transformComponent.y < colliderTransform.y + colliderDimension.height) {
-//            contact.setFriction(0);
-//        } else {
-//            contact.setFriction(1);
-//        }
     }
 
     @Override
     public void postSolve(int contactEntity, Fixture contactFixture, Fixture ownFixture, Contact contact) {
-
     }
+
+
+    private boolean isCanJumpNow() {
+        if (jumpTimeout > 0) {
+            return false;
+        }
+
+        return !fixturesUnderfoot.isEmpty();
+    }
+
 }

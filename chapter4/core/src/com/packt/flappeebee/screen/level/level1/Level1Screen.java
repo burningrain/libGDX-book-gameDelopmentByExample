@@ -13,11 +13,15 @@ import com.github.br.simple.input.InputSystem;
 import com.packt.flappeebee.Resources;
 import com.packt.flappeebee.action.ActionMapperImpl;
 import com.packt.flappeebee.model.GameObjectFactory;
+import com.packt.flappeebee.screen.HUD;
+import com.packt.flappeebee.screen.level.Tags;
 import com.packt.flappeebee.screen.level.level1.script.PlayerScript;
 import com.packt.flappeebee.screen.level.level1.systems.components.AnimationComponent;
 import com.packt.flappeebee.screen.level.level1.systems.AnimationSystem;
 import com.packt.flappeebee.screen.level.level1.systems.CameraSystem;
+import com.packt.flappeebee.screen.level.level1.systems.components.HeroComponent;
 import com.packt.flappeebee.screen.level.level1.systems.components.InputComponent;
+import com.packt.flappeebee.screen.level.level1.systems.components.PearlComponent;
 import games.rednblack.editor.renderer.SceneConfiguration;
 import games.rednblack.editor.renderer.SceneLoader;
 import games.rednblack.editor.renderer.resources.AsyncResourceManager;
@@ -28,6 +32,7 @@ public class Level1Screen extends AbstractGameScreen {
 
     private SceneLoader sceneLoader;
     private AsyncResourceManager asyncResourceManager;
+    private HUD hud;
 
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -39,6 +44,10 @@ public class Level1Screen extends AbstractGameScreen {
     @Override
     public void show() {
         super.show();
+
+        hud = new HUD();
+        hud.setGameManager(getGameManager());
+        hud.show();
 
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(10, 7, camera);
@@ -64,12 +73,13 @@ public class Level1Screen extends AbstractGameScreen {
         // после new SceneLoader(config) должны быть добавления новых компонент во фреймворк
         ComponentRetriever.addMapper(AnimationComponent.class);
         ComponentRetriever.addMapper(InputComponent.class);
+        ComponentRetriever.addMapper(HeroComponent.class);
 
         sceneLoader.loadScene("MainScene", viewport);
-
         ItemWrapper root = new ItemWrapper(sceneLoader.getRoot(), artemisWorld);
-        ItemWrapper hero = root.getChild("hero");
 
+        // hero
+        ItemWrapper hero = root.getChild(Tags.HERO_ID);
         int heroEntity = hero.getEntity();
         AnimationComponent animationComponent = ComponentRetriever.create(heroEntity, AnimationComponent.class, artemisWorld);
         animationComponent.simpleAnimationComponent = GameObjectFactory.createAnimationComponentCrab();
@@ -77,6 +87,7 @@ public class Level1Screen extends AbstractGameScreen {
         PlayerScript playerScript = new PlayerScript();
         hero.addScript(playerScript);
 
+        // camera
         cameraSystem.setFocus(heroEntity);
 
         // InputSystem
@@ -84,6 +95,15 @@ public class Level1Screen extends AbstractGameScreen {
         InputComponent inputComponent = ComponentRetriever.create(heroEntity, InputComponent.class, artemisWorld);
         inputComponent.inputActions = inputSystem.getInputActions();
         Gdx.input.setInputProcessor(inputSystem.getInputProcessor());
+
+        // collectables
+        sceneLoader.addComponentByTagName(Tags.SEA_SHELL, PearlComponent.class);
+
+        // hero component
+        HeroComponent heroComponent = ComponentRetriever.create(heroEntity, HeroComponent.class, artemisWorld);
+        heroComponent.setLifeCount(4);
+        heroComponent.addListener(hud);
+        heroComponent.notifyListeners();
     }
 
     @Override
@@ -95,29 +115,38 @@ public class Level1Screen extends AbstractGameScreen {
         inputSystem.update(delta);
         artemisWorld.process();
         inputSystem.reset();
+
+        hud.render(delta);
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-        if (width != 0 && height != 0)
+        if (width != 0 && height != 0) {
             sceneLoader.resize(width, height);
+            hud.resize(width, height);
+        }
+
     }
 
     @Override
     public void pause() {
+        hud.pause();
     }
 
     @Override
     public void resume() {
+        hud.resume();
     }
 
     @Override
     public void hide() {
+        hud.hide();
     }
 
     @Override
     public void dispose() {
+        hud.dispose();
     }
 
 }
