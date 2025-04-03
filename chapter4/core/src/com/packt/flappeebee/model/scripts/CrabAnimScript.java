@@ -3,6 +3,7 @@ package com.packt.flappeebee.model.scripts;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
+import com.github.br.ecs.simple.system.transform.TransformComponent;
 import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
 import com.packt.flappeebee.action.HeroActions;
@@ -20,7 +21,7 @@ public class CrabAnimScript extends EcsScript {
     public static final String ATTACK = "ATTACK";
     public static final String FLY = "FLY";
 
-
+    private TransformComponent transform;
     private PhysicsComponent physics;
     private RendererComponent renderer;
     private AnimationComponent animation;
@@ -31,6 +32,7 @@ public class CrabAnimScript extends EcsScript {
 
     @Override
     public void init() {
+        transform = getComponent(TransformComponent.class);
         physics = getComponent(PhysicsComponent.class);
         renderer = getComponent(RendererComponent.class);
         animation = getComponent(AnimationComponent.class);
@@ -64,9 +66,9 @@ public class CrabAnimScript extends EcsScript {
         }
         context.update(MOVEMENT, Math.abs(physics.velocity.x));
 
-        if (physics.velocity.y < -0.3) {
+        if (transform.position.y > 0) {
             context.update(FLY, true);
-        } else if (physics.velocity.y == 0) {
+        } else if (transform.position.y == 0) {
             context.update(FLY, false);
         }
 
@@ -83,6 +85,5 @@ public class CrabAnimScript extends EcsScript {
                 context.update(FLY, true);
             }
         }
-
     }
 }
