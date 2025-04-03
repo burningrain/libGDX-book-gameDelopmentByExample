@@ -26,7 +26,7 @@ import games.rednblack.editor.renderer.utils.ItemWrapper;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PlayerScript extends BasicScript implements PhysicsContact {
+public class HeroScript extends BasicScript implements PhysicsContact {
 
     protected ComponentMapper<PhysicsBodyComponent> physicsMapper;
     protected ComponentMapper<TransformComponent> transformMapper;

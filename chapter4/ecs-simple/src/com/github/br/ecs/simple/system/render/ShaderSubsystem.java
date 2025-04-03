@@ -78,7 +78,7 @@ public class ShaderSubsystem {
                     lastBatch.end();
                 }
                 lastBatch = batch;
-                ViewHelper.applyCameraAndViewPort(lastBatch, viewport); // todo может и не нужно каждый апдейт обновлять камеру?
+                ViewHelper.applyCameraAndViewPort(lastBatch, viewport);
                 lastBatch.begin();
                 if (shaderUpdaters.get(i) != null) {
                     shaderUpdaters.get(i).update(batch.getShader());
@@ -86,7 +86,9 @@ public class ShaderSubsystem {
             }
             batchListener.update(i, lastBatch);
         }
-        lastBatch.end();
+        if (lastBatch != null) {
+            lastBatch.end();
+        }
     }
 
     public void resize(int width, int height) {

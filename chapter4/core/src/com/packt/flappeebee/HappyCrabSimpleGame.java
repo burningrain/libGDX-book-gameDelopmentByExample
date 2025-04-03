@@ -12,17 +12,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.github.br.gdx.simple.animation.SimpleAnimation;
 import com.github.br.gdx.simple.animation.SimpleAnimationSyncLoader;
 import com.github.br.gdx.simple.structure.AbstractSimpleGame;
 import com.github.br.gdx.simple.structure.GameSettings;
 import com.github.br.gdx.simple.structure.screen.statemachine.GameScreenState;
-import com.packt.flappeebee.screen.level.level1.Level1AssetLoader;
-import com.packt.flappeebee.screen.level.level1.Level1Screen;
-import com.packt.flappeebee.screen.level.menu.MainMenuAssetsLoader;
-import com.packt.flappeebee.screen.level.menu.MainMenuScreen;
+import com.packt.flappeebee.screen.GameScreens;
 import com.ray3k.stripe.FreeTypeSkinLoader;
 import games.rednblack.editor.renderer.resources.AsyncResourceManager;
 import games.rednblack.editor.renderer.resources.ResourceManagerLoader;
@@ -42,13 +38,11 @@ public class HappyCrabSimpleGame extends AbstractSimpleGame<UserFactoryImpl> {
 
     @Override
     protected GameScreenState createStartState() {
-        //return new GameScreenState(new MainMenuScreen(), new MainMenuAssetsLoader());
-        return new GameScreenState(new Level1Screen(), new Level1AssetLoader());
+        return GameScreens.LEVEL_0;
     }
 
     @Override
     protected void fillGameSettings(GameSettings.Builder builder) {
-
     }
 
     @Override

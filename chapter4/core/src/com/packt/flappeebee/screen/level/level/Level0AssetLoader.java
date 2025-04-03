@@ -1,4 +1,4 @@
-package com.packt.flappeebee.screen.level.menu;
+package com.packt.flappeebee.screen.level.level;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,7 +7,7 @@ import com.github.br.gdx.simple.animation.SimpleAnimation;
 import com.github.br.gdx.simple.structure.screen.loading.AssetsLoader;
 import com.packt.flappeebee.Resources;
 
-public class MainMenuAssetsLoader implements AssetsLoader {
+public class Level0AssetLoader implements AssetsLoader {
 
     @Override
     public void loadAssets(AssetManager assetManager) {

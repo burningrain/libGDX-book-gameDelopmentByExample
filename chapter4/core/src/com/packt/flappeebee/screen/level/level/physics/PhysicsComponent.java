@@ -1,4 +1,4 @@
-package com.github.br.ecs.simple.system.physics;
+package com.packt.flappeebee.screen.level.level.physics;
 
 
 import com.badlogic.gdx.math.Shape2D;
@@ -7,8 +7,7 @@ import com.github.br.ecs.simple.engine.EcsComponent;
 
 public class PhysicsComponent implements EcsComponent {
 
-    public Vector2 movement;        // скорость
-    public Vector2 acceleration;    // ускорение
+    public Vector2 velocity;        // скорость
     public Shape2D shape;           // физическая форма
 
 }

@@ -3,7 +3,6 @@ package com.packt.flappeebee.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.utils.Array;
 import com.github.br.ecs.simple.engine.EcsComponent;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
-import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.script.ScriptComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
@@ -21,6 +19,8 @@ import com.github.br.gdx.simple.animation.fsm.FsmContext;
 import com.packt.flappeebee.Resources;
 import com.packt.flappeebee.model.scripts.CrabAnimScript;
 import com.packt.flappeebee.model.scripts.CrabScript;
+import com.packt.flappeebee.screen.level.level.physics.InputComponent;
+import com.packt.flappeebee.screen.level.level.physics.PhysicsComponent;
 
 public final class GameObjectFactory {
 
@@ -45,14 +45,13 @@ public final class GameObjectFactory {
         return new EcsComponent[]{transformComponent, rendererComponent};
     }
 
-    public static EcsComponent[] createCrab() {
+    public static EcsComponent[] createCrab(InputComponent inputComponent) {
         TransformComponent transformComponent = new TransformComponent();
         transformComponent.position = new Vector2(250, 250);
         transformComponent.rotation = 0f;
 
         PhysicsComponent physicsComponent = new PhysicsComponent();
-        physicsComponent.movement = new Vector2(0f, 0f);
-        physicsComponent.acceleration = GameConstants.CRAB_DIVE_ACCEL;
+        physicsComponent.velocity = new Vector2(0f, 0f);
         physicsComponent.shape = new Rectangle(0, 0, 75, 64);
 
         ScriptComponent scriptComponent = new ScriptComponent();
@@ -67,7 +66,7 @@ public final class GameObjectFactory {
         animationComponent.simpleAnimationComponent = createAnimationComponentCrab();
         // АНИМАЦИЯ
 
-        return new EcsComponent[]{transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent};
+        return new EcsComponent[]{transformComponent, physicsComponent, scriptComponent, rendererComponent, animationComponent, inputComponent};
     }
 
     public static SimpleAnimationComponent createAnimationComponentCrab() {

@@ -56,6 +56,9 @@ public abstract class EcsSystem extends ScreenAdapter {
     }
 
     public void render(float delta) {
+    }
+
+    public void update(float delta) {
         update(delta, entities.values());
     }
 

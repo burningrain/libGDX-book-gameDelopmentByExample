@@ -15,7 +15,7 @@ import com.packt.flappeebee.action.ActionMapperImpl;
 import com.packt.flappeebee.model.GameObjectFactory;
 import com.packt.flappeebee.screen.HUD;
 import com.packt.flappeebee.screen.level.Tags;
-import com.packt.flappeebee.screen.level.level1.script.PlayerScript;
+import com.packt.flappeebee.screen.level.level1.script.HeroScript;
 import com.packt.flappeebee.screen.level.level1.systems.components.AnimationComponent;
 import com.packt.flappeebee.screen.level.level1.systems.AnimationSystem;
 import com.packt.flappeebee.screen.level.level1.systems.CameraSystem;
@@ -84,8 +84,8 @@ public class Level1Screen extends AbstractGameScreen {
         AnimationComponent animationComponent = ComponentRetriever.create(heroEntity, AnimationComponent.class, artemisWorld);
         animationComponent.simpleAnimationComponent = GameObjectFactory.createAnimationComponentCrab();
 
-        PlayerScript playerScript = new PlayerScript();
-        hero.addScript(playerScript);
+        HeroScript heroScript = new HeroScript();
+        hero.addScript(heroScript);
 
         // camera
         cameraSystem.setFocus(heroEntity);
@@ -131,21 +131,33 @@ public class Level1Screen extends AbstractGameScreen {
 
     @Override
     public void pause() {
+        if (hud == null) {
+            return;
+        }
         hud.pause();
     }
 
     @Override
     public void resume() {
+        if (hud == null) {
+            return;
+        }
         hud.resume();
     }
 
     @Override
     public void hide() {
+        if (hud == null) {
+            return;
+        }
         hud.hide();
     }
 
     @Override
     public void dispose() {
+        if (hud == null) {
+            return;
+        }
         hud.dispose();
     }
 

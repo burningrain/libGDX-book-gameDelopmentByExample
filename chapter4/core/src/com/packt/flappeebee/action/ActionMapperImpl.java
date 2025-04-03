@@ -11,7 +11,7 @@ public class ActionMapperImpl implements ActionMapper {
 
     @Override
     public int getAction(float deltaTime, InputData inputData, Controller controller) {
-        boolean isJump = controller.getButton(controller.getMapping().buttonA) || Gdx.input.isKeyPressed(Input.Keys.SPACE);
+        boolean isJump = controller.getButton(controller.getMapping().buttonA) || Gdx.input.isKeyPressed(Input.Keys.UP);
         if (isJump) {
             return HeroActions.JUMP;
         }
@@ -27,6 +27,14 @@ public class ActionMapperImpl implements ActionMapper {
         // attack
         if (controller.getButton(controller.getMapping().buttonB) || Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
             return HeroActions.ATTACK;
+        }
+
+        // blink
+        if(controller.getButton(controller.getMapping().buttonY) || Gdx.input.isKeyPressed(Input.Keys.F)) {
+            return HeroActions.BLINK_ON;
+        }
+        if(controller.getButton(controller.getMapping().buttonX) || Gdx.input.isKeyPressed(Input.Keys.G)) {
+            return HeroActions.BLINK_OFF;
         }
 
         return ActionConst.EMPTY_ACTION;

@@ -102,7 +102,6 @@ public class EcsContainer implements Screen {
 
     private void initInputMultiplexer(InputProcessor... processors) {
         this.inputMultiplexer = new InputMultiplexer(processors);
-        //Gdx.input.setInputProcessor(inputMultiplexer); todo пока решил оставить это на откуп клиенту
     }
 
     public int createEntity(String type, EcsComponent... components) {
@@ -133,12 +132,11 @@ public class EcsContainer implements Screen {
         systems.add(system);
     }
 
-    @Override
-    public void render(float delta) {
+    public void update(float delta) {
         EcsSimple.ECS.update(delta);
         entityManager.update(createEntityEventCallback, deleteEntityEventCallback, addedComponentEventCallback, deletedComponentEventCallback); // коллбеки для очистки нод в системах
         for (EcsSystem system : systems) {
-            system.render(delta);
+            system.update(delta);
         }
 
         if (ecsDebug.isDebugActive()) {
@@ -151,6 +149,10 @@ public class EcsContainer implements Screen {
         for (EcsSystem system : systems) {
             system.show();
         }
+    }
+
+    @Override
+    public void render(float delta) {
     }
 
     @Override

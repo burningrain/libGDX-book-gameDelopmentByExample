@@ -1,14 +1,13 @@
 package com.packt.flappeebee.model.scripts;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.github.br.ecs.simple.engine.EcsScript;
 import com.github.br.ecs.simple.system.animation.AnimationComponent;
-import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.gdx.simple.animation.component.SimpleAnimatorUtils;
 import com.github.br.gdx.simple.animation.fsm.FsmContext;
-import com.github.br.simple.input.controller.ControllerProxy;
+import com.packt.flappeebee.action.HeroActions;
+import com.packt.flappeebee.screen.level.level.physics.InputComponent;
+import com.packt.flappeebee.screen.level.level.physics.PhysicsComponent;
 
 /**
  * Created by user on 17.04.2017.
@@ -25,6 +24,7 @@ public class CrabAnimScript extends EcsScript {
     private PhysicsComponent physics;
     private RendererComponent renderer;
     private AnimationComponent animation;
+    private InputComponent userInput;
 
     private boolean attack = false;
     private boolean jump = false;
@@ -34,6 +34,7 @@ public class CrabAnimScript extends EcsScript {
         physics = getComponent(PhysicsComponent.class);
         renderer = getComponent(RendererComponent.class);
         animation = getComponent(AnimationComponent.class);
+        userInput = getComponent(InputComponent.class);
     }
 
     @Override
@@ -41,31 +42,31 @@ public class CrabAnimScript extends EcsScript {
         physics = null;
         renderer = null;
         animation = null;
+        userInput = null;
     }
 
     @Override
     public void update(float delta) {
-        ControllerProxy controller = ControllerProxy.INSTANCE;
         FsmContext context = animation.simpleAnimationComponent.fsmContext;
-        if ((Gdx.input.isKeyPressed(Input.Keys.ENTER) || controller.getButton(controller.getMapping().buttonB)) && !attack) {
+        if (userInput.inputActions.getAction(HeroActions.ATTACK) && !attack) {
             attack = true;
             context.update(ATTACK, true);
         }
-        if ((Gdx.input.isKeyPressed(Input.Keys.SPACE) || controller.getButton(controller.getMapping().buttonA)) && !jump) {
+        if (userInput.inputActions.getAction(HeroActions.JUMP) && !jump) {
             jump = true;
             context.update(JUMP, true);
         }
 
-        if (physics.movement.x < 0) {
+        if (physics.velocity.x < 0) {
             renderer.flipX = true;
         } else {
             renderer.flipX = false;
         }
-        context.update(MOVEMENT, Math.abs(physics.movement.x));
+        context.update(MOVEMENT, Math.abs(physics.velocity.x));
 
-        if (physics.movement.y < -0.3) {
+        if (physics.velocity.y < -0.3) {
             context.update(FLY, true);
-        } else if (physics.movement.y == 0) {
+        } else if (physics.velocity.y == 0) {
             context.update(FLY, false);
         }
 

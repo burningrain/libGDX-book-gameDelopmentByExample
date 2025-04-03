@@ -1,32 +1,32 @@
 package com.packt.flappeebee.model.scripts;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.github.br.ecs.simple.engine.EcsScript;
-import com.github.br.ecs.simple.system.physics.PhysicsComponent;
 import com.github.br.ecs.simple.system.render.RendererComponent;
 import com.github.br.ecs.simple.system.transform.TransformComponent;
-import com.github.br.simple.input.controller.ControllerProxy;
-import com.packt.flappeebee.model.GameConstants;
+import com.packt.flappeebee.action.HeroActions;
 import com.packt.flappeebee.model.LayerEnum;
+import com.packt.flappeebee.screen.level.level.gameloop.GameLoopManager;
+import com.packt.flappeebee.screen.level.level.physics.InputComponent;
+import com.packt.flappeebee.screen.level.level.physics.PhysicsComponent;
 
 /**
  * Created by user on 16.04.2017.
  */
 public class CrabScript extends EcsScript {
 
-    public static final int VELOCITY = 2;
     private TransformComponent transform;
     private PhysicsComponent physics;
 
     private RendererComponent rendererComponent;
+    private InputComponent userInput;
 
     @Override
     public void init() {
         transform = getComponent(TransformComponent.class);
         physics = getComponent(PhysicsComponent.class);
         rendererComponent = getComponent(RendererComponent.class);
+        userInput = getComponent(InputComponent.class);
     }
 
     @Override
@@ -37,40 +37,37 @@ public class CrabScript extends EcsScript {
 
     @Override
     public void update(float delta) {
-        blockFlappeeLeavingTheWorld();
-
-        // TODO должен быть маппинг кнопок на действия, а в условиях проверять уже сами действия случились или нет, в не кнопки
-        ControllerProxy controller = ControllerProxy.INSTANCE;
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || controller.getButton(controller.getMapping().buttonA)) {
-            flyUp(delta);
+        if (userInput.inputActions.getAction(HeroActions.JUMP)) {
+            physics.velocity.add(getJumpVelocity());
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D) || controller.getAxis(controller.getMapping().axisLeftX) > 0) {
-            physics.movement.x = VELOCITY;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A) || controller.getAxis(controller.getMapping().axisLeftX) < 0) {
-            physics.movement.x = -VELOCITY;
+        if (userInput.inputActions.getAction(HeroActions.MOVE_RIGHT)) {
+            physics.velocity.x = getVelocityX();
+        } else if (userInput.inputActions.getAction(HeroActions.MOVE_LEFT)) {
+            physics.velocity.x = -getVelocityX();
         } else {
-            physics.movement.x = 0;
+            physics.velocity.x = 0;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.F) || controller.getButton(controller.getMapping().buttonX)) {
+        if (userInput.inputActions.getAction(HeroActions.BLINK_ON)) {
             rendererComponent.newLayerTitle = LayerEnum.FRONT_EFFECTS.name();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.G) || controller.getButton(controller.getMapping().buttonY)) {
+        if (userInput.inputActions.getAction(HeroActions.BLINK_OFF)) {
             rendererComponent.newLayerTitle = LayerEnum.MAIN_LAYER.name();
         }
     }
 
-    private void blockFlappeeLeavingTheWorld() {
-        int height = Gdx.graphics.getHeight();
-
-        if (transform.position.y <= 0 || transform.position.y >= height) {
-            physics.movement.y = 0;
+    private float getVelocityX() {
+        if (GameLoopManager.version == 1) {
+            return 2f;
         }
-        transform.position.y = MathUtils.clamp(transform.position.y, 0, height);
+        return 200f;
     }
 
-    public void flyUp(float delta) {
-        physics.movement.add(GameConstants.CRAB_DIVE_ACCEL_ACCEL.cpy().scl(delta * delta * 360f / 2f));
+    private Vector2 getJumpVelocity() {
+        if (GameLoopManager.version == 1) {
+            return new Vector2(0, 10.5f);
+        }
+        return new Vector2(0, 1000.5f);
     }
 
 }
