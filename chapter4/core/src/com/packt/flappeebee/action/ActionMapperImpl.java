@@ -30,10 +30,10 @@ public class ActionMapperImpl implements ActionMapper {
         }
 
         // blink
-        if(controller.getButton(controller.getMapping().buttonY) || Gdx.input.isKeyPressed(Input.Keys.F)) {
+        if(controller.getButton(controller.getMapping().buttonY) || Gdx.input.isKeyPressed(Input.Keys.O)) {
             return HeroActions.BLINK_ON;
         }
-        if(controller.getButton(controller.getMapping().buttonX) || Gdx.input.isKeyPressed(Input.Keys.G)) {
+        if(controller.getButton(controller.getMapping().buttonX) || Gdx.input.isKeyPressed(Input.Keys.P)) {
             return HeroActions.BLINK_OFF;
         }
 

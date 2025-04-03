@@ -5,10 +5,6 @@ package com.github.br.gdx.simple.console.exception;
  */
 public class CommandExecutionException extends ConsoleException {
 
-    public CommandExecutionException() {
-        super();
-    }
-
     public CommandExecutionException(String message) {
         super(message);
     }

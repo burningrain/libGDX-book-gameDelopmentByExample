@@ -58,16 +58,16 @@ public class Level0Screen extends AbstractGameScreen {
 
     // game loops
     private final GameLoopManager gameLoopManager = new GameLoopManager();
+    private GameWorldSettings gameWorldSettings;
 
     @Override
     public void show() {
         super.show();
-
         loadAssets();
 
-        GameWorldSettings gameWorldSettings = new GameWorldSettings();
-        gameWorldSettings.virtualWidth = 640;
-        gameWorldSettings.virtualHeight = 480;
+        gameWorldSettings = new GameWorldSettings();
+        gameWorldSettings.virtualWidth = 360;
+        gameWorldSettings.virtualHeight = 277;
 
         // инициализация настроек
         ShaderData waveShader = new ShaderData();
@@ -181,6 +181,10 @@ public class Level0Screen extends AbstractGameScreen {
         Console console = new Console(
                 Input.Keys.F9,
                 DebugDrawObject.DEFAULT_SKIN,
+                new StretchViewport(
+                        gameWorldSettings.virtualWidth,
+                        gameWorldSettings.virtualHeight
+                ),
                 true,
                 new ConsoleOffOnCallback() {
                     @Override
@@ -188,7 +192,7 @@ public class Level0Screen extends AbstractGameScreen {
                         container.setDebugMode(isActive);
                     }
                 });
-        console.addCommands(CommandsFactory.getCommands(container, gameLoopManager));
+        console.addCommands(CommandsFactory.getCommands(container, gameLoopManager, getGameManager()));
         return console;
     }
 

@@ -5,10 +5,6 @@ package com.github.br.gdx.simple.console.exception;
  */
 public class CommandNotFoundException extends ConsoleException {
 
-    public CommandNotFoundException() {
-        super();
-    }
-
     public CommandNotFoundException(String message) {
         super(message);
     }
